@@ -1,7 +1,10 @@
 package com.ssafy.realty.security.config.jwt;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import com.ssafy.realty.security.entity.User;
 import com.ssafy.realty.security.repository.UserRepository;
@@ -19,14 +22,14 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class JwtManger {
+public class JwtManager {
 
     private final JwtProperties jwtProperties;
     private final UserRepository userRepository;
 
     public String createAccessToken(PrincipalDetails principalDetails) {
         return JWT.create()
-                .withSubject("token") //아무거나 써도 됨.
+                .withSubject("token")
                 .withExpiresAt(new Date(System.currentTimeMillis() + jwtProperties.getAccessTokenExpirationTime()))
                 .withClaim("id", principalDetails.getUser().getId()) // 발행 유저정보 저장
                 .withClaim("username", principalDetails.getUser().getUsername())
@@ -41,6 +44,9 @@ public class JwtManger {
     public String getUsername(String token) {
         token = token.replace(jwtProperties.getTokenPrefix(), "");
 
+        DecodedJWT verify = JWT.require(Algorithm.HMAC512(jwtProperties.getAccessTokenSecret())).build().verify(token);
+        Claim c = verify.getClaim("username");
+
         return JWT.require(Algorithm.HMAC512(jwtProperties.getAccessTokenSecret())).build().verify(token).
                 getClaim("username").asString();
 
@@ -53,7 +59,7 @@ public class JwtManger {
             User user = userRepository.findByUsername(username);
             PrincipalDetails principalDetails = new PrincipalDetails(user);
             return new UsernamePasswordAuthenticationToken(principalDetails,
-                    null,
+                    principalDetails.getPassword(),
                     principalDetails.getAuthorities());
         }
         return null;
@@ -77,7 +83,6 @@ public class JwtManger {
     }
 
     public boolean isTokenValid(String token){
-        token = token.replace(jwtProperties.getTokenPrefix(), "");
         return getUsername(token) != null;
     }
 }

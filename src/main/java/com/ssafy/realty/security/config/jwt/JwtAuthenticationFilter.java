@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import com.ssafy.realty.security.dto.RequestLoginDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,7 +20,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationProvider authenticationProvider;
-    private final JwtManger jwtTokenProvider;
+    private final JwtManager jwtTokenProvider;
     private final JwtProperties jwtProperties;
 
     @Override
@@ -46,7 +45,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
-        PrincipalDetails principalDetails = (PrincipalDetails)   authResult.getPrincipal();
+        PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
         String jwtAccessToken = jwtTokenProvider.createAccessToken(principalDetails);
 
         response.addHeader(jwtProperties.getAccessTokenHeader(), jwtProperties.getTokenPrefix() + jwtAccessToken);

@@ -1,5 +1,7 @@
 package com.ssafy.realty.security.config.auth;
 
+import com.ssafy.realty.common.Role;
+import com.ssafy.realty.security.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -19,10 +21,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
+        PrincipalDetails principalDetails = (PrincipalDetails) userDetailsService.loadUserByUsername(authentication.getName());
 
-        if(userDetails != null && bCryptPasswordEncoder.matches(authentication.getCredentials().toString(), userDetails.getPassword())){
-           return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword());
+        if(principalDetails != null && bCryptPasswordEncoder.matches(authentication.getCredentials().toString(), principalDetails.getPassword())){
+           return new UsernamePasswordAuthenticationToken(principalDetails, principalDetails.getPassword(), principalDetails.getAuthorities());
         }
 
         throw new BadCredentialsException("잘못된 비밀번호 입니다.");

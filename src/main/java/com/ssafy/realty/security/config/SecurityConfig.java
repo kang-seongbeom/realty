@@ -6,12 +6,9 @@ import com.ssafy.realty.security.error.CustomAuthenticationFailureHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,7 +21,7 @@ import org.springframework.web.filter.CorsFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final CorsFilter corsFilter;
-    private final JwtManger jwtManger;
+    private final JwtManager jwtManager;
     private final JwtProperties jwtProperties;
     private final UserDetailsService userDetailsService;
 
@@ -40,8 +37,8 @@ public class SecurityConfig {
 
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
         JwtAuthenticationFilter jwtAuthenticationFilter =
-                new JwtAuthenticationFilter(authenticationProvider(), jwtManger, jwtProperties);
-        jwtAuthenticationFilter.setFilterProcessesUrl("/api/login");
+                new JwtAuthenticationFilter(authenticationProvider(), jwtManager, jwtProperties);
+        jwtAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
         jwtAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
         return jwtAuthenticationFilter;
     }
@@ -53,7 +50,7 @@ public class SecurityConfig {
         http.addFilter(corsFilter);
         http.formLogin().disable();
         http.httpBasic().disable();
-        http.addFilterBefore(new JwtAuthorizationFilter(jwtManger), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthorizationFilter(jwtManager), UsernamePasswordAuthenticationFilter.class);
         http.addFilterAt(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.authorizeRequests()
                 .antMatchers("/api/v1/realty/**")

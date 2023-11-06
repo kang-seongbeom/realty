@@ -23,7 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-    private final JwtManger jwtManger;
+    private final JwtManager jwtManager;
 
 
     @Override
@@ -31,14 +31,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                                     FilterChain chain) throws IOException, ServletException {
 
         try{
-            Optional<String> optionalAccessToken = jwtManger.resolveAccessToken(request);
+            Optional<String> optionalAccessToken = jwtManager.resolveAccessToken(request);
             optionalAccessToken.orElseThrow(() -> new AccessTokenExpiredException("만료된 Access Token 입니다."));
             String accessToken = optionalAccessToken.get();
 
-            boolean accessTokenValid = jwtManger.isTokenValid(accessToken);
+            boolean accessTokenValid = jwtManager.isTokenValid(accessToken);
 
             if(accessTokenValid){
-                Authentication authentication = jwtManger.getAuthentication(accessToken);
+                Authentication authentication = jwtManager.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 

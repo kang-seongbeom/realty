@@ -1,5 +1,6 @@
 package com.ssafy.realty.security.entity;
 
+import com.ssafy.realty.common.Role;
 import lombok.*;
 
 import javax.persistence.*;
@@ -8,8 +9,8 @@ import javax.persistence.*;
 @Table
 @Builder
 @Getter
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id

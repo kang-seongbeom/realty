@@ -41,7 +41,7 @@ public class SwaggerConfiguration {
                 .consumes(getConsumeContentTypes())
                 .produces(getProduceContentType())
                 .apiInfo(apiInfo()).groupName("user V1").select()
-                .apis(RequestHandlerSelectors.basePackage("com.ssafy.realty.user.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.ssafy.realty.user.adapter.in.web"))
                 .paths(regex("/api/v1/*/.*"))
                 .build()
                 .useDefaultResponseMessages(false);
@@ -67,6 +67,4 @@ public class SwaggerConfiguration {
                 .license("ksb license")
                 .version("1.0").build();
     }
-
-
 }

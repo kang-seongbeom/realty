@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class UserController {
     @PostMapping("/regist")
     @ApiOperation(value = "회원가입", notes = "회원가입")
     @ApiResponsesCommon
-    ResponseEntity<Void> regist(@RequestBody RegistPayload registPayload){
+    ResponseEntity<Void> regist(@RequestBody @Valid RegistPayload registPayload){
         RegistDto dto = RegistDto
                 .builder()
                 .username(registPayload.getUsername())
@@ -42,7 +44,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/user/update/{id}")
+    @PatchMapping("/user/update")
     @ApiOperation(value = "회원 정보 수정", notes = "회원 정보 수정")
     @ApiResponsesCommon
     ResponseEntity<Void> update(){

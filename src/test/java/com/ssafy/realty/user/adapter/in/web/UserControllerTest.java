@@ -1,31 +1,23 @@
 package com.ssafy.realty.user.adapter.in.web;
 
 import com.ssafy.realty.common.Role;
-import com.ssafy.realty.security.config.SecurityConfig;
 import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import com.ssafy.realty.security.config.jwt.JwtManager;
-import com.ssafy.realty.security.config.jwt.JwtProperties;
 import com.ssafy.realty.security.entity.User;
 import com.ssafy.realty.security.repository.UserRepository;
-import com.ssafy.realty.user.adapter.out.repository.UserJpaRepository;
 import com.ssafy.realty.user.application.port.in.DeleteUserUseCase;
 import com.ssafy.realty.user.application.port.in.RegistUserUseCase;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -33,7 +25,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -76,7 +67,7 @@ class UserControllerTest {
     public void regist() throws Exception {
         JSONObject requestBody = new JSONObject();
         requestBody.put("username", "qkfka9045@gmail.com");
-        requestBody.put("password", "1234");
+        requestBody.put("password", "a1234567");
         requestBody.put("nickname", "nick");
 
         doNothing().when(registUserUseCase).regist(any());
@@ -95,7 +86,7 @@ class UserControllerTest {
     @DisplayName("로그인")
     public void login() throws Exception {
         // given
-        User user = new User(null, "qkfka9045@gmail.com", "1234", Role.USER);
+        User user = new User(null, "qkfka9045@gmail.com", "a1234567", Role.USER);
 
         JSONObject requestBody = new JSONObject();
         requestBody.put("username", user.getUsername());
@@ -108,10 +99,10 @@ class UserControllerTest {
 
         when(userRepository.findByUsername(user.getUsername()))
                 .thenReturn(new User(
-                                null,
-                                    user.getUsername(),
-                                    bCryptPasswordEncoder.encode(user.getPassword()),
-                                    user.getRole()));
+                        null,
+                        user.getUsername(),
+                        bCryptPasswordEncoder.encode(user.getPassword()),
+                        user.getRole()));
 
         // when, then
         mockMvc.perform(request)
@@ -123,7 +114,7 @@ class UserControllerTest {
     @DisplayName("회원 삭제")
     public void delete() throws Exception {
         // given
-        User user = new User(1L, "qkfka9045@gmail.com", "1234", Role.USER);
+        User user = new User(1L, "qkfka9045@gmail.com", "a1234567", Role.USER);
 
         when(userRepository.findByUsername(user.getUsername()))
                 .thenReturn(new User(

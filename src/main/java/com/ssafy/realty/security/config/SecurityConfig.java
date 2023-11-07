@@ -45,18 +45,22 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilter(corsFilter);
-        http.formLogin().disable();
-        http.httpBasic().disable();
-        http.addFilterBefore(new JwtAuthorizationFilter(jwtManager), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterAt(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.authorizeRequests()
+        http
+                .csrf().disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilter(corsFilter)
+                .formLogin().disable()
+                .httpBasic().disable()
+                .addFilterBefore(new JwtAuthorizationFilter(jwtManager), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .authorizeRequests()
                 .antMatchers("/api/v1/realty/**")
-                .hasAnyRole("USER", "SSAFY", "ADMIN")
-                .anyRequest().permitAll();
-        http.exceptionHandling()
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_SSAFY') or hasRole('ROLE_ADMIN')")
+
+                .and()
+                .exceptionHandling()
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 .accessDeniedHandler(new JwtAccessDeniedHandler());
 

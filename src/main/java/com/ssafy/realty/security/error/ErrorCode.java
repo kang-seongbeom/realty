@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
+    E4000("E4000","잘못된 요청입니다."),
     E4001("E4001","잘못된 접근입니다."),
     E4011("E4011","아이디 또는 비밀번호가 틀렸습니다."),
     E4012("E4012","Access Token 값 오류"),

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-// 401에러
+// 401
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private static final ObjectMapper objectMapper=new ObjectMapper();

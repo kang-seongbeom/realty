@@ -24,7 +24,8 @@ public enum ErrorStatues {
     }
 
     public static ErrorStatues findByErrorCode(ErrorCode errorCode){
-        ErrorStatues statues = Arrays.stream(ErrorStatues.values()).filter(errorStatues -> errorStatues.hasErrorCode(errorCode))
+        ErrorStatues statues = Arrays.stream(ErrorStatues.values())
+                .filter(errorStatues -> errorStatues.hasErrorCode(errorCode))
                 .findAny().orElse(INTERNAL_SERVER_ERROR);
         return statues;
     }

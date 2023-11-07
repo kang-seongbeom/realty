@@ -29,7 +29,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
-        String requestURI = request.getRequestURI();
         if(request.getRequestURI().equals("/api/v1/login")){
             chain.doFilter(request, response);
             return;
@@ -50,13 +49,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         } catch (AccessTokenExpiredException e){
             ErrorCode e4012 = ErrorCode.E4012;
             request.setAttribute("exception", new ErrorResponse(ErrorStatues.findByErrorCode(e4012),e4012));
-        }
-         catch (MalformedJwtException e) {
-            request.setAttribute("exception", HttpStatus.UNAUTHORIZED);
+        } catch (MalformedJwtException e) {
+             ErrorCode e4000 = ErrorCode.E4000;
+             request.setAttribute("exception", new ErrorResponse(ErrorStatues.findByErrorCode(e4000),e4000));
         } catch (JWTDecodeException e) {
-            request.setAttribute("exception", HttpStatus.UNAUTHORIZED);
+            ErrorCode e4000 = ErrorCode.E4000;
+            request.setAttribute("exception", new ErrorResponse(ErrorStatues.findByErrorCode(e4000),e4000));
         } catch (IllegalArgumentException e) {
-            request.setAttribute("exception", HttpStatus.UNAUTHORIZED);
+            ErrorCode e4000 = ErrorCode.E4000;
+            request.setAttribute("exception", new ErrorResponse(ErrorStatues.findByErrorCode(e4000),e4000));
         } catch (SignatureVerificationException e) {
             ErrorCode e4012 = ErrorCode.E4012;
             request.setAttribute("exception", new ErrorResponse(ErrorStatues.findByErrorCode(e4012),e4012));

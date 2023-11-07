@@ -1,6 +1,7 @@
 package com.ssafy.realty.user.adapter.out.entity;
 
 import com.ssafy.realty.common.Role;
+import com.ssafy.realty.user.domain.UserDomain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,4 +32,9 @@ public class UserJpaEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public void toUpdate(UserDomain updateWantUser){
+        this.password = updateWantUser.getUserDomainData().getPassword();
+        this.nickname = updateWantUser.getUserDomainData().getNickname();
+    }
 }

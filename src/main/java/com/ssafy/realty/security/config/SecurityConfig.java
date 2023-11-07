@@ -58,6 +58,8 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/api/v1/realty/**")
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_SSAFY') or hasRole('ROLE_ADMIN')")
+                .antMatchers("/api/v1/user/**")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_SSAFY') or hasRole('ROLE_ADMIN')")
 
                 .and()
                 .exceptionHandling()

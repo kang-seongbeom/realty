@@ -1,17 +1,30 @@
 package com.ssafy.realty.user.adapter.in.web;
 
+import com.ssafy.realty.common.Role;
 import com.ssafy.realty.security.config.SecurityConfig;
+import com.ssafy.realty.security.config.auth.PrincipalDetails;
+import com.ssafy.realty.security.config.jwt.JwtManager;
+import com.ssafy.realty.security.config.jwt.JwtProperties;
+import com.ssafy.realty.security.entity.User;
+import com.ssafy.realty.security.repository.UserRepository;
+import com.ssafy.realty.user.adapter.out.repository.UserJpaRepository;
 import com.ssafy.realty.user.application.port.in.DeleteUserUseCase;
 import com.ssafy.realty.user.application.port.in.RegistUserUseCase;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -19,17 +32,23 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = UserController.class,
-        excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
-})
+@SpringBootTest
+@AutoConfigureMockMvc
+@DisplayName("시큐리티 및 컨트롤러 통합 테스트")
 class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private JwtManager jwtManager;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @MockBean
     private RegistUserUseCase registUserUseCase;
@@ -37,11 +56,23 @@ class UserControllerTest {
     @MockBean
     private DeleteUserUseCase deleteUserUseCase;
 
+    @MockBean
+    private UserRepository userRepository;
 
+    private String getAuthorizedUserToken(User saved) {
+        PrincipalDetails principalDetails = new PrincipalDetails(saved);
+
+        String accessToken = jwtManager.createAccessToken(principalDetails);
+
+        if (accessToken != null && jwtManager.isTokenValid(accessToken)) {
+            Authentication authentication = jwtManager.getAuthentication(accessToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        return accessToken;
+    }
 
     @Test
     @DisplayName("회원가입")
-    @WithMockUser
     public void regist() throws Exception {
         JSONObject requestBody = new JSONObject();
         requestBody.put("username", "qkfka9045@gmail.com");
@@ -52,7 +83,6 @@ class UserControllerTest {
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post("/api/v1/regist")
-                .with(csrf())
                 .content(requestBody.toString())
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -61,4 +91,57 @@ class UserControllerTest {
 
     }
 
+    @Test
+    @DisplayName("로그인")
+    public void login() throws Exception {
+        // given
+        User user = new User(null, "qkfka9045@gmail.com", "1234", Role.USER);
+
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("username", user.getUsername());
+        requestBody.put("password", user.getPassword());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post("/api/v1/login")
+                .content(requestBody.toString())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        when(userRepository.findByUsername(user.getUsername()))
+                .thenReturn(new User(
+                                null,
+                                    user.getUsername(),
+                                    bCryptPasswordEncoder.encode(user.getPassword()),
+                                    user.getRole()));
+
+        // when, then
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    @DisplayName("회원 삭제")
+    public void delete() throws Exception {
+        // given
+        User user = new User(1L, "qkfka9045@gmail.com", "1234", Role.USER);
+
+        when(userRepository.findByUsername(user.getUsername()))
+                .thenReturn(new User(
+                        user.getId(),
+                        user.getUsername(),
+                        bCryptPasswordEncoder.encode(user.getPassword()),
+                        user.getRole()));
+
+        doNothing().when(deleteUserUseCase).delete(1L);
+
+        String accessToken = getAuthorizedUserToken(user);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete("/api/v1/user/delete")
+                .header("accessToken", accessToken);
+
+        // when, then
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+    }
 }

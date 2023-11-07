@@ -7,6 +7,8 @@ import com.ssafy.realty.security.entity.User;
 import com.ssafy.realty.security.repository.UserRepository;
 import com.ssafy.realty.user.application.port.in.DeleteUserUseCase;
 import com.ssafy.realty.user.application.port.in.RegistUserUseCase;
+import com.ssafy.realty.user.application.port.in.UpdateUserUseCase;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -46,6 +49,9 @@ class UserControllerTest {
 
     @MockBean
     private DeleteUserUseCase deleteUserUseCase;
+
+    @MockBean
+    private UpdateUserUseCase updateUserUseCase;
 
     @MockBean
     private UserRepository userRepository;
@@ -106,6 +112,38 @@ class UserControllerTest {
 
         // when, then
         mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(header().exists("accessToken"));
+    }
+
+    @Test
+    @DisplayName("회원 정보 수정")
+    public void update() throws Exception {
+        // given
+        User user = new User(1L, "qkfka9045@gmail.com", "a1234567", Role.USER);
+
+        when(userRepository.findByUsername(user.getUsername()))
+                .thenReturn(new User(
+                        user.getId(),
+                        user.getUsername(),
+                        bCryptPasswordEncoder.encode(user.getPassword()),
+                        user.getRole()));
+
+        doNothing().when(updateUserUseCase).update(any());
+
+        String accessToken = getAuthorizedUserToken(user);
+
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("password", "b1234567");
+        requestBody.put("nickname", "updateNick");
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .patch("/api/v1/user/update")
+                .header("accessToken", accessToken)
+                .content(requestBody.toString())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
                 .andExpect(status().isOk());
     }
 
@@ -123,7 +161,7 @@ class UserControllerTest {
                         bCryptPasswordEncoder.encode(user.getPassword()),
                         user.getRole()));
 
-        doNothing().when(deleteUserUseCase).delete(1L);
+        doNothing().when(deleteUserUseCase).delete(user.getId());
 
         String accessToken = getAuthorizedUserToken(user);
 
@@ -134,5 +172,19 @@ class UserControllerTest {
         // when, then
         mockMvc.perform(request)
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("검증할 수 없는 토큰 사용")
+    public void unValidAccessToken() throws Exception {
+        String unValidToken = "Bearer unValidAccessToken";
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete("/api/v1/user/delete")
+                .header("accessToken", unValidToken);
+
+        // when, then
+        mockMvc.perform(request)
+                .andExpect(status().isInternalServerError());
     }
 }

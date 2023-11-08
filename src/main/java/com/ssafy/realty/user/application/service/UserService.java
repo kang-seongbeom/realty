@@ -10,6 +10,7 @@ import com.ssafy.realty.user.application.port.out.RegistUserPort;
 import com.ssafy.realty.user.application.port.out.UpdateUserPort;
 import com.ssafy.realty.user.domain.UserDomain;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +22,16 @@ public class UserService implements RegistUserUseCase, DeleteUserUseCase, Update
     private final RegistUserPort registUserPort;
     private final DeleteUserPort deleteUserPort;
     private final UpdateUserPort updateUserPort;
+    private final BCryptPasswordEncoder encoder;
 
     @Transactional
     @Override
     public void regist(RegistDto registDto) {
-        UserDomain registRequestUserDomain = UserDomain.init(registDto.getUsername(), registDto.getPassword(), registDto.getNickname());
+        UserDomain registRequestUserDomain =
+                UserDomain.init(
+                        registDto.getUsername(),
+                        encoder.encode(registDto.getPassword()),
+                        registDto.getNickname());
         registUserPort.regist(registRequestUserDomain);
     }
 
@@ -38,7 +44,12 @@ public class UserService implements RegistUserUseCase, DeleteUserUseCase, Update
     @Transactional
     @Override
     public void update(UpdateDto updateDto) {
-        UserDomain updateRequestUserDomain = UserDomain.init(updateDto.getId(), null, updateDto.getPassword(), updateDto.getNickname());
+        UserDomain updateRequestUserDomain =
+                UserDomain.init(
+                        updateDto.getId(),
+                        null,
+                        encoder.encode(updateDto.getPassword()),
+                        updateDto.getNickname());
         updateUserPort.update(updateRequestUserDomain);
     }
 }

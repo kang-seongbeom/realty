@@ -1,6 +1,7 @@
 package com.ssafy.realty.user.domain;
 
 import com.ssafy.realty.common.Role;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Value;
 

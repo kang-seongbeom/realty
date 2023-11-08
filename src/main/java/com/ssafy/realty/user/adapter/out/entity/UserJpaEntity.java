@@ -2,10 +2,7 @@ package com.ssafy.realty.user.adapter.out.entity;
 
 import com.ssafy.realty.common.Role;
 import com.ssafy.realty.user.domain.UserDomain;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -15,6 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Getter
+@ToString
 public class UserJpaEntity {
 
     @Id

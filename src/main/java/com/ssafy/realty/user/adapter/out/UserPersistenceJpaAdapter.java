@@ -7,10 +7,7 @@ import com.ssafy.realty.user.application.port.out.RegistUserPort;
 import com.ssafy.realty.user.application.port.out.UpdateUserPort;
 import com.ssafy.realty.user.domain.UserDomain;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -18,7 +15,6 @@ public class UserPersistenceJpaAdapter implements RegistUserPort, DeleteUserPort
 
     private final UserMapper userMapper;
     private final UserJpaRepository userJpaRepository;
-    private final BCryptPasswordEncoder encoder;
 
     @Override
     public void regist(UserDomain userDomain) {

@@ -5,10 +5,10 @@ import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import com.ssafy.realty.security.config.jwt.JwtManager;
 import com.ssafy.realty.security.entity.User;
 import com.ssafy.realty.security.repository.UserRepository;
-import com.ssafy.realty.user.application.port.in.DeleteUserUseCase;
-import com.ssafy.realty.user.application.port.in.RegistUserUseCase;
-import com.ssafy.realty.user.application.port.in.UpdateUserUseCase;
-import org.json.JSONException;
+import com.ssafy.realty.user.application.port.in.CommandUserUseCase;
+import com.ssafy.realty.user.application.port.in.command.DeleteUserUseCase;
+import com.ssafy.realty.user.application.port.in.command.RegistUserUseCase;
+import com.ssafy.realty.user.application.port.in.command.UpdateUserUseCase;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,13 +45,7 @@ class UserControllerTest {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @MockBean
-    private RegistUserUseCase registUserUseCase;
-
-    @MockBean
-    private DeleteUserUseCase deleteUserUseCase;
-
-    @MockBean
-    private UpdateUserUseCase updateUserUseCase;
+    private CommandUserUseCase commandUserUseCase;
 
     @MockBean
     private UserRepository userRepository;
@@ -76,7 +70,7 @@ class UserControllerTest {
         requestBody.put("password", "a1234567");
         requestBody.put("nickname", "nick");
 
-        doNothing().when(registUserUseCase).regist(any());
+        doNothing().when(commandUserUseCase).regist(any());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post("/api/v1/regist")
@@ -92,7 +86,7 @@ class UserControllerTest {
     @DisplayName("로그인")
     public void login() throws Exception {
         // given
-        User user = new User(null, "qkfka9045@gmail.com", "a1234567", Role.USER);
+        User user = new User(null, "qkfka9045@gmail.com", "a1234567", "nick", Role.USER);
 
         JSONObject requestBody = new JSONObject();
         requestBody.put("username", user.getUsername());
@@ -108,6 +102,7 @@ class UserControllerTest {
                         null,
                         user.getUsername(),
                         bCryptPasswordEncoder.encode(user.getPassword()),
+                        "nick",
                         user.getRole()));
 
         // when, then
@@ -120,16 +115,17 @@ class UserControllerTest {
     @DisplayName("회원 정보 수정")
     public void update() throws Exception {
         // given
-        User user = new User(1L, "qkfka9045@gmail.com", "a1234567", Role.USER);
+        User user = new User(1L, "qkfka9045@gmail.com", "a1234567", "nick", Role.USER);
 
         when(userRepository.findByUsername(user.getUsername()))
                 .thenReturn(new User(
                         user.getId(),
                         user.getUsername(),
                         bCryptPasswordEncoder.encode(user.getPassword()),
+                        user.getNickname(),
                         user.getRole()));
 
-        doNothing().when(updateUserUseCase).update(any());
+        doNothing().when(commandUserUseCase).update(any());
 
         String accessToken = getAuthorizedUserToken(user);
 
@@ -152,16 +148,17 @@ class UserControllerTest {
     @DisplayName("회원 삭제")
     public void delete() throws Exception {
         // given
-        User user = new User(1L, "qkfka9045@gmail.com", "a1234567", Role.USER);
+        User user = new User(1L, "qkfka9045@gmail.com", "a1234567", "nick", Role.USER);
 
         when(userRepository.findByUsername(user.getUsername()))
                 .thenReturn(new User(
                         user.getId(),
                         user.getUsername(),
                         bCryptPasswordEncoder.encode(user.getPassword()),
+                        user.getNickname(),
                         user.getRole()));
 
-        doNothing().when(deleteUserUseCase).delete(user.getId());
+        doNothing().when(commandUserUseCase).delete(user.getId());
 
         String accessToken = getAuthorizedUserToken(user);
 

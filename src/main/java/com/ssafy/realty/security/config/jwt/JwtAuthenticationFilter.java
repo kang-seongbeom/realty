@@ -2,7 +2,7 @@ package com.ssafy.realty.security.config.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.realty.security.config.auth.PrincipalDetails;
-import com.ssafy.realty.security.dto.RequestLoginDto;
+import com.ssafy.realty.security.dto.LoginRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,10 +26,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         ObjectMapper objectMapper = new ObjectMapper();
-        RequestLoginDto loginDto = null;
+        LoginRequestDto loginDto = null;
 
         try {
-            loginDto = objectMapper.readValue(request.getInputStream(), RequestLoginDto.class);
+            loginDto = objectMapper.readValue(request.getInputStream(), LoginRequestDto.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

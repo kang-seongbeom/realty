@@ -4,5 +4,5 @@ import com.ssafy.realty.user.domain.UserDomain;
 
 public interface QueryUserPort {
 
-    public UserDomain query(String username);
+    UserDomain query(String username);
 }

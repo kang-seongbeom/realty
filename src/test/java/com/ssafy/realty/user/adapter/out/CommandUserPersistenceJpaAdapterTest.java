@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 @DisplayName("어댑터 레파지토리 통합 테스트")
-class UserPersistenceJpaAdapterTest {
+class CommandUserPersistenceJpaAdapterTest {
     @Autowired
-    private UserPersistenceJpaAdapter userPersistenceJpaAdapter;
+    private CommandUserPersistenceJpaAdapter commandUserPersistenceJpaAdapter;
 
     @Autowired
     private UserJpaRepository userJpaRepository;
@@ -37,7 +37,7 @@ class UserPersistenceJpaAdapterTest {
         UserDomain userDomain = UserDomain.init(null, "qkfka9045@gmail.com", encoder.encode("a1234567"), "nick");
 
         // when
-        userPersistenceJpaAdapter.regist(userDomain);
+        commandUserPersistenceJpaAdapter.regist(userDomain);
         List<UserJpaEntity> allData = userJpaRepository.findAll();
         Long lastAutoIncrementId = allData.get(allData.size()-1).getId();
         UserJpaEntity saved = userJpaRepository.findById(lastAutoIncrementId).get();
@@ -54,13 +54,13 @@ class UserPersistenceJpaAdapterTest {
     public void delete(){
         // given
         UserDomain userDomain = UserDomain.init(null, "qkfka9045@gmail.com", encoder.encode("a1234567"), "nick");
-        userPersistenceJpaAdapter.regist(userDomain);
+        commandUserPersistenceJpaAdapter.regist(userDomain);
 
         List<UserJpaEntity> allData = userJpaRepository.findAll();
         Long lastAutoIncrementId = allData.get(allData.size()-1).getId();
 
         // when
-        userPersistenceJpaAdapter.delete(lastAutoIncrementId);
+        commandUserPersistenceJpaAdapter.delete(lastAutoIncrementId);
 
         // then
         assertThrows(NoSuchElementException.class, () -> userJpaRepository.findById(1L).get());
@@ -72,7 +72,7 @@ class UserPersistenceJpaAdapterTest {
     public void update(){
         // given
         UserDomain userDomain = UserDomain.init(null, "qkfka9045@gmail.com", encoder.encode("a1234567"), "nick");
-        userPersistenceJpaAdapter.regist(userDomain);
+        commandUserPersistenceJpaAdapter.regist(userDomain);
 
         List<UserJpaEntity> allData = userJpaRepository.findAll();
         Long lastAutoIncrementId = allData.get(allData.size()-1).getId();
@@ -80,7 +80,7 @@ class UserPersistenceJpaAdapterTest {
         UserDomain updateWant = UserDomain.init(lastAutoIncrementId, null, encoder.encode("b1234567"), "changeNick");
 
         // when
-        userPersistenceJpaAdapter.update(updateWant);
+        commandUserPersistenceJpaAdapter.update(updateWant);
         UserJpaEntity updated = userJpaRepository.findById(lastAutoIncrementId).get();
 
         // then

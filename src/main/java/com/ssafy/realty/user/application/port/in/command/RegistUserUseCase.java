@@ -1,4 +1,4 @@
-package com.ssafy.realty.user.application.port.in;
+package com.ssafy.realty.user.application.port.in.command;
 
 import com.ssafy.realty.user.application.port.in.dto.RegistDto;
 

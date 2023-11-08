@@ -1,4 +1,4 @@
-package com.ssafy.realty.user.application.port.out;
+package com.ssafy.realty.user.application.port.out.command;
 
 import com.ssafy.realty.user.domain.UserDomain;
 

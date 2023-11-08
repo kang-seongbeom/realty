@@ -4,15 +4,14 @@ import com.ssafy.realty.realty.controller.swagger.ApiResponsesCommon;
 import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import com.ssafy.realty.user.adapter.in.web.payload.RegistPayload;
 import com.ssafy.realty.user.adapter.in.web.payload.UpdatePayload;
-import com.ssafy.realty.user.application.port.in.DeleteUserUseCase;
+import com.ssafy.realty.user.application.port.in.CommandUserUseCase;
 import com.ssafy.realty.user.application.port.in.QueryUserUseCase;
-import com.ssafy.realty.user.application.port.in.RegistUserUseCase;
-import com.ssafy.realty.user.application.port.in.UpdateUserUseCase;
 import com.ssafy.realty.user.application.port.in.dto.QueryResponseDto;
 import com.ssafy.realty.user.application.port.in.dto.RegistDto;
 import com.ssafy.realty.user.application.port.in.dto.UpdateDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +24,7 @@ import javax.validation.Valid;
 public class UserController {
 
     private final QueryUserUseCase queryUserUseCase;
-    private final RegistUserUseCase registUserUseCase;
-    private final DeleteUserUseCase deleteUserUseCase;
-    private final UpdateUserUseCase updateUserUseCase;
+    private final CommandUserUseCase commandUserUseCase;
 
     @PostMapping("/regist")
     @ApiOperation(value = "회원가입", notes = "회원가입")
@@ -39,7 +36,7 @@ public class UserController {
                 .password(registPayload.getPassword())
                 .nickname(registPayload.getPassword())
                 .build();
-        registUserUseCase.regist(dto);
+        commandUserUseCase.regist(dto);
 
         return ResponseEntity.ok().build();
     }
@@ -52,6 +49,8 @@ public class UserController {
     }
 
     @GetMapping("/user/query")
+    @ApiOperation(value = "회원 정보 조회", notes = "회원 정보 조회")
+    @ApiResponsesCommon
     ResponseEntity<QueryResponseDto> query(@AuthenticationPrincipal PrincipalDetails principalDetails){
         QueryResponseDto queryResponseDto = queryUserUseCase.query(principalDetails.getUsername());
 
@@ -69,7 +68,7 @@ public class UserController {
                 .password(updatePayload.getPassword())
                 .nickname(updatePayload.getNickname())
                 .build();
-        updateUserUseCase.update(dto);
+        commandUserUseCase.update(dto);
 
         return ResponseEntity.ok().build();
     }
@@ -79,7 +78,7 @@ public class UserController {
     @ApiResponsesCommon
     ResponseEntity<Void> delete(@AuthenticationPrincipal PrincipalDetails principalDetails){
         Long id = principalDetails.getUser().getId();
-        deleteUserUseCase.delete(id);
+        commandUserUseCase.delete(id);
 
         return ResponseEntity.ok().build();
     }

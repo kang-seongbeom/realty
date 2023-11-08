@@ -5,8 +5,10 @@ import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import com.ssafy.realty.user.adapter.in.web.payload.RegistPayload;
 import com.ssafy.realty.user.adapter.in.web.payload.UpdatePayload;
 import com.ssafy.realty.user.application.port.in.DeleteUserUseCase;
+import com.ssafy.realty.user.application.port.in.QueryUserUseCase;
 import com.ssafy.realty.user.application.port.in.RegistUserUseCase;
 import com.ssafy.realty.user.application.port.in.UpdateUserUseCase;
+import com.ssafy.realty.user.application.port.in.dto.QueryResponseDto;
 import com.ssafy.realty.user.application.port.in.dto.RegistDto;
 import com.ssafy.realty.user.application.port.in.dto.UpdateDto;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +24,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class UserController {
 
+    private final QueryUserUseCase queryUserUseCase;
     private final RegistUserUseCase registUserUseCase;
     private final DeleteUserUseCase deleteUserUseCase;
     private final UpdateUserUseCase updateUserUseCase;
@@ -46,6 +49,13 @@ public class UserController {
     @ApiResponsesCommon
     ResponseEntity<Void> logout(){
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/user/query")
+    ResponseEntity<QueryResponseDto> query(@AuthenticationPrincipal PrincipalDetails principalDetails){
+        QueryResponseDto queryResponseDto = queryUserUseCase.query(principalDetails.getUsername());
+
+        return ResponseEntity.ok(queryResponseDto);
     }
 
     @PatchMapping("/user/update")

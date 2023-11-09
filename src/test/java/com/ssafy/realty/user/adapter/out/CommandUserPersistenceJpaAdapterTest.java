@@ -20,6 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @DisplayName("어댑터 레파지토리 통합 테스트")
 class CommandUserPersistenceJpaAdapterTest {
+
+    @Autowired
+    private QueryUserPersistenceJpaAdapter queryUserPersistenceJpaAdapter;
+
     @Autowired
     private CommandUserPersistenceJpaAdapter commandUserPersistenceJpaAdapter;
 
@@ -29,41 +33,70 @@ class CommandUserPersistenceJpaAdapterTest {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
+
+    private UserDomain defaultUserDomain(){
+        return UserDomain.init(null, "qkfka9045@gmail.com", encoder.encode("a1234567"), "nick");
+    }
+
+    private void registUser(UserDomain userDomain){
+        commandUserPersistenceJpaAdapter.regist(userDomain);
+    }
+
+    private Long getLastAutoIncrementId(){
+        List<UserJpaEntity> allData = userJpaRepository.findAll();
+        return allData.get(allData.size()-1).getId();
+    }
+
     @Test
     @DisplayName("회원 가입")
     @Transactional
     public void regist(){
         // given
-        UserDomain userDomain = UserDomain.init(null, "qkfka9045@gmail.com", encoder.encode("a1234567"), "nick");
+        UserDomain user = defaultUserDomain();
 
         // when
-        commandUserPersistenceJpaAdapter.regist(userDomain);
-        List<UserJpaEntity> allData = userJpaRepository.findAll();
-        Long lastAutoIncrementId = allData.get(allData.size()-1).getId();
-        UserJpaEntity saved = userJpaRepository.findById(lastAutoIncrementId).get();
+        registUser(user);
+        UserJpaEntity saved = userJpaRepository.findById(getLastAutoIncrementId()).get();
 
         // then
-        assertThat(saved.getUsername()).isEqualTo(userDomain.getUserDomainData().getUsername());
+        assertThat(saved.getUsername()).isEqualTo(user.getUserDomainData().getUsername());
         assertTrue(encoder.matches("a1234567", saved.getPassword()));
-        assertThat(saved.getRole()).isEqualTo(userDomain.getUserDomainData().getRole());
+        assertThat(saved.getRole()).isEqualTo(user.getUserDomainData().getRole());
     }
+
+    @Test
+    @DisplayName("회원 정보 조회")
+    public void query(){
+        // given
+        UserDomain userDomain = defaultUserDomain();
+        registUser(userDomain);
+        Long lastAutoIncrementId = getLastAutoIncrementId();
+
+        // when
+        UserDomain queried = queryUserPersistenceJpaAdapter.query(userDomain.getUserDomainData().getUsername());
+
+        // then
+        assertThat(queried.getUserDomainId().getValue()).isEqualTo(lastAutoIncrementId);
+        assertThat(queried.getUserDomainData().getUsername()).isEqualTo(userDomain.getUserDomainData().getUsername());
+        assertThat(queried.getUserDomainData().getPassword()).isEqualTo(userDomain.getUserDomainData().getPassword());
+        assertThat(queried.getUserDomainData().getNickname()).isEqualTo(userDomain.getUserDomainData().getNickname());
+        assertThat(queried.getUserDomainData().getRole()).isEqualTo(userDomain.getUserDomainData().getRole());
+    }
+
 
     @Test
     @DisplayName("삭제")
     @Transactional
     public void delete(){
         // given
-        UserDomain userDomain = UserDomain.init(null, "qkfka9045@gmail.com", encoder.encode("a1234567"), "nick");
-        commandUserPersistenceJpaAdapter.regist(userDomain);
-
-        List<UserJpaEntity> allData = userJpaRepository.findAll();
-        Long lastAutoIncrementId = allData.get(allData.size()-1).getId();
+        registUser(defaultUserDomain());
+        Long lastAutoIncrementId = getLastAutoIncrementId();
 
         // when
         commandUserPersistenceJpaAdapter.delete(lastAutoIncrementId);
 
         // then
-        assertThrows(NoSuchElementException.class, () -> userJpaRepository.findById(1L).get());
+        assertThrows(NoSuchElementException.class, () -> userJpaRepository.findById(lastAutoIncrementId).get());
     }
 
     @Test
@@ -71,11 +104,9 @@ class CommandUserPersistenceJpaAdapterTest {
     @Transactional
     public void update(){
         // given
-        UserDomain userDomain = UserDomain.init(null, "qkfka9045@gmail.com", encoder.encode("a1234567"), "nick");
-        commandUserPersistenceJpaAdapter.regist(userDomain);
-
-        List<UserJpaEntity> allData = userJpaRepository.findAll();
-        Long lastAutoIncrementId = allData.get(allData.size()-1).getId();
+        UserDomain userDomain = defaultUserDomain();
+        registUser(userDomain);
+        Long lastAutoIncrementId = getLastAutoIncrementId();
 
         UserDomain updateWant = UserDomain.init(lastAutoIncrementId, null, encoder.encode("b1234567"), "changeNick");
 

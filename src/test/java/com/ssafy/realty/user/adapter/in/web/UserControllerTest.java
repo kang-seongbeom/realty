@@ -6,12 +6,12 @@ import com.ssafy.realty.security.config.jwt.JwtManager;
 import com.ssafy.realty.security.entity.User;
 import com.ssafy.realty.security.repository.UserRepository;
 import com.ssafy.realty.user.application.port.in.CommandUserUseCase;
-import com.ssafy.realty.user.application.port.in.command.DeleteUserUseCase;
-import com.ssafy.realty.user.application.port.in.command.RegistUserUseCase;
-import com.ssafy.realty.user.application.port.in.command.UpdateUserUseCase;
+import com.ssafy.realty.user.application.port.in.QueryUserUseCase;
+import com.ssafy.realty.user.application.port.in.dto.QueryResponseDto;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,8 +27,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -42,10 +41,13 @@ class UserControllerTest {
     private JwtManager jwtManager;
 
     @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private BCryptPasswordEncoder encoder;
 
     @MockBean
     private CommandUserUseCase commandUserUseCase;
+
+    @MockBean
+    private QueryUserUseCase queryUserUseCase;
 
     @MockBean
     private UserRepository userRepository;
@@ -101,7 +103,7 @@ class UserControllerTest {
                 .thenReturn(new User(
                         null,
                         user.getUsername(),
-                        bCryptPasswordEncoder.encode(user.getPassword()),
+                        encoder.encode(user.getPassword()),
                         "nick",
                         user.getRole()));
 
@@ -109,6 +111,42 @@ class UserControllerTest {
         mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andExpect(header().exists("accessToken"));
+    }
+
+    @Test
+    @DisplayName("회원 정보 조회")
+    public void query() throws Exception {
+        // given
+        User user = new User(null, "qkfka9045@gmail.com", "a1234567", "nick", Role.USER);
+        QueryResponseDto dto = QueryResponseDto
+                .builder()
+                .username(user.getUsername())
+                .password(encoder.encode(user.getPassword()))
+                .nickname(user.getNickname())
+                .role(user.getRole())
+                .build();
+
+        when(userRepository.findByUsername(user.getUsername()))
+                .thenReturn(new User(
+                        null,
+                        user.getUsername(),
+                        encoder.encode(user.getPassword()),
+                        "nick",
+                        user.getRole()));
+
+        when(queryUserUseCase.query(any())).thenReturn(dto);
+
+        String accessToken = getAuthorizedUserToken(user);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/api/v1/user/query")
+                .header("accessToken", accessToken);
+
+        // when, then
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value(user.getUsername()));
+
     }
 
     @Test
@@ -121,7 +159,7 @@ class UserControllerTest {
                 .thenReturn(new User(
                         user.getId(),
                         user.getUsername(),
-                        bCryptPasswordEncoder.encode(user.getPassword()),
+                        encoder.encode(user.getPassword()),
                         user.getNickname(),
                         user.getRole()));
 
@@ -154,7 +192,7 @@ class UserControllerTest {
                 .thenReturn(new User(
                         user.getId(),
                         user.getUsername(),
-                        bCryptPasswordEncoder.encode(user.getPassword()),
+                        encoder.encode(user.getPassword()),
                         user.getNickname(),
                         user.getRole()));
 

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 @DisplayName("어댑터 레파지토리 통합 테스트")
-class CommandUserPersistenceJpaAdapterTest {
+class CommandQueryUserPersistenceJpaAdapterTest {
 
     @Autowired
     private QueryUserPersistenceJpaAdapter queryUserPersistenceJpaAdapter;
@@ -65,27 +65,7 @@ class CommandUserPersistenceJpaAdapterTest {
     }
 
     @Test
-    @DisplayName("회원 정보 조회")
-    public void query(){
-        // given
-        UserDomain userDomain = defaultUserDomain();
-        registUser(userDomain);
-        Long lastAutoIncrementId = getLastAutoIncrementId();
-
-        // when
-        UserDomain queried = queryUserPersistenceJpaAdapter.query(userDomain.getUserDomainData().getUsername());
-
-        // then
-        assertThat(queried.getUserDomainId().getValue()).isEqualTo(lastAutoIncrementId);
-        assertThat(queried.getUserDomainData().getUsername()).isEqualTo(userDomain.getUserDomainData().getUsername());
-        assertThat(queried.getUserDomainData().getPassword()).isEqualTo(userDomain.getUserDomainData().getPassword());
-        assertThat(queried.getUserDomainData().getNickname()).isEqualTo(userDomain.getUserDomainData().getNickname());
-        assertThat(queried.getUserDomainData().getRole()).isEqualTo(userDomain.getUserDomainData().getRole());
-    }
-
-
-    @Test
-    @DisplayName("삭제")
+    @DisplayName("회원 탈퇴")
     @Transactional
     public void delete(){
         // given
@@ -118,5 +98,24 @@ class CommandUserPersistenceJpaAdapterTest {
         assertThat(updated.getUsername()).isEqualTo(userDomain.getUserDomainData().getUsername());
         assertTrue(encoder.matches("b1234567", updated.getPassword()));
         assertThat(updated.getNickname()).isEqualTo(updateWant.getUserDomainData().getNickname());
+    }
+
+    @Test
+    @DisplayName("회원 정보 조회")
+    public void query(){
+        // given
+        UserDomain userDomain = defaultUserDomain();
+        registUser(userDomain);
+        Long lastAutoIncrementId = getLastAutoIncrementId();
+
+        // when
+        UserDomain queried = queryUserPersistenceJpaAdapter.query(userDomain.getUserDomainData().getUsername());
+
+        // then
+        assertThat(queried.getUserDomainId().getValue()).isEqualTo(lastAutoIncrementId);
+        assertThat(queried.getUserDomainData().getUsername()).isEqualTo(userDomain.getUserDomainData().getUsername());
+        assertThat(queried.getUserDomainData().getPassword()).isEqualTo(userDomain.getUserDomainData().getPassword());
+        assertThat(queried.getUserDomainData().getNickname()).isEqualTo(userDomain.getUserDomainData().getNickname());
+        assertThat(queried.getUserDomainData().getRole()).isEqualTo(userDomain.getUserDomainData().getRole());
     }
 }

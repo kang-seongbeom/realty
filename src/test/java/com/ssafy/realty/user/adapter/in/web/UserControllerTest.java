@@ -150,6 +150,33 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("회원 탈퇴")
+    public void delete() throws Exception {
+        // given
+        User user = new User(1L, "qkfka9045@gmail.com", "a1234567", "nick", Role.USER);
+
+        when(userRepository.findByUsername(user.getUsername()))
+                .thenReturn(new User(
+                        user.getId(),
+                        user.getUsername(),
+                        encoder.encode(user.getPassword()),
+                        user.getNickname(),
+                        user.getRole()));
+
+        doNothing().when(commandUserUseCase).delete(user.getId());
+
+        String accessToken = getAuthorizedUserToken(user);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete("/api/v1/user/delete")
+                .header("accessToken", accessToken);
+
+        // when, then
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+    }
+
+    @Test
     @DisplayName("회원 정보 수정")
     public void update() throws Exception {
         // given
@@ -177,34 +204,6 @@ class UserControllerTest {
                 .content(requestBody.toString())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        mockMvc.perform(request)
-                .andExpect(status().isOk());
-    }
-
-
-    @Test
-    @DisplayName("회원 삭제")
-    public void delete() throws Exception {
-        // given
-        User user = new User(1L, "qkfka9045@gmail.com", "a1234567", "nick", Role.USER);
-
-        when(userRepository.findByUsername(user.getUsername()))
-                .thenReturn(new User(
-                        user.getId(),
-                        user.getUsername(),
-                        encoder.encode(user.getPassword()),
-                        user.getNickname(),
-                        user.getRole()));
-
-        doNothing().when(commandUserUseCase).delete(user.getId());
-
-        String accessToken = getAuthorizedUserToken(user);
-
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .delete("/api/v1/user/delete")
-                .header("accessToken", accessToken);
-
-        // when, then
         mockMvc.perform(request)
                 .andExpect(status().isOk());
     }

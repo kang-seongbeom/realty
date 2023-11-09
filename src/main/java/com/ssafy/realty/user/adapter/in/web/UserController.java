@@ -1,6 +1,6 @@
 package com.ssafy.realty.user.adapter.in.web;
 
-import com.ssafy.realty.realty.controller.swagger.ApiResponsesCommon;
+import com.ssafy.realty.common.swagger.ApiResponsesCommon;
 import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import com.ssafy.realty.user.adapter.in.web.payload.RegistPayload;
 import com.ssafy.realty.user.adapter.in.web.payload.UpdatePayload;
@@ -11,7 +11,6 @@ import com.ssafy.realty.user.application.port.in.dto.RegistDto;
 import com.ssafy.realty.user.application.port.in.dto.UpdateDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

@@ -18,6 +18,7 @@ public class Marker {
         String realtyType;
         RentType rentType;
         Integer maxRentCost;
+        Integer maxDeposit;
         Long maxLongTermRentCost;
         Long maxSaleCost;
         Integer maxMaintenanceCost;

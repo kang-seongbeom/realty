@@ -24,6 +24,7 @@ public class UserMapper {
                 userJpaEntity.getId(),
                 userJpaEntity.getUsername(),
                 userJpaEntity.getPassword(),
-                userJpaEntity.getNickname());
+                userJpaEntity.getNickname(),
+                userJpaEntity.getRole());
     }
 }

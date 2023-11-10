@@ -1,5 +1,6 @@
 package com.ssafy.realty.user.adapter.in.web;
 
+import com.ssafy.realty.common.Role;
 import com.ssafy.realty.realty.controller.swagger.ApiResponsesCommon;
 import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import com.ssafy.realty.user.adapter.in.web.payload.RegistPayload;
@@ -53,7 +54,6 @@ public class UserController {
     @ApiResponsesCommon
     ResponseEntity<QueryResponseDto> query(@AuthenticationPrincipal PrincipalDetails principalDetails){
         QueryResponseDto queryResponseDto = queryUserUseCase.query(principalDetails.getUsername());
-
         return ResponseEntity.ok(queryResponseDto);
     }
 

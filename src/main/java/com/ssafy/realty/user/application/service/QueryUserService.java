@@ -23,6 +23,7 @@ public class QueryUserService implements QueryUserUseCase {
                 .id(userDomain.getUserDomainId().getValue())
                 .username(userDomain.getUserDomainData().getUsername())
                 .password(userDomain.getUserDomainData().getPassword())
+                .nickname(userDomain.getUserDomainData().getNickname())
                 .role(userDomain.getUserDomainData().getRole())
                 .build();
 

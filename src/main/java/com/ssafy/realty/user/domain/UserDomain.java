@@ -27,6 +27,10 @@ public class UserDomain {
         return new UserDomain(new UserDomainId(id), new UserDomainData(username, password, nickname, Role.USER));
     }
 
+    public static UserDomain init(Long id, String username, String password, String nickname, Role role){
+        return new UserDomain(new UserDomainId(id), new UserDomainData(username, password, nickname, role));
+    }
+
     @Value
     public static class UserDomainId{
         Long value;

@@ -1,4 +1,4 @@
-package com.ssafy.realty.common.config;
+package com.ssafy.realty.common.swagger.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

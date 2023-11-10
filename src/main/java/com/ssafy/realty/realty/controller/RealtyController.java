@@ -1,6 +1,7 @@
 package com.ssafy.realty.realty.controller;
 
-import com.ssafy.realty.realty.controller.swagger.ApiResponsesCommon;
+
+import com.ssafy.realty.common.swagger.ApiResponsesCommon;
 import com.ssafy.realty.realty.dto.DealInfo;
 import com.ssafy.realty.realty.dto.wrap.DealInfos;
 import com.ssafy.realty.realty.dto.Marker;

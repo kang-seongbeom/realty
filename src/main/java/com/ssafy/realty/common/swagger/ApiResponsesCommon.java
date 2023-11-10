@@ -1,4 +1,4 @@
-package com.ssafy.realty.realty.controller.swagger;
+package com.ssafy.realty.common.swagger;
 
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;

@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 public class Markers {
-    private List<Marker> markers;
+    private final List<Marker> markers;
 
     public Markers(List<Marker> marker){
         this.markers = marker;

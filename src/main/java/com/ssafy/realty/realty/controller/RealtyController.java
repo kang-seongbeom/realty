@@ -1,8 +1,8 @@
 package com.ssafy.realty.realty.controller;
 
 import com.ssafy.realty.realty.controller.swagger.ApiResponsesCommon;
-import com.ssafy.realty.realty.dto.Home;
-import com.ssafy.realty.realty.dto.wrap.Homes;
+import com.ssafy.realty.realty.dto.DealInfo;
+import com.ssafy.realty.realty.dto.wrap.DealInfos;
 import com.ssafy.realty.realty.dto.Marker;
 import com.ssafy.realty.realty.dto.wrap.Markers;
 import io.swagger.annotations.Api;
@@ -46,17 +46,17 @@ class RealtyController {
     @PostMapping("/realty-info")
     @ApiOperation(value = "마커 주변 집 정보", notes = "마커의 정보를 확인해 필터링 한 뒤, 매물 정보 반환")
     @ApiResponsesCommon
-    ResponseEntity<Homes> markerVicinityHomeInfo(@RequestBody Marker marker){
-        Homes homes = new Homes(Collections.emptyList());
-        return ResponseEntity.ok(homes);
+    ResponseEntity<DealInfos> markerVicinityHomeInfo(@RequestBody Marker marker){
+        DealInfos dealInfos = new DealInfos(Collections.emptyList());
+        return ResponseEntity.ok(dealInfos);
     }
 
     @GetMapping("/{id}")
     @ApiOperation(value = "상세 매물 정보", notes = "id에 해당하는 매물 정보를 반환")
     @ApiResponsesCommon
-    ResponseEntity<Home> detailHomeInfo(@PathVariable Integer id){
-        Home home = new Home();
-        return ResponseEntity.ok(home);
+    ResponseEntity<DealInfo> detailHomeInfo(@PathVariable Integer id){
+        DealInfo dealInfo = new DealInfo();
+        return ResponseEntity.ok(dealInfo);
     }
 
     @PostMapping("/save")

@@ -2,6 +2,7 @@ package com.ssafy.realty.realty.adapter.in.web;
 
 
 import com.ssafy.realty.common.swagger.ApiResponsesCommon;
+import com.ssafy.realty.realty.adapter.in.web.payload.RealtyInfoPayload;
 import com.ssafy.realty.realty.domain.DealInfo;
 import com.ssafy.realty.realty.domain.wrap.DealInfos;
 import com.ssafy.realty.realty.domain.Marker;
@@ -47,7 +48,7 @@ class RealtyController {
     @PostMapping("/realty-info")
     @ApiOperation(value = "마커 주변 집 정보", notes = "마커의 정보를 확인해 필터링 한 뒤, 매물 정보 반환")
     @ApiResponsesCommon
-    ResponseEntity<DealInfos> markerVicinityHomeInfo(@RequestBody Marker marker){
+    ResponseEntity<DealInfos> markerVicinityHomeInfo(@RequestBody RealtyInfoPayload payload){
         DealInfos dealInfos = new DealInfos(Collections.emptyList());
         return ResponseEntity.ok(dealInfos);
     }

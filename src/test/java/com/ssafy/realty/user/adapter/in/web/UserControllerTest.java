@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@DisplayName("시큐리티 및 컨트롤러 통합 테스트")
+@DisplayName("시큐리티 및 유저 컨트롤러 통합 테스트")
 class UserControllerTest {
 
     @Autowired

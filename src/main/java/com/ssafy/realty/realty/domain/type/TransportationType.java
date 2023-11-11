@@ -1,7 +1,7 @@
-package com.ssafy.realty.realty.dto.type;
+package com.ssafy.realty.realty.domain.type;
 
 public enum TransportationType {
-    MONTH_TERM("도보"), LONG_TERM("자건거"), SALE("자가용");
+    WALK("도보"), BYCYCLE("자건거"), OWN_CAR("자가용");
 
     private final String type;
 

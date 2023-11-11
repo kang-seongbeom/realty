@@ -1,11 +1,11 @@
-package com.ssafy.realty.realty.controller;
+package com.ssafy.realty.realty.adapter.in.web;
 
 
 import com.ssafy.realty.common.swagger.ApiResponsesCommon;
-import com.ssafy.realty.realty.dto.DealInfo;
-import com.ssafy.realty.realty.dto.wrap.DealInfos;
-import com.ssafy.realty.realty.dto.Marker;
-import com.ssafy.realty.realty.dto.wrap.Markers;
+import com.ssafy.realty.realty.domain.DealInfo;
+import com.ssafy.realty.realty.domain.wrap.DealInfos;
+import com.ssafy.realty.realty.domain.Marker;
+import com.ssafy.realty.realty.domain.wrap.Markers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;

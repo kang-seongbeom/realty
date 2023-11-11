@@ -1,4 +1,4 @@
-package com.ssafy.realty.realty.dto;
+package com.ssafy.realty.realty.domain;
 
 import lombok.Data;
 

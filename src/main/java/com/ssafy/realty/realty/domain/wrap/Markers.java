@@ -1,6 +1,6 @@
-package com.ssafy.realty.realty.dto.wrap;
+package com.ssafy.realty.realty.domain.wrap;
 
-import com.ssafy.realty.realty.dto.Marker;
+import com.ssafy.realty.realty.domain.Marker;
 import lombok.Getter;
 
 import java.util.List;

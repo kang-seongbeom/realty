@@ -21,7 +21,7 @@ public class SwaggerConfiguration {
 
     private final String title = "Realty API";
 
-    // http://localhost:8080/{your-app-root}/swagger-ui/index.html
+    // http://localhost:8080/swagger-ui/index.html
 
     @Bean
     public Docket realtyApi() {

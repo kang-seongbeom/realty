@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
-public class RealtyInfoPayload {
+public class MarkerPayload {
     @NotNull
     private Double lat;
     @NotNull
@@ -17,32 +17,32 @@ public class RealtyInfoPayload {
     private PayloadMarkerFilter filter;
 
     @Data
-    private static class PayloadMarkerFilter {
-        private DateRange date;
-        private DealAmountRange dealAmount;
-        private AreaRange area;
-        private List<Transportation> transportations;
+    public static class PayloadMarkerFilter {
+        private PayloadDateRange date;
+        private PayloadDealAmountRange dealAmount;
+        private PayloadAreaRange area;
+        private List<PayloadTransportation> transportations;
 
         @Data
-        private static class DateRange {
+        private static class PayloadDateRange {
             private String lower;
             private String upper;
         }
 
         @Data
-        private static class DealAmountRange {
+        private static class PayloadDealAmountRange {
             private Long lower;
             private Long upper;
         }
 
         @Data
-        private static class AreaRange {
+        private static class PayloadAreaRange {
             private Double lower;
             private Double upper;
         }
 
         @Data
-        private static class Transportation{
+        private static class PayloadTransportation {
             private String type;
             private Integer time;
         }

@@ -4,18 +4,24 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 public enum TransportationType {
-    WALK("도보"), BYCYCLE("자건거"), OWN_CAR("자가용");
+    WALK("walk", 0.01), BYCYCLE("자건거", 0.0333), OWN_CAR("자가용", 0.0833);
 
-    private final String value;
+    private final String key;
+    private final Double value;
 
-    TransportationType(String value) {
+    TransportationType(String key, Double value) {
+        this.key = key;
         this.value = value;
     }
 
-    public static TransportationType findByValue(String value){
+    public static TransportationType findByTypeKey(String key){
         return Arrays.stream(TransportationType.values())
-                .filter(t -> t.value.equals(value))
+                .filter(t -> t.key.equals(key.toLowerCase()))
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("교통수단을 찾을 수 없습니다."));
+    }
+
+    public Double getDistance(Integer time) {
+        return this.value * time;
     }
 }

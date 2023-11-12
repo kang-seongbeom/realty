@@ -1,8 +1,8 @@
 package com.ssafy.realty.realty.adapter.out.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
@@ -10,21 +10,22 @@ import javax.persistence.*;
 @Table(name = "housedeal")
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class HouseDealJpaEntity {
 
     @Id
     String no;
 
-    @Column
+    @Column(name = "dealamount")
     String dealAmount;
 
-    @Column
+    @Column(name = "dealyear")
     Integer dealYear;
 
-    @Column
+    @Column(name = "dealmonth")
     Integer dealMonth;
 
-    @Column
+    @Column(name = "dealday")
     Integer dealDay;
 
     @Column
@@ -33,10 +34,10 @@ public class HouseDealJpaEntity {
     @Column
     Integer floor;
 
-    @Column(name = "aptCode")
+    @Column(name = "aptcode")
     Long aptCode;
 
     @ManyToOne
-    @JoinColumn(name = "aptCode", insertable = false, updatable = false)
+    @JoinColumn(name = "aptcode", insertable = false, updatable = false)
     private HouseInfoJpaEntity houseinfo;
 }

@@ -131,7 +131,7 @@ public class Marker {
                 for(String[] info : transInfo){
                     if(info.length != 2) throw new IllegalArgumentException("잘못된 데이터가 포함되어 있습니다.");
 
-                    TransportationType type = TransportationType.findByValue(info[0]);
+                    TransportationType type = TransportationType.findByTypeKey(info[0]);
                     Integer time = Integer.parseInt(info[1]);
 
                     result.add(new Transportation(type, time));

@@ -1,0 +1,42 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.realty.realty.adapter.out.repository.HouseInfoMybatisRepository">
+
+    <resultMap id="MarkerVicinityHomeInfoMapping" type="com.ssafy.realty.realty.adapter.out.mybatis.MarkerVicinityHomeInfoMapper">
+        <id property="aptCode" column="aptCode" />
+        <result property="apartmentName" column="apartmentName" />
+        <result property="lat" column="lat" />
+        <result property="lng" column="lng" />
+        <result property="address" column="address" />
+        <result property="totalDealAmount" column="totalDealAmount" />
+        <result property="maxDealAmount" column="maxDealAmount" />
+        <result property="minDealAmount" column="minDealAmount" />
+        <result property="avgDealAmount" column="avgDealAmount" />
+        <result property="avgArea" column="avgArea" />
+    </resultMap>
+
+    <select id="queryMarkerVicinityHome" resultMap="MarkerVicinityHomeInfoMapping" parameterType="map">
+        SELECT
+            houseinfo.aptCode AS aptCode,
+            houseinfo.apartmentName AS apartmentName,
+            houseinfo.lat AS lat,
+            houseinfo.lng AS lng,
+            CONCAT(houseinfo.dong, ' ', houseinfo.roadName, ' ', houseinfo.jibun) AS address,
+            COUNT(*) AS totalDealAmount,
+            REPLACE(MAX(housedeal.dealAmount), ',', '') AS maxDealAmount,
+            REPLACE(MIN(housedeal.dealAmount), ',', '') AS minDealAmount,
+            AVG(housedeal.dealAmount) AS avgDealAmount,
+            AVG(housedeal.area) AS avgArea
+        FROM (SELECT * FROM houseinfo sh WHERE sh.dongCode = #{dongCode}) houseinfo
+            JOIN housedeal
+            ON houseinfo.aptCode = housedeal.aptCode
+        WHERE 6371 * ACOS(
+            COS(RADIANS(#{baseLatitude})) * COS(RADIANS(houseinfo.lat)) *
+            COS(RADIANS(houseinfo.lng) - RADIANS(#{baseLongitude})) +
+            SIN(RADIANS(#{baseLatitude})) * SIN(RADIANS(houseinfo.lat))
+            ) <![CDATA[<=]]> #{distance}
+        GROUP BY houseinfo.aptCode
+    </select>
+
+</mapper>

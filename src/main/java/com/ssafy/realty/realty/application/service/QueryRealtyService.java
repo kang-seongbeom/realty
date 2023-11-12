@@ -5,6 +5,7 @@ import com.ssafy.realty.realty.application.port.in.dto.MarkerDto;
 import com.ssafy.realty.realty.application.port.out.QueryRealtyPort;
 import com.ssafy.realty.realty.domain.DealInfo;
 import com.ssafy.realty.realty.domain.Marker;
+import com.ssafy.realty.realty.domain.wrap.DealInfos;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,7 @@ public class QueryRealtyService implements QueryRealtyUseCase {
     @Override
     public void queryMarkerVicinityHome(MarkerDto markerDto) {
         Marker marker = initMarker(markerDto);
-        List<DealInfo> dealInfos = queryRealtyPort.queryMarkerVicinityHome(marker);
+        DealInfos dealInfos = queryRealtyPort.queryMarkerVicinityHome(marker);
     }
 
     private Marker initMarker(MarkerDto markerDto){

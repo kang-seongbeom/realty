@@ -2,6 +2,7 @@ package com.ssafy.realty.realty.adapter.out.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
@@ -10,27 +11,29 @@ import java.util.List;
 @Table(name = "houseinfo")
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class HouseInfoJpaEntity {
 
     @Id
+    @Column(name = "aptcode")
     String aptCode;
 
-    @Column
+    @Column(name = "buildyear")
     Integer buildYear;
 
-    @Column
+    @Column(name = "roadname")
     String roadName;
 
-    @Column
+    @Column(name = "roadnamebonbun")
     String roadNameBonbun;
 
-    @Column
+    @Column(name = "roadnamebubun")
     String roadNameBubun;
 
-    @Column
+    @Column(name = "roadnameseq")
     String roadNameSeq;
 
-    @Column
+    @Column(name = "roadnamebasementcode")
     String roadNameBasementCode;
 
     @Column
@@ -42,19 +45,19 @@ public class HouseInfoJpaEntity {
     @Column
     String bubun;
 
-    @Column
+    @Column(name = "sigungucode")
     String sigunguCode;
 
-    @Column
+    @Column(name = "eubmyundongcode")
     String eubmyundongCode;
 
-    @Column
+    @Column(name = "dongcode")
     String dongCode;
 
-    @Column
+    @Column(name = "landcode")
     String landCode;
 
-    @Column
+    @Column(name = "apartmentname")
     String apartmentName;
 
     @Column
@@ -66,7 +69,7 @@ public class HouseInfoJpaEntity {
     @Column
     Double lat;
 
-    @OneToMany(mappedBy = "houseinfo")
+    @OneToMany(mappedBy = "houseinfo", fetch = FetchType.LAZY)
     private List<HouseDealJpaEntity> housedeals;
 
 }

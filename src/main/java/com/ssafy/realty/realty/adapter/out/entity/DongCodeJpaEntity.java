@@ -17,14 +17,15 @@ import javax.persistence.Table;
 public class DongCodeJpaEntity {
 
     @Id
+    @Column(name = "dongcode")
     String dongCode;
 
-    @Column
+    @Column(name = "sidoname")
     String sidoName;
 
-    @Column
+    @Column(name = "gugunname")
     String gugunName;
 
-    @Column
+    @Column(name = "dongname")
     String dongName;
 }

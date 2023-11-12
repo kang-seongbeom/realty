@@ -3,7 +3,7 @@
 
 <mapper namespace="com.ssafy.realty.realty.adapter.out.repository.HouseInfoMybatisRepository">
 
-    <resultMap id="MarkerVicinityHomeInfoMapping" type="com.ssafy.realty.realty.adapter.out.mybatis.MarkerVicinityHomeInfoMapper">
+    <resultMap id="MarkerVicinityHomeInfoMapping" type="com.ssafy.realty.realty.adapter.out.mybatis.MarkerVicinityHomeInfo">
         <id property="aptCode" column="aptCode" />
         <result property="apartmentName" column="apartmentName" />
         <result property="lat" column="lat" />

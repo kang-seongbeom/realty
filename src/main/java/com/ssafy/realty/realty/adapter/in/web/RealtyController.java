@@ -4,17 +4,22 @@ package com.ssafy.realty.realty.adapter.in.web;
 import com.ssafy.realty.common.swagger.ApiResponsesCommon;
 import com.ssafy.realty.realty.adapter.in.web.mapper.MarkerWebMapper;
 import com.ssafy.realty.realty.adapter.in.web.payload.MarkerPayload;
+import com.ssafy.realty.realty.adapter.in.web.payload.SavePayload;
 import com.ssafy.realty.realty.application.port.in.QueryRealtyUseCase;
 import com.ssafy.realty.realty.application.port.in.dto.MarkerDto;
+import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.TotalHistoryDealInfos;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.VicinityHomeInfoDtos;
 import com.ssafy.realty.realty.domain.wrap.Markers;
+import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Collections;
 
 @RestController
@@ -71,9 +76,13 @@ class RealtyController {
     }
 
     @PostMapping("/save")
-    @ApiOperation(value = "상세 매물 정보", notes = "id에 해당하는 매물 정보를 반환")
+    @ApiOperation(value = "매물 정보 저장", notes = "사용자가 만든 매물 정보를 저장한다.")
     @ApiResponsesCommon
-    ResponseEntity<Void> save(@RequestBody String title, @RequestBody Markers markers){
+    ResponseEntity<Void> save(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                              @Valid @RequestBody SavePayload savePayload){
+        System.out.println(principalDetails.getUser().getId());
+        System.out.println(savePayload);
+
         return ResponseEntity.ok().build();
     }
 }

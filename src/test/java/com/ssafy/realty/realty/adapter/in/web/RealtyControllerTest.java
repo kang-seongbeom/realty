@@ -1,31 +1,58 @@
 package com.ssafy.realty.realty.adapter.in.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.realty.common.Role;
+import com.ssafy.realty.security.config.auth.PrincipalDetails;
+import com.ssafy.realty.security.config.jwt.JwtManager;
+import com.ssafy.realty.security.entity.User;
+import com.ssafy.realty.security.repository.UserRepository;
+import com.ssafy.realty.user.application.port.in.CommandUserUseCase;
+import com.ssafy.realty.user.application.port.in.QueryUserUseCase;
+import com.ssafy.realty.user.application.port.in.dto.QueryResponseDto;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("부동산 컨트롤러 통합 테스트")
-class RealtyControllerTest extends RealtyJsonData{
+class RealtyControllerTest extends RealtyJsonData {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    private JwtManager jwtManager;
+
+    @Autowired
+    private BCryptPasswordEncoder encoder;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     @DisplayName("마커 주변 집 정보")
@@ -60,5 +87,50 @@ class RealtyControllerTest extends RealtyJsonData{
                 .andExpect(status().isOk())
                 .andExpect(content().json(expect));
 
+    }
+
+    @Test
+    @DisplayName("저장")
+    public void save() throws Exception {
+        // given
+        JSONObject requestBody = new JSONObject();
+
+        List<JSONObject> markers = new ArrayList<>();
+        markers.add(realtyInfoJsonBody());
+
+        String title = "나만의 매물 정보";
+        requestBody.put("title", title);
+        requestBody.put("markers", markers);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post("/api/v1/realty/save")
+                .header("accessToken", getAccessToken())
+                .content(requestBody.toString())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // when, then
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+    }
+
+    private String getAccessToken(){
+        User user = new User(null, "qkfka9045@gmail.com", encoder.encode("a1234567"), "nick", Role.USER);
+        userRepository.save(user);
+
+        User saved = userRepository.findByUsername(user.getUsername());
+
+        return getAuthorizedUserToken(user);
+    }
+
+    private String getAuthorizedUserToken(User saved) {
+        PrincipalDetails principalDetails = new PrincipalDetails(saved);
+
+        String accessToken = jwtManager.createAccessToken(principalDetails);
+
+        if (accessToken != null && jwtManager.isTokenValid(accessToken)) {
+            Authentication authentication = jwtManager.getAuthentication(accessToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        return "Bearer " + accessToken;
     }
 }

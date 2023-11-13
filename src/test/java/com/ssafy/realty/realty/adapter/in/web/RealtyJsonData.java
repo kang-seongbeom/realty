@@ -8,15 +8,15 @@ public class RealtyJsonData {
 
     protected JSONObject realtyInfoJsonBody() throws JSONException {
         JSONObject json = new JSONObject();
-        json.put("lat", 36.0019);
-        json.put("lng", 127.6686);
-        json.put("address", "전라북도 무주군 무주읍 당산리");
+        json.put("lat", 35.9768231457432);
+        json.put("lng", 128.944137387794);
+        json.put("address", "경상북도 영천시 야사동");
 
         JSONObject filter = new JSONObject();
 
         JSONObject day = new JSONObject();
-        day.put("lower", "2015.7.15");
-        day.put("upper", "2020.12.31");
+        day.put("lower", "2015-07-15");
+        day.put("upper", "2020-12-31");
         filter.put("date", day);
 
         JSONObject dealAmount = new JSONObject();

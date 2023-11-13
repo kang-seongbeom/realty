@@ -15,6 +15,19 @@ import java.util.List;
 @Component
 public class QueryRealtyServiceMapper {
 
+    public Marker mapToMarker(MarkerDto markerDto){
+        return Marker.init(
+                markerDto.getLat(), markerDto.getLng(), markerDto.getAddress(),
+                markerDto.getFilter().getDate() != null ? markerDto.getFilter().getDate().getLower() : null,
+                markerDto.getFilter().getDate() != null ? markerDto.getFilter().getDate().getUpper() : null,
+                markerDto.getFilter().getDealAmount() != null ? markerDto.getFilter().getDealAmount().getLower() : null,
+                markerDto.getFilter().getDealAmount() != null ? markerDto.getFilter().getDealAmount().getUpper() : null,
+                markerDto.getFilter().getArea() != null ? markerDto.getFilter().getArea().getLower() : null,
+                markerDto.getFilter().getArea() != null ? markerDto.getFilter().getArea().getUpper() : null,
+                getTransportations(markerDto)
+        );
+    }
+
     public VicinityHomeInfoDtos mapToVicinityHomeInfoDtos(TotalVicinityHomeInfos total) {
         List<VicinityHomeInfosDto> data = new ArrayList<>();
 
@@ -22,6 +35,19 @@ public class QueryRealtyServiceMapper {
             data.add(mapToVicinityHomeInfosDto(infos));
         }
         return new VicinityHomeInfoDtos(data);
+    }
+
+    private List<String[]> getTransportations(MarkerDto markerDto){
+        List<String[]> transportations = new ArrayList<>();
+        if(markerDto.getFilter().getTransportations() != null){
+            for(MarkerDto.DtoMarkerFilter.PayloadTransportation p: markerDto.getFilter().getTransportations()){
+                String[] trans = new String[2];
+                trans[0] = p.getType();
+                trans[1] = String.valueOf(p.getTime());
+                transportations.add(trans);
+            }
+        }
+        return transportations;
     }
 
     private VicinityHomeInfosDto mapToVicinityHomeInfosDto(VicinityHomeInfos infos) {
@@ -55,31 +81,5 @@ public class QueryRealtyServiceMapper {
                 .avgDealAmount(info.getVicinityHomeInfoData().getAvgDealAmount())
                 .avgArea(info.getVicinityHomeInfoData().getAvgArea())
                 .build();
-    }
-
-    public Marker mapToMarker(MarkerDto markerDto){
-        return Marker.init(
-                markerDto.getLat(), markerDto.getLng(), markerDto.getAddress(),
-                markerDto.getFilter().getDate() != null ? markerDto.getFilter().getDate().getLower() : null,
-                markerDto.getFilter().getDate() != null ? markerDto.getFilter().getDate().getUpper() : null,
-                markerDto.getFilter().getDealAmount() != null ? markerDto.getFilter().getDealAmount().getLower() : null,
-                markerDto.getFilter().getDealAmount() != null ? markerDto.getFilter().getDealAmount().getUpper() : null,
-                markerDto.getFilter().getArea() != null ? markerDto.getFilter().getArea().getLower() : null,
-                markerDto.getFilter().getArea() != null ? markerDto.getFilter().getArea().getUpper() : null,
-                getTransportations(markerDto)
-        );
-    }
-
-    private List<String[]> getTransportations(MarkerDto markerDto){
-        List<String[]> transportations = new ArrayList<>();
-        if(markerDto.getFilter().getTransportations() != null){
-            for(MarkerDto.DtoMarkerFilter.PayloadTransportation p: markerDto.getFilter().getTransportations()){
-                String[] trans = new String[2];
-                trans[0] = p.getType();
-                trans[1] = String.valueOf(p.getTime());
-                transportations.add(trans);
-            }
-        }
-        return transportations;
     }
 }

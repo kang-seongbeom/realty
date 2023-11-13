@@ -6,6 +6,7 @@ import com.ssafy.realty.realty.adapter.in.web.mapper.MarkerWebMapper;
 import com.ssafy.realty.realty.adapter.in.web.payload.MarkerPayload;
 import com.ssafy.realty.realty.application.port.in.QueryRealtyUseCase;
 import com.ssafy.realty.realty.application.port.in.dto.MarkerDto;
+import com.ssafy.realty.realty.application.port.out.dto.wrap.VicinityHomeInfoDtos;
 import com.ssafy.realty.realty.domain.DealInfo;
 import com.ssafy.realty.realty.domain.wrap.DealInfos;
 import com.ssafy.realty.realty.domain.wrap.Markers;
@@ -56,12 +57,10 @@ class RealtyController {
     @PostMapping("/realty-info")
     @ApiOperation(value = "마커 주변 집 정보", notes = "마커의 정보를 확인해 필터링 한 뒤, 매물 정보 반환")
     @ApiResponsesCommon
-    ResponseEntity<DealInfos> markerVicinityHome(@RequestBody MarkerPayload payload){
+    ResponseEntity<VicinityHomeInfoDtos> markerVicinityHome(@RequestBody MarkerPayload payload){
         MarkerDto markerDto = markerWebMapper.mapToMakerDto(payload);
-        queryRealtyUseCase.queryMarkerVicinityHome(markerDto);
-
-        DealInfos dealInfos = new DealInfos(Collections.emptyList());
-        return ResponseEntity.ok(dealInfos);
+        VicinityHomeInfoDtos dto = queryRealtyUseCase.queryMarkerVicinityHome(markerDto);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/{id}")

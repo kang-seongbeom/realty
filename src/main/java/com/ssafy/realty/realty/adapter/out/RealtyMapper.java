@@ -14,14 +14,8 @@ import java.util.stream.Collectors;
 @Component
 public class RealtyMapper {
 
-    private VicinityHomeInfo mapToVicinityHomeInfo(MarkerVicinityHomeInfo info) {
-        return VicinityHomeInfo.init(
-                info.getAptCode(), info.getApartmentName(),
-                info.getLat(), info.getLng(),
-                info.getAddress(), info.getTotalDealAmount(),
-                info.getMaxDealAmount(), info.getMinDealAmount(),
-                info.getAvgDealAmount(), info.getAvgArea()
-        );
+    public TotalVicinityHomeInfos mapToTotalVicinityHomeInfos(List<VicinityHomeInfos> infos){
+        return new TotalVicinityHomeInfos(infos);
     }
 
     public VicinityHomeInfos mapToVicinityHomeInfos(List<MarkerVicinityHomeInfo> infos,
@@ -32,9 +26,16 @@ public class RealtyMapper {
         return new VicinityHomeInfos(elements, type, time);
     }
 
-    public TotalVicinityHomeInfos mapToTotalVicinityHomeInfos(List<VicinityHomeInfos> infos){
-        return new TotalVicinityHomeInfos(infos);
+    private VicinityHomeInfo mapToVicinityHomeInfo(MarkerVicinityHomeInfo info) {
+        return VicinityHomeInfo.init(
+                info.getAptCode(), info.getApartmentName(),
+                info.getLat(), info.getLng(),
+                info.getAddress(), info.getTotalDealAmount(),
+                info.getMaxDealAmount(), info.getMinDealAmount(),
+                info.getAvgDealAmount(), info.getAvgArea()
+        );
     }
+
 
 
 }

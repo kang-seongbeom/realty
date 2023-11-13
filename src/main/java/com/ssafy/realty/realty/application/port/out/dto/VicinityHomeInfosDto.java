@@ -15,6 +15,7 @@ public class VicinityHomeInfosDto {
     private Integer time;
     private List<homeSummaryInfo> homeSummaryInfos;
 
+    @Getter
     @Builder
     public static class homeSummaryInfo{
         private Long aptCode;

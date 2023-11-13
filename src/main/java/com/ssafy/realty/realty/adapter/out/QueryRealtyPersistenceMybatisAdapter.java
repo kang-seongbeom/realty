@@ -42,7 +42,7 @@ public class QueryRealtyPersistenceMybatisAdapter implements QueryRealtyPort {
             queryResult.add(realtyMapper.mapToVicinityHomeInfos(infos, t.getType(), t.getTime()));
         }
 
-        return realtyMapper.mapToTotalVicinityHomeInfos(queryResult, marker);
+        return realtyMapper.mapToTotalVicinityHomeInfos(queryResult);
     }
 
     private String findDongCode(String address){

@@ -32,8 +32,8 @@ public class RealtyMapper {
         return new VicinityHomeInfos(elements, type, time);
     }
 
-    public TotalVicinityHomeInfos mapToTotalVicinityHomeInfos(List<VicinityHomeInfos> infos, Marker marker){
-        return new TotalVicinityHomeInfos(infos, marker);
+    public TotalVicinityHomeInfos mapToTotalVicinityHomeInfos(List<VicinityHomeInfos> infos){
+        return new TotalVicinityHomeInfos(infos);
     }
 
 

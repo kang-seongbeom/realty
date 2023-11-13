@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,4 +21,13 @@ public class RealtyUserJpaEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CustomJpaEntity> customs;
+
+    public void addCustom(CustomJpaEntity custom) {
+        if(customs == null) {
+            customs = new ArrayList<>();
+        }
+        customs.add(custom);
+
+        custom.setUser(this);
+    }
 }

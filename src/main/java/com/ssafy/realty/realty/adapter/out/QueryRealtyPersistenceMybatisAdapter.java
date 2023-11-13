@@ -1,9 +1,8 @@
 package com.ssafy.realty.realty.adapter.out;
 
-import com.ssafy.realty.realty.adapter.out.entity.HouseDealJpaEntity;
 import com.ssafy.realty.realty.adapter.out.entity.HouseInfoJpaEntity;
 import com.ssafy.realty.realty.adapter.out.entity.mybatis.MarkerVicinityHomeInfo;
-import com.ssafy.realty.realty.adapter.out.mapper.RealtyMapper;
+import com.ssafy.realty.realty.adapter.out.mapper.RealtyAdapterMapper;
 import com.ssafy.realty.realty.adapter.out.repository.DongCodeJpaRepository;
 import com.ssafy.realty.realty.adapter.out.repository.HouseInfoJpaRepository;
 import com.ssafy.realty.realty.adapter.out.repository.HouseInfoMybatisRepository;
@@ -27,7 +26,7 @@ public class QueryRealtyPersistenceMybatisAdapter implements QueryRealtyPort {
     private final HouseInfoMybatisRepository houseInfoMybatisRepository;
     private final HouseInfoJpaRepository houseInfoJpaRepository;
 
-    private final RealtyMapper realtyMapper;
+    private final RealtyAdapterMapper realtyAdapterMapper;
 
     @Override
     public TotalVicinityHomeInfos queryMarkerVicinityHome(Marker marker) {
@@ -44,16 +43,16 @@ public class QueryRealtyPersistenceMybatisAdapter implements QueryRealtyPort {
             List<MarkerVicinityHomeInfo> infos =
                     houseInfoMybatisRepository.queryMarkerVicinityHome(dongCode, lat, lng, distance);
 
-            queryResult.add(realtyMapper.mapToVicinityHomeInfos(infos, t.getType(), t.getTime()));
+            queryResult.add(realtyAdapterMapper.mapToVicinityHomeInfos(infos, t.getType(), t.getTime()));
         }
 
-        return realtyMapper.mapToTotalVicinityHomeInfos(queryResult);
+        return realtyAdapterMapper.mapToTotalVicinityHomeInfos(queryResult);
     }
 
     @Override
     public DealInfos queryTotalHistory(String aptCode) {
         HouseInfoJpaEntity byAptCodeWithDeal = houseInfoJpaRepository.findByAptCodeWithDeals(aptCode);
-        return realtyMapper.mapToDealInfos(byAptCodeWithDeal);
+        return realtyAdapterMapper.mapToDealInfos(byAptCodeWithDeal);
     }
 
     private String findDongCode(String address){

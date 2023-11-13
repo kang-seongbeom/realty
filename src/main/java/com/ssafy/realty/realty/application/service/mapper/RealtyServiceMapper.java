@@ -1,14 +1,18 @@
 package com.ssafy.realty.realty.application.service.mapper;
 
 import com.ssafy.realty.realty.application.port.in.dto.MarkerDto;
+import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
+import com.ssafy.realty.realty.application.port.in.dto.wrap.MarkerDtos;
 import com.ssafy.realty.realty.application.port.out.dto.TotalHistoryDealInfo;
 import com.ssafy.realty.realty.application.port.out.dto.VicinityHomeInfosDto;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.TotalHistoryDealInfos;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.VicinityHomeInfoDtos;
 import com.ssafy.realty.realty.domain.DealInfo;
 import com.ssafy.realty.realty.domain.Marker;
+import com.ssafy.realty.realty.domain.Save;
 import com.ssafy.realty.realty.domain.VicinityHomeInfo;
 import com.ssafy.realty.realty.domain.wrap.DealInfos;
+import com.ssafy.realty.realty.domain.wrap.Markers;
 import com.ssafy.realty.realty.domain.wrap.TotalVicinityHomeInfos;
 import com.ssafy.realty.realty.domain.wrap.VicinityHomeInfos;
 import org.springframework.stereotype.Component;
@@ -18,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class QueryRealtyServiceMapper {
+public class RealtyServiceMapper {
 
     public Marker mapToMarker(MarkerDto markerDto){
         return Marker.init(
@@ -45,9 +49,19 @@ public class QueryRealtyServiceMapper {
     public TotalHistoryDealInfos mapToTotalHistoryDealInfos(DealInfos dealInfos){
         List<TotalHistoryDealInfo> data = dealInfos.getDealInfos()
                 .stream()
-                .map(d -> mapToTotalHistoryDealInfo(d))
+                .map(this::mapToTotalHistoryDealInfo)
                 .collect(Collectors.toList());
         return new TotalHistoryDealInfos(data);
+    }
+
+    public Save mapToSave(SaveDto saveDto) {
+        MarkerDtos markers = saveDto.getMarkers();
+        List<Marker> data = markers.getData()
+                .stream()
+                .map(this::mapToMarker)
+                .collect(Collectors.toList());
+
+        return Save.init(saveDto.getUserId(), saveDto.getTitle(), new Markers(data));
     }
 
     private TotalHistoryDealInfo mapToTotalHistoryDealInfo(DealInfo dealInfo){

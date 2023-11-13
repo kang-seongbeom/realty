@@ -2,9 +2,10 @@ package com.ssafy.realty.realty.adapter.in.web;
 
 
 import com.ssafy.realty.common.swagger.ApiResponsesCommon;
-import com.ssafy.realty.realty.adapter.in.web.mapper.MarkerWebMapper;
+import com.ssafy.realty.realty.adapter.in.web.mapper.WebControllerMapper;
 import com.ssafy.realty.realty.adapter.in.web.payload.MarkerPayload;
 import com.ssafy.realty.realty.adapter.in.web.payload.SavePayload;
+import com.ssafy.realty.realty.application.port.in.CommandRealtyUseCase;
 import com.ssafy.realty.realty.application.port.in.QueryRealtyUseCase;
 import com.ssafy.realty.realty.application.port.in.dto.MarkerDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
@@ -28,9 +29,10 @@ import java.util.Collections;
 @Api(tags = {"Realty Controller V1"})
 class RealtyController {
 
-    private final MarkerWebMapper markerWebMapper;
+    private final WebControllerMapper webControllerMapper;
 
     private final QueryRealtyUseCase queryRealtyUseCase;
+    private final CommandRealtyUseCase commandRealtyUseCase;
 
     @GetMapping("/is-saved")
     @ApiOperation(value = "임시 저장된 마커 존재 확인", notes = "임시 저장된 마커 확인")
@@ -62,7 +64,7 @@ class RealtyController {
     @ApiOperation(value = "마커 주변 집 정보", notes = "마커의 정보를 확인해 필터링 한 뒤, 매물 정보 반환")
     @ApiResponsesCommon
     ResponseEntity<VicinityHomeInfoDtos> markerVicinityHome(@RequestBody MarkerPayload payload){
-        MarkerDto markerDto = markerWebMapper.mapToMakerDto(payload);
+        MarkerDto markerDto = webControllerMapper.mapToMakerDto(payload);
         VicinityHomeInfoDtos dto = queryRealtyUseCase.queryMarkerVicinityHome(markerDto);
         return ResponseEntity.ok(dto);
     }
@@ -80,7 +82,8 @@ class RealtyController {
     @ApiResponsesCommon
     ResponseEntity<Void> save(@AuthenticationPrincipal PrincipalDetails principalDetails,
                               @Valid @RequestBody SavePayload savePayload){
-
+        SaveDto saveDto = webControllerMapper.mapToSaveDto(principalDetails.getUser().getId(), savePayload);
+        commandRealtyUseCase.save(saveDto);
         return ResponseEntity.ok().build();
     }
 }

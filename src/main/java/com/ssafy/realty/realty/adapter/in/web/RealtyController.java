@@ -80,8 +80,6 @@ class RealtyController {
     @ApiResponsesCommon
     ResponseEntity<Void> save(@AuthenticationPrincipal PrincipalDetails principalDetails,
                               @Valid @RequestBody SavePayload savePayload){
-        System.out.println(principalDetails.getUser().getId());
-        System.out.println(savePayload);
 
         return ResponseEntity.ok().build();
     }

@@ -9,6 +9,7 @@ import com.ssafy.realty.security.repository.UserRepository;
 import com.ssafy.realty.user.application.port.in.CommandUserUseCase;
 import com.ssafy.realty.user.application.port.in.QueryUserUseCase;
 import com.ssafy.realty.user.application.port.in.dto.QueryResponseDto;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,13 +92,14 @@ class RealtyControllerTest extends RealtyJsonData {
     }
 
     @Test
+    @Transactional
     @DisplayName("저장")
     public void save() throws Exception {
         // given
         JSONObject requestBody = new JSONObject();
 
-        List<JSONObject> markers = new ArrayList<>();
-        markers.add(realtyInfoJsonBody());
+        JSONArray markers = new JSONArray();
+        markers.put(realtyInfoJsonBody());
 
         String title = "나만의 매물 정보";
         requestBody.put("title", title);
@@ -116,9 +119,6 @@ class RealtyControllerTest extends RealtyJsonData {
     private String getAccessToken(){
         User user = new User(null, "qkfka9045@gmail.com", encoder.encode("a1234567"), "nick", Role.USER);
         userRepository.save(user);
-
-        User saved = userRepository.findByUsername(user.getUsername());
-
         return getAuthorizedUserToken(user);
     }
 

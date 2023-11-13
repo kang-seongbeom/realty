@@ -36,6 +36,10 @@ public class FilterJpaEntity {
     @Column(name = "areaUpper")
     private Double areaUpper;
 
+    @OneToOne
+    @JoinColumn(name = "markers_id")
+    private MarkerJpaEntity marker;
+
     @OneToMany(mappedBy = "filter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TransportationJpaEntity> transportations;
 }

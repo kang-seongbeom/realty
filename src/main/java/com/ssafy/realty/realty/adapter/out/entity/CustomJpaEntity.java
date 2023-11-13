@@ -23,7 +23,7 @@ public class CustomJpaEntity {
 
     @ManyToOne
     @JoinColumn(name = "users_id")
-    private UserJpaEntity user;
+    private RealtyUserJpaEntity user;
 
     @OneToMany(mappedBy = "custom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MarkerJpaEntity> markers;

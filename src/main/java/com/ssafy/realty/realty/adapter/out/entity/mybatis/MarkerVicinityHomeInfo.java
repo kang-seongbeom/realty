@@ -1,4 +1,4 @@
-package com.ssafy.realty.realty.adapter.out.mybatis;
+package com.ssafy.realty.realty.adapter.out.entity.mybatis;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

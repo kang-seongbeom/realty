@@ -6,9 +6,8 @@ import com.ssafy.realty.realty.adapter.in.web.mapper.MarkerWebMapper;
 import com.ssafy.realty.realty.adapter.in.web.payload.MarkerPayload;
 import com.ssafy.realty.realty.application.port.in.QueryRealtyUseCase;
 import com.ssafy.realty.realty.application.port.in.dto.MarkerDto;
+import com.ssafy.realty.realty.application.port.out.dto.wrap.TotalHistoryDealInfos;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.VicinityHomeInfoDtos;
-import com.ssafy.realty.realty.domain.DealInfo;
-import com.ssafy.realty.realty.domain.wrap.DealInfos;
 import com.ssafy.realty.realty.domain.wrap.Markers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -63,12 +62,12 @@ class RealtyController {
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping("/{id}")
-    @ApiOperation(value = "상세 매물 정보", notes = "id에 해당하는 매물 정보를 반환")
+    @GetMapping("/{aptCode}")
+    @ApiOperation(value = "집의 전체 거래 정보", notes = "하나의 집에 대한 전체 거래 정보를 조회 후 반환한다.")
     @ApiResponsesCommon
-    ResponseEntity<DealInfo> detailHomeInfo(@PathVariable Integer id){
-        DealInfo dealInfo = new DealInfo();
-        return ResponseEntity.ok(dealInfo);
+    ResponseEntity<TotalHistoryDealInfos> totalHistory(@PathVariable String aptCode){
+        TotalHistoryDealInfos totalHistoryDealInfos = queryRealtyUseCase.queryTotalHistory(aptCode);
+        return ResponseEntity.ok(totalHistoryDealInfos);
     }
 
     @PostMapping("/save")

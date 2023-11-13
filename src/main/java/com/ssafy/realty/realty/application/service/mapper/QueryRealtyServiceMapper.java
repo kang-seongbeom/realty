@@ -1,16 +1,21 @@
-package com.ssafy.realty.realty.application.service;
+package com.ssafy.realty.realty.application.service.mapper;
 
 import com.ssafy.realty.realty.application.port.in.dto.MarkerDto;
+import com.ssafy.realty.realty.application.port.out.dto.TotalHistoryDealInfo;
 import com.ssafy.realty.realty.application.port.out.dto.VicinityHomeInfosDto;
+import com.ssafy.realty.realty.application.port.out.dto.wrap.TotalHistoryDealInfos;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.VicinityHomeInfoDtos;
+import com.ssafy.realty.realty.domain.DealInfo;
 import com.ssafy.realty.realty.domain.Marker;
 import com.ssafy.realty.realty.domain.VicinityHomeInfo;
+import com.ssafy.realty.realty.domain.wrap.DealInfos;
 import com.ssafy.realty.realty.domain.wrap.TotalVicinityHomeInfos;
 import com.ssafy.realty.realty.domain.wrap.VicinityHomeInfos;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class QueryRealtyServiceMapper {
@@ -35,6 +40,28 @@ public class QueryRealtyServiceMapper {
             data.add(mapToVicinityHomeInfosDto(infos));
         }
         return new VicinityHomeInfoDtos(data);
+    }
+
+    public TotalHistoryDealInfos mapToTotalHistoryDealInfos(DealInfos dealInfos){
+        List<TotalHistoryDealInfo> data = dealInfos.getDealInfos()
+                .stream()
+                .map(d -> mapToTotalHistoryDealInfo(d))
+                .collect(Collectors.toList());
+        return new TotalHistoryDealInfos(data);
+    }
+
+    private TotalHistoryDealInfo mapToTotalHistoryDealInfo(DealInfo dealInfo){
+        return TotalHistoryDealInfo
+                .builder()
+                .aptCode(dealInfo.getDealInfoArtCode().getArtCode())
+                .apartmentName(dealInfo.getDealInfoData().getApartmentName())
+                .lat(dealInfo.getDealInfoData().getLat())
+                .lng(dealInfo.getDealInfoData().getLng())
+                .address(dealInfo.getDealInfoData().getAddress())
+                .floor(dealInfo.getDealInfoData().getFloor())
+                .dealAmount(dealInfo.getDealInfoData().getDealAmount())
+                .dealDate(dealInfo.getDealInfoData().getDealDate())
+                .build();
     }
 
     private List<String[]> getTransportations(MarkerDto markerDto){

@@ -1,6 +1,7 @@
 package com.ssafy.realty.realty.adapter.out.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -11,7 +12,7 @@ import java.util.List;
 @Table(name = "houseinfo")
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@Getter
 public class HouseInfoJpaEntity {
 
     @Id

@@ -1,7 +1,11 @@
 package com.ssafy.realty.realty.adapter.out;
 
-import com.ssafy.realty.realty.adapter.out.mybatis.MarkerVicinityHomeInfo;
+import com.ssafy.realty.realty.adapter.out.entity.HouseDealJpaEntity;
+import com.ssafy.realty.realty.adapter.out.entity.HouseInfoJpaEntity;
+import com.ssafy.realty.realty.adapter.out.entity.mybatis.MarkerVicinityHomeInfo;
+import com.ssafy.realty.realty.adapter.out.mapper.RealtyMapper;
 import com.ssafy.realty.realty.adapter.out.repository.DongCodeJpaRepository;
+import com.ssafy.realty.realty.adapter.out.repository.HouseInfoJpaRepository;
 import com.ssafy.realty.realty.adapter.out.repository.HouseInfoMybatisRepository;
 import com.ssafy.realty.realty.application.port.out.QueryRealtyPort;
 import com.ssafy.realty.realty.domain.Marker;
@@ -21,6 +25,7 @@ public class QueryRealtyPersistenceMybatisAdapter implements QueryRealtyPort {
 
     private final DongCodeJpaRepository dongCodeJpaRepository;
     private final HouseInfoMybatisRepository houseInfoMybatisRepository;
+    private final HouseInfoJpaRepository houseInfoJpaRepository;
 
     private final RealtyMapper realtyMapper;
 
@@ -43,6 +48,12 @@ public class QueryRealtyPersistenceMybatisAdapter implements QueryRealtyPort {
         }
 
         return realtyMapper.mapToTotalVicinityHomeInfos(queryResult);
+    }
+
+    @Override
+    public DealInfos queryTotalHistory(String aptCode) {
+        HouseInfoJpaEntity byAptCodeWithDeal = houseInfoJpaRepository.findByAptCodeWithDeals(aptCode);
+        return realtyMapper.mapToDealInfos(byAptCodeWithDeal);
     }
 
     private String findDongCode(String address){

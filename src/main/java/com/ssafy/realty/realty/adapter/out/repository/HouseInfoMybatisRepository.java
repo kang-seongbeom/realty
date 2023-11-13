@@ -1,6 +1,6 @@
 package com.ssafy.realty.realty.adapter.out.repository;
 
-import com.ssafy.realty.realty.adapter.out.mybatis.MarkerVicinityHomeInfo;
+import com.ssafy.realty.realty.adapter.out.entity.mybatis.MarkerVicinityHomeInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

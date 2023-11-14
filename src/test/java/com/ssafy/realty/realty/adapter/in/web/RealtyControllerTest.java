@@ -93,6 +93,7 @@ class RealtyControllerTest extends RealtyJsonData {
 
     @Test
     @DisplayName("저장")
+    @Transactional
     public void save() throws Exception {
         // given
         JSONObject requestBody = new JSONObject();

@@ -3,14 +3,14 @@ package com.ssafy.realty.realty.domain;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Value;
 
 import java.time.LocalDate;
 
-@Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Value
 public class DealInfo implements Comparable<DealInfo> {
-    private DealInfoArtCode dealInfoArtCode;
-    private DealInfoData dealInfoData;
+    DealInfoArtCode dealInfoArtCode;
+    DealInfoData dealInfoData;
 
     public static DealInfo init(String aptCode, String apartmentName, Double lat, Double lng,
                          String dong, String roadName, String jibun,
@@ -28,22 +28,20 @@ public class DealInfo implements Comparable<DealInfo> {
         );
     }
 
-    @Getter
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @Value
     public static class DealInfoArtCode {
-        private String artCode;
+        String artCode;
     }
 
-    @Getter
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @Value
     public static class DealInfoData {
-        private String apartmentName;
-        private Double lat;
-        private Double lng;
-        private String address;
-        private Integer floor;
-        private Long dealAmount;
-        private LocalDate dealDate;
+        String apartmentName;
+        Double lat;
+        Double lng;
+        String address;
+        Integer floor;
+        Long dealAmount;
+        LocalDate dealDate;
     }
 
     @Override

@@ -13,9 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-@Service
 public class QueryRealtyService implements QueryRealtyUseCase {
 
     private final QueryRealtyPort queryRealtyPort;

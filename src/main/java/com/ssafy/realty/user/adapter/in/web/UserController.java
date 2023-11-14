@@ -9,6 +9,7 @@ import com.ssafy.realty.user.application.port.in.QueryUserUseCase;
 import com.ssafy.realty.user.application.port.in.dto.QueryResponseDto;
 import com.ssafy.realty.user.application.port.in.dto.RegistDto;
 import com.ssafy.realty.user.application.port.in.dto.UpdateDto;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1")
+@Api(tags = {"User Controller V1"})
 @RequiredArgsConstructor
 public class UserController {
 

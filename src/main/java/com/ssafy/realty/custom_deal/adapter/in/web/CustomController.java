@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 
+@RestController
 @RequestMapping("/api/v1/custom")
 @Api(tags = {"Custom Controller V1"})
 @RequiredArgsConstructor
-@RestController
 public class CustomController {
 
     private final QueryCustomUseCase queryCustomUseCase;

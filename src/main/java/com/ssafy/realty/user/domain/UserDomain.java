@@ -1,14 +1,15 @@
 package com.ssafy.realty.user.domain;
 
 import com.ssafy.realty.common.Role;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Value;
 
-
+@Getter
 public class UserDomain {
-    @Getter private UserDomainId userDomainId;
-    @Getter private final UserDomainData userDomainData;
+    private UserDomainId userDomainId;
+    private final UserDomainData userDomainData;
 
     private UserDomain(UserDomainData userDomainData) {
         this.userDomainData = userDomainData;
@@ -19,20 +20,20 @@ public class UserDomain {
         this.userDomainData = userDomainData;
     }
 
-    public static UserDomain init(String username, String password, String nickname){
+    public static UserDomain init(String username, String password, String nickname) {
         return new UserDomain(new UserDomainData(username, password, nickname, Role.USER));
     }
 
-    public static UserDomain init(Long id, String username, String password, String nickname){
+    public static UserDomain init(Long id, String username, String password, String nickname) {
         return new UserDomain(new UserDomainId(id), new UserDomainData(username, password, nickname, Role.USER));
     }
 
-    public static UserDomain init(Long id, String username, String password, String nickname, Role role){
+    public static UserDomain init(Long id, String username, String password, String nickname, Role role) {
         return new UserDomain(new UserDomainId(id), new UserDomainData(username, password, nickname, role));
     }
 
     @Value
-    public static class UserDomainId{
+    public static class UserDomainId {
         Long value;
     }
 

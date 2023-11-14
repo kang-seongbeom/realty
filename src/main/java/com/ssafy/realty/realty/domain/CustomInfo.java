@@ -1,20 +1,21 @@
 package com.ssafy.realty.realty.domain;
 
 import lombok.Data;
+import lombok.Value;
 
 import java.time.LocalDateTime;
 
-@Data
+@Value
 public class CustomInfo {
-    private CustomInfoId customInfoId;
-    private CustomInfoData customInfoData;
+    CustomInfoId customInfoId;
+    CustomInfoData customInfoData;
 
-    @Data
+    @Value
     public static class CustomInfoId{
         Long id;
     }
 
-    @Data
+    @Value
     public static class CustomInfoData{
         String title;
         String author;

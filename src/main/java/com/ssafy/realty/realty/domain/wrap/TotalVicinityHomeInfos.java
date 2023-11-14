@@ -2,14 +2,11 @@ package com.ssafy.realty.realty.domain.wrap;
 
 import com.ssafy.realty.realty.domain.Marker;
 import lombok.Getter;
+import lombok.Value;
 
 import java.util.List;
 
-@Getter
+@Value
 public class TotalVicinityHomeInfos {
-    private final List<VicinityHomeInfos> total;
-
-    public TotalVicinityHomeInfos(List<VicinityHomeInfos> total) {
-        this.total = total;
-    }
+    List<VicinityHomeInfos> total;
 }

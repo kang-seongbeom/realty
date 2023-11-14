@@ -1,28 +1,19 @@
 package com.ssafy.realty.realty.domain;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Value
 public class VicinityHomeInfo {
-    private VicinityHomeInfoId vicinityHomeInfoId;
-    private VicinityHomeInfoData vicinityHomeInfoData;
+    VicinityHomeInfoId vicinityHomeInfoId;
+    VicinityHomeInfoData vicinityHomeInfoData;
 
 
     public static VicinityHomeInfo init(Long aptCode,
                                         String apartmentName,
-                                        Double lat,
-                                        Double lng,
-                                        String address,
-                                        Integer totalDealAmount,
-                                        Long maxDealAmount,
-                                        Long minDealAmount,
-                                        Double avgDealAmount,
-                                        Double avgArea) {
+                                        Double lat, Double lng,
+                                        String address, Integer totalDealAmount,
+                                        Long maxDealAmount, Long minDealAmount,
+                                        Double avgDealAmount, Double avgArea) {
 
         return new VicinityHomeInfo(
                 new VicinityHomeInfoId(aptCode),
@@ -35,23 +26,21 @@ public class VicinityHomeInfo {
         );
     }
 
-    @Getter
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @Value
     public static class VicinityHomeInfoId{
-        private Long aptCode;
+        Long aptCode;
     }
 
-    @Getter
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @Value
     public static class VicinityHomeInfoData {
-        private String apartmentName;
-        private Double lat;
-        private Double lng;
-        private String address;
-        private Integer totalDealAmount;
-        private Long maxDealAmount;
-        private Long minDealAmount;
-        private Double avgDealAmount;
-        private Double avgArea;
+        String apartmentName;
+        Double lat;
+        Double lng;
+        String address;
+        Integer totalDealAmount;
+        Long maxDealAmount;
+        Long minDealAmount;
+        Double avgDealAmount;
+        Double avgArea;
     }
 }

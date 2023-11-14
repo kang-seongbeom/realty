@@ -2,14 +2,11 @@ package com.ssafy.realty.realty.domain.wrap;
 
 import com.ssafy.realty.realty.domain.DealInfo;
 import lombok.Getter;
+import lombok.Value;
 
 import java.util.List;
 
-@Getter
+@Value
 public class DealInfos {
-    private final List<DealInfo> dealInfos;
-
-    public DealInfos(List<DealInfo> dealInfos) {
-        this.dealInfos = dealInfos;
-    }
+    List<DealInfo> dealInfos;
 }

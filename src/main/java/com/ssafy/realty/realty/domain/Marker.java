@@ -1,23 +1,17 @@
 package com.ssafy.realty.realty.domain;
 
 import com.ssafy.realty.common.TransportationType;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Value
 public class Marker {
-
-    private MarkerId markerId;
-    private MarkerData markerData;
+    MarkerId markerId;
+    MarkerData markerData;
 
     public static Marker init(Double lat, Double lng, String address,
                               String dateLower, String dateUpper,
@@ -36,18 +30,17 @@ public class Marker {
         );
     }
 
-    @Data
+    @Value
     private static class MarkerId{
-        private Long value;
+        Long value;
     }
 
-    @Data
-    @AllArgsConstructor
+    @Value
     public static class MarkerData{
-        private Double lat;
-        private Double lng;
-        private String address;
-        private MarkerFilter filter;
+        Double lat;
+        Double lng;
+        String address;
+        MarkerFilter filter;
 
         static MarkerFilter initMarkerFilter(String dateLower, String dateUpper,
                                               Long dealAmountLower, Long dealAmountUpper,
@@ -61,47 +54,41 @@ public class Marker {
             );
         }
 
-        @Data
-        @AllArgsConstructor
+        @Value
         public static class MarkerFilter {
-            private DateRange dayRange;
-            private DealAmountRange dealAmountRange;
-            private AreaRange areaRange;
-            private List<Transportation> transportations;
+            DateRange dayRange;
+            DealAmountRange dealAmountRange;
+            AreaRange areaRange;
+            List<Transportation> transportations;
 
-            @Data
-            @AllArgsConstructor
+            @Value
             public static class Range<T>{
                 T lower;
                 T upper;
             }
 
-            @Data
-            @AllArgsConstructor
+            @Value
             public static class DateRange {
                 Range<LocalDate> range;
             }
 
-            @Data
-            @AllArgsConstructor
+            @Value
             public static class DealAmountRange {
                 Range<Long> range;
             }
 
-            @Data
-            @AllArgsConstructor
+            @Value
             public static class AreaRange {
                 Range<Double> range;
             }
 
-            @Data
-            @AllArgsConstructor
+            @Value
             public static class Transportation {
                 TransportationType type;
                 Integer time;
             }
 
-            static DateRange initDateRange(String lower, String upper){
+            private static DateRange initDateRange(String lower, String upper){
                 if(lower == null) lower = "1900-01-01";
                 if(upper == null) upper = "2999-12-31";
 
@@ -111,21 +98,21 @@ public class Marker {
                 );
             }
 
-            static DealAmountRange initDealAmountRange(Long lower, Long upper){
+            private static DealAmountRange initDealAmountRange(Long lower, Long upper){
                 if(lower == null) lower = 0L;
                 if(upper == null) upper = 999_999_999_999L;
 
                 return new DealAmountRange(new Range<>(lower, upper));
             }
 
-            static AreaRange initAreaRange(Double lower, Double upper){
+            private static AreaRange initAreaRange(Double lower, Double upper){
                 if(lower == null) lower = 0.0;
                 if(upper == null) upper = 9_999_999.0;
 
                 return new AreaRange(new Range<>(lower, upper));
             }
 
-            static List<Transportation> initTransportations(List<String[]> transInfo){
+            private static List<Transportation> initTransportations(List<String[]> transInfo){
                 List<Transportation> result = new ArrayList<>();
 
                 for(String[] info : transInfo){

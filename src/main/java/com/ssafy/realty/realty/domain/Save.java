@@ -4,13 +4,12 @@ import com.ssafy.realty.realty.domain.wrap.Markers;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Value;
 
-@Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Value
 public class Save {
-
-    private SaveUserId saveUserId;
-    private SaveData saveData;
+    SaveUserId saveUserId;
+    SaveData saveData;
 
     public static Save init(Long userId, String title, Markers markers){
         return new Save(
@@ -19,16 +18,14 @@ public class Save {
         );
     }
 
-    @Getter
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @Value
     public static class SaveUserId {
-        private Long userId;
+        Long userId;
     }
 
-    @Getter
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @Value
     public static class SaveData {
-        private String title;
-        private Markers markers;
+        String title;
+        Markers markers;
     }
 }

@@ -3,15 +3,15 @@ package com.ssafy.realty.custom_deal.domain;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Value;
 
 import java.time.LocalDate;
 
-@Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Value
 public class Summary {
 
-    private CustomSummaryId customSummaryId;
-    private CustomSummaryData customSummaryData;
+    CustomSummaryId customSummaryId;
+    CustomSummaryData customSummaryData;
 
     public static Summary init(Long id, String author, String title, Integer look, Integer star, LocalDate createDate){
         return new Summary(
@@ -21,14 +21,12 @@ public class Summary {
     }
 
 
-    @Getter
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @Value
     public static class CustomSummaryId{
         Long value;
     }
 
-    @Getter
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @Value
     public static class CustomSummaryData{
         String author;
         String title;

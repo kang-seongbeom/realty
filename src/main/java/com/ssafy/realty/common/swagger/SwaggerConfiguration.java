@@ -1,4 +1,4 @@
-package com.ssafy.realty.common.swagger.config;
+package com.ssafy.realty.common.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,8 +28,20 @@ public class SwaggerConfiguration {
         return new Docket(DocumentationType.SWAGGER_2)
                 .consumes(getConsumeContentTypes())
                 .produces(getProduceContentType())
-                .apiInfo(apiInfo()).groupName("realty V1").select()
-                .apis(RequestHandlerSelectors.basePackage("com.ssafy.realty.realty.controller"))
+                .apiInfo(apiInfo()).groupName("Realty V1").select()
+                .apis(RequestHandlerSelectors.basePackage("com.ssafy.realty.realty.adapter.in.web"))
+                .paths(regex("/api/v1/*/.*"))
+                .build()
+                .useDefaultResponseMessages(false);
+    }
+
+    @Bean
+    public Docket customDeal() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .consumes(getConsumeContentTypes())
+                .produces(getProduceContentType())
+                .apiInfo(apiInfo()).groupName("Custom deal V1").select()
+                .apis(RequestHandlerSelectors.basePackage("com.ssafy.realty.custom_deal.adapter.in.web"))
                 .paths(regex("/api/v1/*/.*"))
                 .build()
                 .useDefaultResponseMessages(false);
@@ -40,7 +52,7 @@ public class SwaggerConfiguration {
         return new Docket(DocumentationType.SWAGGER_2)
                 .consumes(getConsumeContentTypes())
                 .produces(getProduceContentType())
-                .apiInfo(apiInfo()).groupName("user V1").select()
+                .apiInfo(apiInfo()).groupName("User V1").select()
                 .apis(RequestHandlerSelectors.basePackage("com.ssafy.realty.user.adapter.in.web"))
                 .paths(regex("/api/v1/*/.*"))
                 .build()
@@ -62,7 +74,7 @@ public class SwaggerConfiguration {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder().title(title)
-                .description("<h3>realty Api Document</h3>")
+                .description("<h3>Realty Api Document</h3>")
                 .contact(new Contact("ksb", "https://ksb-dev.tistory.com", "qkfka9045@gmail.com"))
                 .license("ksb license")
                 .version("1.0").build();

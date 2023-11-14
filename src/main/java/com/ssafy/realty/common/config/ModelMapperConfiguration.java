@@ -1,4 +1,4 @@
-package com.ssafy.realty.common.swagger.config;
+package com.ssafy.realty.common.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

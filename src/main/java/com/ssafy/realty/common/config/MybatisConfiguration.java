@@ -1,4 +1,4 @@
-package com.ssafy.realty.common.swagger.config;
+package com.ssafy.realty.common.config;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSessionFactory;

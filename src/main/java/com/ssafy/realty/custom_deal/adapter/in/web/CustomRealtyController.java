@@ -1,4 +1,4 @@
-package com.ssafy.realty.realty.adapter.in.web;
+package com.ssafy.realty.custom_deal.adapter.in.web;
 
 import com.ssafy.realty.common.swagger.ApiResponsesCommon;
 import com.ssafy.realty.realty.domain.wrap.CustomInfos;

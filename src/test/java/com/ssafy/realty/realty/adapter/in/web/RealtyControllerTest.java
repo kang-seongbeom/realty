@@ -100,7 +100,7 @@ class RealtyControllerTest extends RealtyJsonData {
         JSONArray markers = new JSONArray();
         markers.put(realtyInfoJsonBody());
 
-        String title = "나만의 매물 정보";
+        String title = "my own info";
         requestBody.put("title", title);
         requestBody.put("markers", markers);
 

@@ -51,6 +51,8 @@ public class RealtyAdapterMapper {
         CustomJpaEntity customJpa = CustomJpaEntity
                 .builder()
                 .title(save.getSaveData().getTitle())
+                .look(0)
+                .star(0)
                 .build();
 
         customJpa.setMarkers(getMarkerJpaEntities(save.getSaveData().getMarkers()));

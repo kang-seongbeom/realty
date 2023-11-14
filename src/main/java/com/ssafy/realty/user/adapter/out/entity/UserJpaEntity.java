@@ -3,8 +3,11 @@ package com.ssafy.realty.user.adapter.out.entity;
 import com.ssafy.realty.common.Role;
 import com.ssafy.realty.user.domain.UserDomain;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
@@ -30,6 +33,11 @@ public class UserJpaEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name = "createDate")
+    @CreationTimestamp
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate createDate;
 
     public void toUpdate(UserDomain updateWantUser){
         this.password = updateWantUser.getUserDomainData().getPassword();

@@ -4,8 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "markers")
@@ -27,6 +30,11 @@ public class MarkerJpaEntity {
 
     @Column
     private String address;
+
+    @Column(name = "createDate")
+    @CreationTimestamp
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate createDate;
 
     @ManyToOne
     @JoinColumn(name = "customs_id")

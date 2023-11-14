@@ -5,8 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "transportations")
@@ -25,6 +28,11 @@ public class TransportationJpaEntity {
 
     @Column
     private Integer time;
+
+    @Column(name = "createDate")
+    @CreationTimestamp
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate createDate;
 
     @ManyToOne
     @JoinColumn(name = "filters_id")

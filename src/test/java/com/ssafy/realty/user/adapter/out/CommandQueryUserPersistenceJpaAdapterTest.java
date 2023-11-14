@@ -102,6 +102,7 @@ class CommandQueryUserPersistenceJpaAdapterTest {
 
     @Test
     @DisplayName("회원 정보 조회")
+    @Transactional
     public void query(){
         // given
         UserDomain userDomain = defaultUserDomain();

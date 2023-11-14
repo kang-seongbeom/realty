@@ -116,7 +116,7 @@ class RealtyControllerTest extends RealtyJsonData {
     }
 
     private String getAccessToken(){
-        User user = new User(null, "qkfka9045@gmail.com", encoder.encode("a1234567"), "nick", Role.USER);
+        User user = new User(null, "realtyqkfka9045@gmail.com", encoder.encode("a1234567"), "nick", Role.USER);
         userRepository.save(user);
         return getAuthorizedUserToken(user);
     }

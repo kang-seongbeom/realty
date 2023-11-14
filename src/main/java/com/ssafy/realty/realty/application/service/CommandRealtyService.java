@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//@Transactional(readOnly = true)
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class CommandRealtyService implements CommandRealtyUseCase {
@@ -18,7 +18,7 @@ public class CommandRealtyService implements CommandRealtyUseCase {
 
     private final CommandRealtyPort commandRealtyPort;
 
-    //@Transactional
+    @Transactional
     @Override
     public void save(SaveDto saveDto) {
         Save save = realtyServiceMapper.mapToSave(saveDto);

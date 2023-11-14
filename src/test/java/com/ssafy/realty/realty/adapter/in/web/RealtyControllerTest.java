@@ -2,28 +2,28 @@ package com.ssafy.realty.realty.adapter.in.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.realty.common.Role;
+import com.ssafy.realty.realty.adapter.out.CommandRealtyPersistenceAdapter;
+import com.ssafy.realty.realty.adapter.out.entity.CustomJpaEntity;
+import com.ssafy.realty.realty.adapter.out.repository.CustomJpaRepository;
+import com.ssafy.realty.realty.domain.Marker;
+import com.ssafy.realty.realty.domain.Save;
+import com.ssafy.realty.realty.domain.wrap.Markers;
 import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import com.ssafy.realty.security.config.jwt.JwtManager;
 import com.ssafy.realty.security.entity.User;
 import com.ssafy.realty.security.repository.UserRepository;
-import com.ssafy.realty.user.application.port.in.CommandUserUseCase;
-import com.ssafy.realty.user.application.port.in.QueryUserUseCase;
-import com.ssafy.realty.user.application.port.in.dto.QueryResponseDto;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -56,8 +54,15 @@ class RealtyControllerTest extends RealtyJsonData {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CommandRealtyPersistenceAdapter commandRealtyPersistenceAdapter;
+
+    @Autowired
+    private CustomJpaRepository customJpaRepository;
+
     @Test
     @DisplayName("마커 주변 집 정보")
+    @Transactional
     public void realtyInfoTest() throws Exception {
         // given
         JSONObject requestBody = realtyInfoJsonBody();
@@ -116,10 +121,39 @@ class RealtyControllerTest extends RealtyJsonData {
                 .andExpect(status().isOk());
     }
 
-    private String getAccessToken(){
+    @Test
+    @DisplayName("저장된 커스컴 매물 정보 확인")
+    @Transactional
+    public void custom() throws Exception {
+        // given
+        String expect = "{\"data\":[{\"lat\":12.0,\"lng\":133.0,\"address\":\"address\",\"filter\":{\"date\":{\"lower\":\"2017-03-23\",\"upper\":\"2020-04-04\"},\"dealAmount\":{\"lower\":10,\"upper\":20},\"area\":{\"lower\":10.1,\"upper\":11.1},\"transportations\":[{\"type\":\"WALK\",\"time\":5},{\"type\":\"BYCYCLE\",\"time\":10}]}},{\"lat\":22.0,\"lng\":233.0,\"address\":\"address\",\"filter\":{\"date\":{\"lower\":\"2010-01-01\",\"upper\":\"2050-12-31\"},\"dealAmount\":{\"lower\":100,\"upper\":20123},\"area\":{\"lower\":11230.1,\"upper\":111233.1},\"transportations\":[{\"type\":\"WALK\",\"time\":5},{\"type\":\"BYCYCLE\",\"time\":10}]}}]}";
+
+        saveCustom(getUserId(defaultUser()));
+
+        List<CustomJpaEntity> all = customJpaRepository.findAll();
+        Long lastInsertCustomId = all.get(all.size()-1).getId();
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/api/v1/realty/custom/" + lastInsertCustomId);
+
+        // when, then
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(content().json(expect));
+    }
+
+
+    private User defaultUser() {
         User user = new User(null, "realtyqkfka9045@gmail.com", encoder.encode("a1234567"), "nick", Role.USER);
-        userRepository.save(user);
-        return getAuthorizedUserToken(user);
+        return userRepository.save(user);
+    }
+
+    private Long getUserId(User savedUser){
+        return savedUser.getId();
+    }
+
+    private String getAccessToken() {
+        return getAuthorizedUserToken(defaultUser());
     }
 
     private String getAuthorizedUserToken(User saved) {
@@ -132,5 +166,33 @@ class RealtyControllerTest extends RealtyJsonData {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         return "Bearer " + accessToken;
+    }
+
+    private static Markers customData() {
+        List<String[]> ts = new ArrayList<>();
+        ts.add(new String[]{"walk", "5"});
+        ts.add(new String[]{"bicycle", "10"});
+
+        Marker marker1 = Marker.init(12.0, 133.0,
+                "address", "2017-03-23",
+                "2020-04-04",
+                10L, 20L,
+                10.1, 11.1, ts);
+        Marker marker2 = Marker.init(22.0, 233.0,
+                "address", "2010-01-01",
+                "2050-12-31",
+                100L, 20123L,
+                11230.1, 111233.1, ts);
+        List<Marker> data = new ArrayList<>();
+        data.add(marker1);
+        data.add(marker2);
+
+        return new Markers(data);
+    }
+
+    private void saveCustom(Long userId){
+        String title = "kkk 제목 title";
+
+        commandRealtyPersistenceAdapter.save(Save.init(userId, title, customData()));
     }
 }

@@ -32,9 +32,4 @@ public class CustomController {
         return ResponseEntity.ok(total);
     }
 
-    @GetMapping("/{customId}")
-    ResponseEntity<Markers> detailCustomInfo(@PathVariable Long customId) {
-        Markers markers = new Markers(Collections.emptyList());
-        return ResponseEntity.ok(markers);
-    }
 }

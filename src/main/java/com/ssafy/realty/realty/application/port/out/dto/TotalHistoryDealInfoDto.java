@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Getter
 @Builder
-public class TotalHistoryDealInfo {
+public class TotalHistoryDealInfoDto {
 
     private String aptCode;
     private String apartmentName;

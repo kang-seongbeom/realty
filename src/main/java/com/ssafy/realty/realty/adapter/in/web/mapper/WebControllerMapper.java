@@ -1,10 +1,10 @@
 package com.ssafy.realty.realty.adapter.in.web.mapper;
 
 import com.ssafy.realty.realty.adapter.in.web.payload.SavePayload;
-import com.ssafy.realty.realty.application.port.in.dto.MarkerDto;
+import com.ssafy.realty.realty.application.port.common_dto.MarkerDto;
 import com.ssafy.realty.realty.adapter.in.web.payload.MarkerPayload;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
-import com.ssafy.realty.realty.application.port.in.dto.wrap.MarkerDtos;
+import com.ssafy.realty.realty.application.port.common_dto.wrap.MarkerDtos;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

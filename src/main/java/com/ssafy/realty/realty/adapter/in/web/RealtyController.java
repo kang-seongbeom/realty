@@ -5,11 +5,12 @@ import com.ssafy.realty.common.swagger.ApiResponsesCommon;
 import com.ssafy.realty.realty.adapter.in.web.mapper.WebControllerMapper;
 import com.ssafy.realty.realty.adapter.in.web.payload.MarkerPayload;
 import com.ssafy.realty.realty.adapter.in.web.payload.SavePayload;
+import com.ssafy.realty.realty.application.port.common_dto.wrap.MarkerDtos;
 import com.ssafy.realty.realty.application.port.in.CommandRealtyUseCase;
 import com.ssafy.realty.realty.application.port.in.QueryRealtyUseCase;
-import com.ssafy.realty.realty.application.port.in.dto.MarkerDto;
+import com.ssafy.realty.realty.application.port.common_dto.MarkerDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
-import com.ssafy.realty.realty.application.port.out.dto.wrap.TotalHistoryDealInfos;
+import com.ssafy.realty.realty.application.port.out.dto.wrap.TotalHistoryDealInfoDtos;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.VicinityHomeInfoDtos;
 import com.ssafy.realty.realty.domain.wrap.Markers;
 import com.ssafy.realty.security.config.auth.PrincipalDetails;
@@ -72,9 +73,9 @@ class RealtyController {
     @GetMapping("/{aptCode}")
     @ApiOperation(value = "집의 전체 거래 정보", notes = "하나의 집에 대한 전체 거래 정보를 조회 후 반환한다.")
     @ApiResponsesCommon
-    ResponseEntity<TotalHistoryDealInfos> totalHistory(@PathVariable String aptCode){
-        TotalHistoryDealInfos totalHistoryDealInfos = queryRealtyUseCase.queryTotalHistory(aptCode);
-        return ResponseEntity.ok(totalHistoryDealInfos);
+    ResponseEntity<TotalHistoryDealInfoDtos> totalHistory(@PathVariable String aptCode){
+        TotalHistoryDealInfoDtos totalHistoryDealInfoDtos = queryRealtyUseCase.queryTotalHistory(aptCode);
+        return ResponseEntity.ok(totalHistoryDealInfoDtos);
     }
 
     @PostMapping("/save")
@@ -85,5 +86,13 @@ class RealtyController {
         SaveDto saveDto = webControllerMapper.mapToSaveDto(principalDetails.getUser().getId(), savePayload);
         commandRealtyUseCase.save(saveDto);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/custom/{customId}")
+    @ApiOperation(value = "커스텀 매물 정보 보기", notes = "다른(or 같은) 사용자가 만든 상세 매물 정보 확인")
+    @ApiResponsesCommon
+    ResponseEntity<MarkerDtos> detailCustomInfo(@PathVariable Long customId) {
+        MarkerDtos markerDtos = queryRealtyUseCase.queryCustomInfo(customId);
+        return ResponseEntity.ok(markerDtos);
     }
 }

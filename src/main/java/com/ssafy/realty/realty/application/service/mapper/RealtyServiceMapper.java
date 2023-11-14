@@ -1,11 +1,11 @@
 package com.ssafy.realty.realty.application.service.mapper;
 
-import com.ssafy.realty.realty.application.port.in.dto.MarkerDto;
+import com.ssafy.realty.realty.application.port.common_dto.MarkerDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
-import com.ssafy.realty.realty.application.port.in.dto.wrap.MarkerDtos;
-import com.ssafy.realty.realty.application.port.out.dto.TotalHistoryDealInfo;
+import com.ssafy.realty.realty.application.port.common_dto.wrap.MarkerDtos;
+import com.ssafy.realty.realty.application.port.out.dto.TotalHistoryDealInfoDto;
 import com.ssafy.realty.realty.application.port.out.dto.VicinityHomeInfosDto;
-import com.ssafy.realty.realty.application.port.out.dto.wrap.TotalHistoryDealInfos;
+import com.ssafy.realty.realty.application.port.out.dto.wrap.TotalHistoryDealInfoDtos;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.VicinityHomeInfoDtos;
 import com.ssafy.realty.realty.domain.DealInfo;
 import com.ssafy.realty.realty.domain.Marker;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Component
 public class RealtyServiceMapper {
 
-    public Marker mapToMarker(MarkerDto markerDto){
+    public Marker mapToMarker(MarkerDto markerDto) {
         return Marker.init(
                 markerDto.getLat(), markerDto.getLng(), markerDto.getAddress(),
                 markerDto.getFilter().getDate() != null ? markerDto.getFilter().getDate().getLower() : null,
@@ -46,12 +46,12 @@ public class RealtyServiceMapper {
         return new VicinityHomeInfoDtos(data);
     }
 
-    public TotalHistoryDealInfos mapToTotalHistoryDealInfos(DealInfos dealInfos){
-        List<TotalHistoryDealInfo> data = dealInfos.getDealInfos()
+    public TotalHistoryDealInfoDtos mapToTotalHistoryDealInfos(DealInfos dealInfos) {
+        List<TotalHistoryDealInfoDto> data = dealInfos.getDealInfos()
                 .stream()
                 .map(this::mapToTotalHistoryDealInfo)
                 .collect(Collectors.toList());
-        return new TotalHistoryDealInfos(data);
+        return new TotalHistoryDealInfoDtos(data);
     }
 
     public Save mapToSave(SaveDto saveDto) {
@@ -64,8 +64,58 @@ public class RealtyServiceMapper {
         return Save.init(saveDto.getUserId(), saveDto.getTitle(), new Markers(data));
     }
 
-    private TotalHistoryDealInfo mapToTotalHistoryDealInfo(DealInfo dealInfo){
-        return TotalHistoryDealInfo
+    public MarkerDtos mapToMarkerDtos(Markers markers) {
+        List<MarkerDto> data = markers.getMarkers()
+                .stream()
+                .map(this::mapToMarkerDto)
+                .collect(Collectors.toList());
+
+        return new MarkerDtos(data);
+    }
+
+    private MarkerDto mapToMarkerDto(Marker marker) {
+        return MarkerDto.builder()
+                .lat(marker.getMarkerData().getLat())
+                .lng(marker.getMarkerData().getLng())
+                .address(marker.getMarkerData().getAddress())
+                .filter(mapToDtoMarkerFilter(marker.getMarkerData().getFilter()))
+                .build();
+    }
+
+    private MarkerDto.DtoMarkerFilter mapToDtoMarkerFilter(Marker.MarkerData.MarkerFilter markerFilter){
+        return MarkerDto.DtoMarkerFilter
+                .builder()
+                .date(mapToPayloadDateRange(markerFilter.getDayRange()))
+                .dealAmount(mapToPayloadDealAmountRange(markerFilter.getDealAmountRange()))
+                .area(mapToPayloadAreaRange(markerFilter.getAreaRange()))
+                .transportations(mapToPayloadTransportations(markerFilter.getTransportations()))
+                .build();
+    }
+
+    private MarkerDto.DtoMarkerFilter.PayloadDateRange mapToPayloadDateRange(Marker.MarkerData.MarkerFilter.DateRange date) {
+        return new MarkerDto.DtoMarkerFilter.PayloadDateRange(date.getRange().getLower().toString(), date.getRange().getUpper().toString());
+    }
+
+    private MarkerDto.DtoMarkerFilter.PayloadDealAmountRange mapToPayloadDealAmountRange(Marker.MarkerData.MarkerFilter.DealAmountRange dealAmount) {
+        return new MarkerDto.DtoMarkerFilter.PayloadDealAmountRange(dealAmount.getRange().getLower(), dealAmount.getRange().getUpper());
+    }
+
+    private MarkerDto.DtoMarkerFilter.PayloadAreaRange mapToPayloadAreaRange(Marker.MarkerData.MarkerFilter.AreaRange area){
+        return new MarkerDto.DtoMarkerFilter.PayloadAreaRange(area.getRange().getLower(), area.getRange().getUpper());
+    }
+
+    private List<MarkerDto.DtoMarkerFilter.PayloadTransportation> mapToPayloadTransportations(List<Marker.MarkerData.MarkerFilter.Transportation> trans) {
+        return trans.stream()
+                .map(this::mapToPayloadTransportation)
+                .collect(Collectors.toList());
+    }
+
+    private MarkerDto.DtoMarkerFilter.PayloadTransportation mapToPayloadTransportation(Marker.MarkerData.MarkerFilter.Transportation t) {
+        return new MarkerDto.DtoMarkerFilter.PayloadTransportation(t.getType().toString(), t.getTime());
+    }
+
+    private TotalHistoryDealInfoDto mapToTotalHistoryDealInfo(DealInfo dealInfo) {
+        return TotalHistoryDealInfoDto
                 .builder()
                 .aptCode(dealInfo.getDealInfoArtCode().getArtCode())
                 .apartmentName(dealInfo.getDealInfoData().getApartmentName())
@@ -78,10 +128,10 @@ public class RealtyServiceMapper {
                 .build();
     }
 
-    private List<String[]> getTransportations(MarkerDto markerDto){
+    private List<String[]> getTransportations(MarkerDto markerDto) {
         List<String[]> transportations = new ArrayList<>();
-        if(markerDto.getFilter().getTransportations() != null){
-            for(MarkerDto.DtoMarkerFilter.PayloadTransportation p: markerDto.getFilter().getTransportations()){
+        if (markerDto.getFilter().getTransportations() != null) {
+            for (MarkerDto.DtoMarkerFilter.PayloadTransportation p : markerDto.getFilter().getTransportations()) {
                 String[] trans = new String[2];
                 trans[0] = p.getType();
                 trans[1] = String.valueOf(p.getTime());

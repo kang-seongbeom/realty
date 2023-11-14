@@ -13,6 +13,7 @@ import com.ssafy.realty.realty.domain.wrap.TotalVicinityHomeInfos;
 import com.ssafy.realty.realty.domain.wrap.VicinityHomeInfos;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,10 +33,10 @@ public class RealtyAdapterMapper {
         return new VicinityHomeInfos(elements, type, time);
     }
 
-    public DealInfos mapToDealInfos(HouseInfoJpaEntity info){
+    public DealInfos mapToDealInfos(HouseInfoJpaEntity info) {
         List<DealInfo> data = new ArrayList<>();
 
-        for(HouseDealJpaEntity deal : info.getHousedeals()){
+        for (HouseDealJpaEntity deal : info.getHousedeals()) {
             DealInfo init = DealInfo.init(info.getAptCode(), info.getApartmentName(),
                     info.getLat(), info.getLng(),
                     info.getDong(), info.getRoadName(),
@@ -47,7 +48,7 @@ public class RealtyAdapterMapper {
         return new DealInfos(data);
     }
 
-    public CustomJpaEntity mapToCustomJpaEntity(Save save){
+    public CustomJpaEntity mapToCustomJpaEntity(Save save) {
         CustomJpaEntity customJpa = CustomJpaEntity
                 .builder()
                 .title(save.getSaveData().getTitle())
@@ -59,6 +60,58 @@ public class RealtyAdapterMapper {
         return customJpa;
     }
 
+    public Markers mapToMarkers(CustomJpaEntity customJpaEntity) {
+        List<Marker> data = customJpaEntity.getMarkers()
+                .stream()
+                .map(this::mapToMarker)
+                .collect(Collectors.toList());
+
+        return new Markers(data);
+    }
+
+    private Marker mapToMarker(MarkerJpaEntity markerJpa){
+        return Marker.init(
+                markerJpa.getId(),
+                markerJpa.getLat(), markerJpa.getLng(), markerJpa.getAddress(),
+                mapToMarkerFilter(markerJpa.getFilter())
+        );
+    }
+
+    private Marker.MarkerData.MarkerFilter mapToMarkerFilter(FilterJpaEntity filterJpa) {
+        return new Marker.MarkerData.MarkerFilter(
+                mapToDateRange(filterJpa.getDateLower(), filterJpa.getDateUpper()),
+                mapToDealAmountRange(filterJpa.getDealAmountLower(), filterJpa.getDealAmountUpper()),
+                mapToAreaRange(filterJpa.getAreaLower(), filterJpa.getAreaUpper()),
+                mapToTransportations(filterJpa.getTransportations())
+        );
+    }
+
+    private <T> Marker.MarkerData.MarkerFilter.Range<T> range(T lower, T upper) {
+        return new Marker.MarkerData.MarkerFilter.Range<>(lower, upper);
+    }
+
+    private Marker.MarkerData.MarkerFilter.DateRange mapToDateRange(LocalDate dateLower, LocalDate dateUpper) {
+        return new Marker.MarkerData.MarkerFilter.DateRange(range(dateLower, dateUpper));
+    }
+
+    private Marker.MarkerData.MarkerFilter.DealAmountRange mapToDealAmountRange(Long amountLower, Long amountUpper) {
+        return new Marker.MarkerData.MarkerFilter.DealAmountRange(range(amountLower, amountUpper));
+    }
+
+    private Marker.MarkerData.MarkerFilter.AreaRange mapToAreaRange(Double areaLower, Double areaUpper) {
+        return new Marker.MarkerData.MarkerFilter.AreaRange(range(areaLower, areaUpper));
+    }
+
+    private List<Marker.MarkerData.MarkerFilter.Transportation> mapToTransportations(List<TransportationJpaEntity> trans) {
+        return trans.stream()
+                .map(this::mapToTransportation)
+                .collect(Collectors.toList());
+    }
+
+    private Marker.MarkerData.MarkerFilter.Transportation mapToTransportation(TransportationJpaEntity trans) {
+        return new Marker.MarkerData.MarkerFilter.Transportation(trans.getType(), trans.getTime());
+    }
+
     private List<MarkerJpaEntity> getMarkerJpaEntities(Markers markers) {
         return markers.getMarkers()
                 .stream()
@@ -66,7 +119,7 @@ public class RealtyAdapterMapper {
                 .collect(Collectors.toList());
     }
 
-    private MarkerJpaEntity mapToMarkerJpaEntity(Marker marker){
+    private MarkerJpaEntity mapToMarkerJpaEntity(Marker marker) {
         MarkerJpaEntity markerJpa = MarkerJpaEntity
                 .builder()
                 .lat(marker.getMarkerData().getLat())
@@ -100,7 +153,7 @@ public class RealtyAdapterMapper {
                 .collect(Collectors.toList());
     }
 
-    private TransportationJpaEntity mapToTransportationJpaEntity(Marker.MarkerData.MarkerFilter.Transportation transportation){
+    private TransportationJpaEntity mapToTransportationJpaEntity(Marker.MarkerData.MarkerFilter.Transportation transportation) {
         return TransportationJpaEntity
                 .builder()
                 .type(transportation.getType())

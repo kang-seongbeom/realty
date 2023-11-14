@@ -1,9 +1,7 @@
 package com.ssafy.realty.realty.application.port.in.dto;
 
-import com.ssafy.realty.realty.application.port.in.dto.wrap.MarkerDtos;
+import com.ssafy.realty.realty.application.port.common_dto.wrap.MarkerDtos;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class SaveDto {

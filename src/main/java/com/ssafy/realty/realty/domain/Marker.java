@@ -30,6 +30,15 @@ public class Marker {
         );
     }
 
+    public static Marker init(Long markerId,
+                              Double lat, Double lng, String address,
+                              MarkerData.MarkerFilter filter){
+        return new Marker(
+                new MarkerId(markerId),
+                new MarkerData(lat, lng, address, filter)
+        );
+    }
+
     @Value
     private static class MarkerId{
         Long value;
@@ -61,7 +70,8 @@ public class Marker {
             AreaRange areaRange;
             List<Transportation> transportations;
 
-            @Value
+            @Getter
+            @AllArgsConstructor
             public static class Range<T>{
                 T lower;
                 T upper;

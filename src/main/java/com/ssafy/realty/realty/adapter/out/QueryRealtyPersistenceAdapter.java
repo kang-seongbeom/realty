@@ -70,6 +70,13 @@ public class QueryRealtyPersistenceAdapter implements QueryRealtyPort {
         return count > 0;
     }
 
+    @Override
+    public Markers loadTemporary(Long userId) {
+        CustomJpaEntity customJpaEntity = customJpaRepository.findByUserId(userId);
+
+        return realtyAdapterMapper.mapToMarkers(customJpaEntity);
+    }
+
     private String findDongCode(String address){
         String[] ad = address.split(" ");
 

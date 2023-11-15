@@ -25,6 +25,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -177,6 +178,28 @@ class RealtyControllerTest extends RealtyJsonData {
         // when, then
         mockMvc.perform(request)
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("임시 저장된  데이터가 없으면 204 반환")
+    @Transactional
+    public void loadTmp() throws Exception {
+        // given
+        String expect = "{\"data\":[{\"lat\":12.0,\"lng\":133.0,\"address\":\"address\",\"filter\":{\"date\":{\"lower\":\"2017-03-23\",\"upper\":\"2020-04-04\"},\"dealAmount\":{\"lower\":10,\"upper\":20},\"area\":{\"lower\":10.1,\"upper\":11.1},\"transportations\":[{\"type\":\"WALK\",\"time\":5},{\"type\":\"BYCYCLE\",\"time\":10}]}},{\"lat\":22.0,\"lng\":233.0,\"address\":\"address\",\"filter\":{\"date\":{\"lower\":\"2010-01-01\",\"upper\":\"2050-12-31\"},\"dealAmount\":{\"lower\":100,\"upper\":20123},\"area\":{\"lower\":11230.1,\"upper\":111233.1},\"transportations\":[{\"type\":\"WALK\",\"time\":5},{\"type\":\"BYCYCLE\",\"time\":10}]}}]}";
+
+        User user = registDefaultUser();
+
+        saveTmp(user.getId());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/api/v1/realty/tmp")
+                .header("accessToken", getAuthorizedUserToken(user))
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // when, then
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(content().json(expect));
     }
 
     @Test

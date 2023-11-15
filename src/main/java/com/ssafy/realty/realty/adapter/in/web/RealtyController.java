@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.NoResultException;
 import javax.validation.Valid;
 import java.util.Collections;
 
@@ -37,13 +38,15 @@ class RealtyController {
 
     private final WebControllerMapper webControllerMapper;
 
+    private boolean isExistTemporary(Long userId){
+        return queryRealtyUseCase.isTemporarySaved(userId);
+    }
+
     @GetMapping("/tmp/is-saved")
     @ApiOperation(value = "임시 저장된 마커 존재 확인", notes = "임시 저장된 마커 확인")
     @ApiResponsesCommon
     ResponseEntity<Void> isSavedTmpMarkers(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-
-        boolean isTemporarySaved = queryRealtyUseCase.isTemporarySaved(principalDetails.getUser().getId());
-        if (isTemporarySaved) {
+        if (isExistTemporary(principalDetails.getUser().getId())) {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.noContent().build();
@@ -52,9 +55,16 @@ class RealtyController {
     @GetMapping("/tmp")
     @ApiOperation(value = "임시 저장된 마커 호출", notes = "임시 저장된 마커를 호출해 반환")
     @ApiResponsesCommon
-    ResponseEntity<Markers> loadTmpMarkers() {
-        Markers markers = new Markers(Collections.emptyList());
-        return ResponseEntity.ok(markers);
+    ResponseEntity<MarkerDtos> loadTmpMarkers(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long userId = principalDetails.getUser().getId();
+
+        if(!isExistTemporary(userId)){
+            throw new NoResultException("임시 저장된 데이터가 없습니다.");
+        }
+
+        MarkerDtos markerDtos = queryRealtyUseCase.loadTemporary(userId);
+
+        return ResponseEntity.ok(markerDtos);
     }
 
     @PostMapping("/tmp/save")

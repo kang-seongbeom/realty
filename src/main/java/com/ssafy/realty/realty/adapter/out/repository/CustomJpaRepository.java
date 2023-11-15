@@ -9,4 +9,7 @@ public interface CustomJpaRepository extends JpaRepository<CustomJpaEntity, Long
 
     @Query(value = "select count(*) from customs where users_id = :userId and is_tmp = 'true'", nativeQuery = true)
     Integer countByUserIdAndIsTmpTrue(Long userId);
+
+    @Query("select c from CustomJpaEntity  c where c.user.id = :userId")
+    CustomJpaEntity findByUserId(Long userId);
 }

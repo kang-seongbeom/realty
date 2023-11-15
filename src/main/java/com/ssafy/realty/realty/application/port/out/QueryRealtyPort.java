@@ -13,4 +13,6 @@ public interface QueryRealtyPort {
     Markers queryCustomInfo(Long customId);
 
     boolean isTemporarySaved(Long userId);
+
+    Markers loadTemporary(Long userId);
 }

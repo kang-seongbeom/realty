@@ -18,9 +18,11 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.time.LocalDate.now;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,7 +51,8 @@ class CustomControllerTest {
 
         List<CustomDealJpaEntity> all = customDealJpaRepository.findAll();
         Long lastInsertId = all.get(all.size() - 1).getId();
-        String expect = String.format("{\"data\":[{\"id\":%d,\"author\":\"ksb\",\"title\":\"kkk 제목 title\",\"look\":0,\"start\":0,\"createDate\":\"2023-11-14\"}]}", lastInsertId);
+        String now = now().format(DateTimeFormatter.ISO_DATE);
+        String expect = String.format("{\"data\":[{\"id\":%d,\"author\":\"ksb\",\"title\":\"kkk 제목 title\",\"look\":0,\"start\":0,\"createDate\":\"%s\"}]}", lastInsertId, now);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get("/api/v1/custom/total");

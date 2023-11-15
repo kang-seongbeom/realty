@@ -122,6 +122,29 @@ class RealtyControllerTest extends RealtyJsonData {
     }
 
     @Test
+    @DisplayName("임시 저장")
+    @Transactional
+    public void saveTmp() throws Exception {
+        // given
+        JSONObject requestBody = new JSONObject();
+
+        JSONArray markers = new JSONArray();
+        markers.put(realtyInfoJsonBody());
+
+        requestBody.put("markers", markers);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post("/api/v1/realty/tmp/save")
+                .header("accessToken", getAccessToken())
+                .content(requestBody.toString())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // when, then
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+    }
+
+    @Test
     @DisplayName("저장된 커스컴 매물 정보 확인")
     @Transactional
     public void custom() throws Exception {
@@ -144,7 +167,7 @@ class RealtyControllerTest extends RealtyJsonData {
 
 
     private User defaultUser() {
-        User user = new User(null, "realtyqkfka9045@gmail.com", encoder.encode("a1234567"), "nick", Role.USER);
+        User user = new User(null, "zrealtyqkfka9045@gmail.com", encoder.encode("a1234567"), "nick", Role.USER);
         return userRepository.save(user);
     }
 

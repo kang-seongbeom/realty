@@ -3,10 +3,7 @@ package com.ssafy.realty.realty.adapter.out.mapper;
 import com.ssafy.realty.common.TransportationType;
 import com.ssafy.realty.realty.adapter.out.entity.*;
 import com.ssafy.realty.realty.adapter.out.entity.mybatis.MarkerVicinityHomeInfo;
-import com.ssafy.realty.realty.domain.DealInfo;
-import com.ssafy.realty.realty.domain.Marker;
-import com.ssafy.realty.realty.domain.Save;
-import com.ssafy.realty.realty.domain.VicinityHomeInfo;
+import com.ssafy.realty.realty.domain.*;
 import com.ssafy.realty.realty.domain.wrap.DealInfos;
 import com.ssafy.realty.realty.domain.wrap.Markers;
 import com.ssafy.realty.realty.domain.wrap.TotalVicinityHomeInfos;
@@ -58,6 +55,12 @@ public class RealtyAdapterMapper {
 
         customJpa.setMarkers(getMarkerJpaEntities(save.getSaveData().getMarkers()));
         return customJpa;
+    }
+
+    public TemporaryCustomJpaEntity mapToTemporaryJpaEntity(SaveTemporary saveTemporary) {
+        TemporaryCustomJpaEntity temporaryCustomJpa = new TemporaryCustomJpaEntity();
+        temporaryCustomJpa.setMarkers(getMarkerJpaEntities(saveTemporary.getSaveData().getMarkers()));
+        return temporaryCustomJpa;
     }
 
     public Markers mapToMarkers(CustomJpaEntity customJpaEntity) {

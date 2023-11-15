@@ -17,6 +17,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "is_tmp", discriminatorType = DiscriminatorType.STRING)
 public class CustomJpaEntity {
 
     @Id

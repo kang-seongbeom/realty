@@ -3,14 +3,12 @@ package com.ssafy.realty.realty.application.service.mapper;
 import com.ssafy.realty.realty.application.port.common_dto.MarkerDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
 import com.ssafy.realty.realty.application.port.common_dto.wrap.MarkerDtos;
+import com.ssafy.realty.realty.application.port.in.dto.SaveTemporaryDto;
 import com.ssafy.realty.realty.application.port.out.dto.TotalHistoryDealInfoDto;
 import com.ssafy.realty.realty.application.port.out.dto.VicinityHomeInfosDto;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.TotalHistoryDealInfoDtos;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.VicinityHomeInfoDtos;
-import com.ssafy.realty.realty.domain.DealInfo;
-import com.ssafy.realty.realty.domain.Marker;
-import com.ssafy.realty.realty.domain.Save;
-import com.ssafy.realty.realty.domain.VicinityHomeInfo;
+import com.ssafy.realty.realty.domain.*;
 import com.ssafy.realty.realty.domain.wrap.DealInfos;
 import com.ssafy.realty.realty.domain.wrap.Markers;
 import com.ssafy.realty.realty.domain.wrap.TotalVicinityHomeInfos;
@@ -55,13 +53,20 @@ public class RealtyServiceMapper {
     }
 
     public Save mapToSave(SaveDto saveDto) {
-        MarkerDtos markers = saveDto.getMarkers();
-        List<Marker> data = markers.getData()
+        return Save.init(saveDto.getUserId(), saveDto.getTitle(), mapToMarkers(saveDto.getMarkers()));
+    }
+
+    public SaveTemporary mapToSaveTemporary(SaveTemporaryDto saveTemporaryDto) {
+        return SaveTemporary.init(saveTemporaryDto.getId(), mapToMarkers(saveTemporaryDto.getMarkers()));
+    }
+
+    public Markers mapToMarkers(MarkerDtos markerDtos){
+        List<Marker> data = markerDtos.getData()
                 .stream()
                 .map(this::mapToMarker)
                 .collect(Collectors.toList());
 
-        return Save.init(saveDto.getUserId(), saveDto.getTitle(), new Markers(data));
+        return new Markers(data);
     }
 
     public MarkerDtos mapToMarkerDtos(Markers markers) {

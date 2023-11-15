@@ -25,21 +25,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("부동산 컨트롤러 통합 테스트")
-class RealtyControllerTest extends RealtyJsonData {
+class RealtyControllerTest extends RealtyData {
 
     @Autowired
     private MockMvc mockMvc;
@@ -147,6 +147,38 @@ class RealtyControllerTest extends RealtyJsonData {
     }
 
     @Test
+    @DisplayName("기존에 임시 저장된 데이터가 있으면 덮어씌움")
+    @Transactional
+    public void coverTmpData() throws Exception {
+        // given
+        User user = registDefaultUser();
+        saveTmp(user.getId());
+
+        JSONObject requestBody = new JSONObject();
+        JSONArray markers = new JSONArray();
+        markers.put(realtyInfoJsonBodyVersion2());
+
+        requestBody.put("markers", markers);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post("/api/v1/realty/tmp/save")
+                .header("accessToken", getAuthorizedUserToken(user))
+                .content(requestBody.toString())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // when
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+
+        // then
+        CustomJpaEntity customJpaEntity = customJpaRepository.findByUserId(user.getId());
+        assertNotNull(customJpaEntity);
+        assertThat(customJpaEntity.getMarkers().get(0).getLat()).isEqualTo(realtyInfoJsonBodyVersion2().getDouble("lat"));
+        assertThat(customJpaEntity.getMarkers().get(0).getLng()).isEqualTo(realtyInfoJsonBodyVersion2().getDouble("lng"));
+        assertThat(customJpaEntity.getMarkers().get(0).getAddress()).isEqualTo(realtyInfoJsonBodyVersion2().getString("address"));
+    }
+
+    @Test
     @DisplayName("임시 저장된  데이터가 있는지 확인")
     @Transactional
     public void isSaveTmp() throws Exception {
@@ -181,7 +213,7 @@ class RealtyControllerTest extends RealtyJsonData {
     }
 
     @Test
-    @DisplayName("임시 저장된  데이터가 없으면 204 반환")
+    @DisplayName("임시 저장된 데이터 로드")
     @Transactional
     public void loadTmp() throws Exception {
         // given
@@ -247,28 +279,6 @@ class RealtyControllerTest extends RealtyJsonData {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         return "Bearer " + accessToken;
-    }
-
-    private static Markers customData() {
-        List<String[]> ts = new ArrayList<>();
-        ts.add(new String[]{"walk", "5"});
-        ts.add(new String[]{"bicycle", "10"});
-
-        Marker marker1 = Marker.init(12.0, 133.0,
-                "address", "2017-03-23",
-                "2020-04-04",
-                10L, 20L,
-                10.1, 11.1, ts);
-        Marker marker2 = Marker.init(22.0, 233.0,
-                "address", "2010-01-01",
-                "2050-12-31",
-                100L, 20123L,
-                11230.1, 111233.1, ts);
-        List<Marker> data = new ArrayList<>();
-        data.add(marker1);
-        data.add(marker2);
-
-        return new Markers(data);
     }
 
     private void saveCustom(Long userId){

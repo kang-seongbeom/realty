@@ -37,6 +37,8 @@ public class CommandRealtyPersistenceAdapter implements CommandRealtyPort {
     public void saveTemporary(SaveTemporary saveTemporary) {
         RealtyUserJpaEntity user = findByUserId(saveTemporary.getSaveUserId().getUserId());
 
+        deleteBeforeSaveTemporary(user.getId());
+
         TemporaryCustomJpaEntity temporaryCustomJpaEntity =
                 realtyAdapterMapper.mapToTemporaryJpaEntity(saveTemporary);
 
@@ -47,5 +49,12 @@ public class CommandRealtyPersistenceAdapter implements CommandRealtyPort {
     private RealtyUserJpaEntity findByUserId(Long userId){
         return realtyUserJpaRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
+    }
+
+    public void deleteBeforeSaveTemporary(Long userId){
+        CustomJpaEntity beforeSavedTmp = customJpaRepository.findByUserId(userId);
+        if(beforeSavedTmp != null){
+            customJpaRepository.deleteById(beforeSavedTmp.getId());
+        }
     }
 }

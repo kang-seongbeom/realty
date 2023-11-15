@@ -68,7 +68,7 @@ class RealtyController {
     }
 
     @PostMapping("/tmp/save")
-    @ApiOperation(value = "마커들 임시 저장", notes = "마커들 임시 저장")
+    @ApiOperation(value = "마커들 임시 저장", notes = "임시 저장 or 퍼가기를 클릭하면 마커들의 정보를 임시저장")
     @ApiResponsesCommon
     ResponseEntity<Void> saveTmpMarkers(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                         @RequestBody MarkerPayloads payloads) {

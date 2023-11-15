@@ -1,6 +1,7 @@
 package com.ssafy.realty.custom_deal.adapter.out.mapper;
 
 import com.ssafy.realty.custom_deal.adapter.out.entity.CustomDealJpaEntity;
+import com.ssafy.realty.custom_deal.application.port.in.IsOwnerDto;
 import com.ssafy.realty.custom_deal.domain.Summary;
 import com.ssafy.realty.custom_deal.domain.wrap.Summaries;
 import org.springframework.stereotype.Component;

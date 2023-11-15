@@ -1,5 +1,6 @@
 package com.ssafy.realty.custom_deal.application.port.out;
 
+import com.ssafy.realty.custom_deal.domain.IsOwner;
 import com.ssafy.realty.custom_deal.domain.wrap.Summaries;
 
 public interface QueryCustomPort {
@@ -7,4 +8,6 @@ public interface QueryCustomPort {
     Summaries total();
 
     Summaries myCustomInfos(Long userId);
+
+    boolean isOwner(IsOwner isOwner);
 }

@@ -7,4 +7,6 @@ public interface QueryCustomUseCase {
     CustomSummaryDtos total();
 
     CustomSummaryDtos myCustomInfos(Long id);
+
+    boolean isOwner(IsOwnerDto isOwnerDto);
 }

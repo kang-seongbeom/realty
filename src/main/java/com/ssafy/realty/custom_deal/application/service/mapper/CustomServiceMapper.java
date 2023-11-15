@@ -1,7 +1,9 @@
 package com.ssafy.realty.custom_deal.application.service.mapper;
 
+import com.ssafy.realty.custom_deal.application.port.in.IsOwnerDto;
 import com.ssafy.realty.custom_deal.application.port.out.CustomSummaryDto;
 import com.ssafy.realty.custom_deal.application.port.out.dto.wrap.CustomSummaryDtos;
+import com.ssafy.realty.custom_deal.domain.IsOwner;
 import com.ssafy.realty.custom_deal.domain.Summary;
 import com.ssafy.realty.custom_deal.domain.wrap.Summaries;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,10 @@ public class CustomServiceMapper {
                 .collect(Collectors.toList());
 
         return new CustomSummaryDtos(data);
+    }
+
+    public IsOwner mapToIsOwner(IsOwnerDto isOwnerDto){
+        return IsOwner.init(isOwnerDto.getUserId(), isOwnerDto.getCustomId());
     }
 
     private CustomSummaryDto mapToCustomSummaryDto(Summary summary) {

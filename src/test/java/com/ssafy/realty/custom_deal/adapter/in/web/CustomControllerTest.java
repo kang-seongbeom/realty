@@ -4,6 +4,8 @@ import com.ssafy.realty.common.Role;
 import com.ssafy.realty.custom_deal.adapter.out.entity.CustomDealJpaEntity;
 import com.ssafy.realty.custom_deal.adapter.out.respository.CustomDealJpaRepository;
 import com.ssafy.realty.realty.adapter.out.CommandRealtyPersistenceAdapter;
+import com.ssafy.realty.realty.adapter.out.entity.CustomJpaEntity;
+import com.ssafy.realty.realty.adapter.out.repository.CustomJpaRepository;
 import com.ssafy.realty.realty.domain.Marker;
 import com.ssafy.realty.realty.domain.Save;
 import com.ssafy.realty.realty.domain.wrap.Markers;
@@ -20,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +48,9 @@ class CustomControllerTest {
 
     @Autowired
     private CustomDealJpaRepository customDealJpaRepository;
+
+    @Autowired
+    private CustomJpaRepository customJpaRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -103,6 +109,28 @@ class CustomControllerTest {
 
         // then
         assertThat(length).isEqualTo(2);
+    }
+
+    @Test
+    @Transactional
+    public void isOwner() throws Exception {
+        // given
+        User user = defaultUser();
+        saveCustom(user.getId());
+
+        List<CustomJpaEntity> all = customJpaRepository.findAll();
+        long lastInsertId = all.get(all.size()-1).getId();
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/api/v1/custom/is-owner/" + lastInsertId)
+                .header("accessToken", getAuthorizedUserToken(user));
+
+        // when, then
+        MvcResult mvcResult = mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andReturn();
+
+        System.out.println(mvcResult.getResponse().getContentAsString());
     }
 
     private User defaultUser() {

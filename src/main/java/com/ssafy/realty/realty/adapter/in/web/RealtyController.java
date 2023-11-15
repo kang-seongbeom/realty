@@ -40,9 +40,10 @@ class RealtyController {
     @GetMapping("/tmp/is-saved")
     @ApiOperation(value = "임시 저장된 마커 존재 확인", notes = "임시 저장된 마커 확인")
     @ApiResponsesCommon
-    ResponseEntity<Void> isSavedTmpMarkers() {
-        boolean isSaved = true;
-        if (isSaved) {
+    ResponseEntity<Void> isSavedTmpMarkers(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+        boolean isTemporarySaved = queryRealtyUseCase.isTemporarySaved(principalDetails.getUser().getId());
+        if (isTemporarySaved) {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.noContent().build();

@@ -7,6 +7,7 @@ import com.ssafy.realty.realty.adapter.out.entity.CustomJpaEntity;
 import com.ssafy.realty.realty.adapter.out.repository.CustomJpaRepository;
 import com.ssafy.realty.realty.domain.Marker;
 import com.ssafy.realty.realty.domain.Save;
+import com.ssafy.realty.realty.domain.SaveTemporary;
 import com.ssafy.realty.realty.domain.wrap.Markers;
 import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import com.ssafy.realty.security.config.jwt.JwtManager;
@@ -112,7 +113,7 @@ class RealtyControllerTest extends RealtyJsonData {
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post("/api/v1/realty/save")
-                .header("accessToken", getAccessToken())
+                .header("accessToken", getAccessTokenWithResgistDefaultUser())
                 .content(requestBody.toString())
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -135,7 +136,7 @@ class RealtyControllerTest extends RealtyJsonData {
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post("/api/v1/realty/tmp/save")
-                .header("accessToken", getAccessToken())
+                .header("accessToken", getAccessTokenWithResgistDefaultUser())
                 .content(requestBody.toString())
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -145,13 +146,47 @@ class RealtyControllerTest extends RealtyJsonData {
     }
 
     @Test
+    @DisplayName("임시 저장된  데이터가 있는지 확인")
+    @Transactional
+    public void isSaveTmp() throws Exception {
+        // given
+        User user = registDefaultUser();
+
+        saveTmp(user.getId());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/api/v1/realty/tmp/is-saved")
+                .header("accessToken", getAuthorizedUserToken(user))
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // when, then
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("임시 저장된  데이터가 없으면 204 반환")
+    @Transactional
+    public void isNotSaveTmp() throws Exception {
+        // given
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/api/v1/realty/tmp/is-saved")
+                .header("accessToken", getAccessTokenWithResgistDefaultUser())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // when, then
+        mockMvc.perform(request)
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
     @DisplayName("저장된 커스컴 매물 정보 확인")
     @Transactional
     public void custom() throws Exception {
         // given
         String expect = "{\"data\":[{\"lat\":12.0,\"lng\":133.0,\"address\":\"address\",\"filter\":{\"date\":{\"lower\":\"2017-03-23\",\"upper\":\"2020-04-04\"},\"dealAmount\":{\"lower\":10,\"upper\":20},\"area\":{\"lower\":10.1,\"upper\":11.1},\"transportations\":[{\"type\":\"WALK\",\"time\":5},{\"type\":\"BYCYCLE\",\"time\":10}]}},{\"lat\":22.0,\"lng\":233.0,\"address\":\"address\",\"filter\":{\"date\":{\"lower\":\"2010-01-01\",\"upper\":\"2050-12-31\"},\"dealAmount\":{\"lower\":100,\"upper\":20123},\"area\":{\"lower\":11230.1,\"upper\":111233.1},\"transportations\":[{\"type\":\"WALK\",\"time\":5},{\"type\":\"BYCYCLE\",\"time\":10}]}}]}";
 
-        saveCustom(getUserId(defaultUser()));
+        saveCustom(getUserId(registDefaultUser()));
 
         List<CustomJpaEntity> all = customJpaRepository.findAll();
         Long lastInsertCustomId = all.get(all.size()-1).getId();
@@ -166,8 +201,8 @@ class RealtyControllerTest extends RealtyJsonData {
     }
 
 
-    private User defaultUser() {
-        User user = new User(null, "zrealtyqkfka9045@gmail.com", encoder.encode("a1234567"), "nick", Role.USER);
+    private User registDefaultUser() {
+        User user = new User(null, "realtyqkfka9045@gmail.com", encoder.encode("a1234567"), "nick", Role.USER);
         return userRepository.save(user);
     }
 
@@ -175,8 +210,8 @@ class RealtyControllerTest extends RealtyJsonData {
         return savedUser.getId();
     }
 
-    private String getAccessToken() {
-        return getAuthorizedUserToken(defaultUser());
+    private String getAccessTokenWithResgistDefaultUser() {
+        return getAuthorizedUserToken(registDefaultUser());
     }
 
     private String getAuthorizedUserToken(User saved) {
@@ -217,5 +252,9 @@ class RealtyControllerTest extends RealtyJsonData {
         String title = "kkk 제목 title";
 
         commandRealtyPersistenceAdapter.save(Save.init(userId, title, customData()));
+    }
+
+    private void saveTmp(Long userId){
+        commandRealtyPersistenceAdapter.saveTemporary(SaveTemporary.init(userId, customData()));
     }
 }

@@ -4,10 +4,7 @@ import com.ssafy.realty.realty.adapter.out.entity.CustomJpaEntity;
 import com.ssafy.realty.realty.adapter.out.entity.HouseInfoJpaEntity;
 import com.ssafy.realty.realty.adapter.out.entity.mybatis.MarkerVicinityHomeInfo;
 import com.ssafy.realty.realty.adapter.out.mapper.RealtyAdapterMapper;
-import com.ssafy.realty.realty.adapter.out.repository.CustomJpaRepository;
-import com.ssafy.realty.realty.adapter.out.repository.DongCodeJpaRepository;
-import com.ssafy.realty.realty.adapter.out.repository.HouseInfoJpaRepository;
-import com.ssafy.realty.realty.adapter.out.repository.HouseInfoMybatisRepository;
+import com.ssafy.realty.realty.adapter.out.repository.*;
 import com.ssafy.realty.realty.application.port.out.QueryRealtyPort;
 import com.ssafy.realty.realty.domain.Marker;
 import com.ssafy.realty.realty.domain.wrap.DealInfos;
@@ -20,11 +17,10 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class QueryRealtyPersistenceMybatisAdapter implements QueryRealtyPort {
+public class QueryRealtyPersistenceAdapter implements QueryRealtyPort {
 
     private final DongCodeJpaRepository dongCodeJpaRepository;
     private final HouseInfoMybatisRepository houseInfoMybatisRepository;
@@ -66,6 +62,12 @@ public class QueryRealtyPersistenceMybatisAdapter implements QueryRealtyPort {
                 .orElseThrow(() -> new NoSuchElementException("매물 글을 찾을 수 없습니다."));
 
         return realtyAdapterMapper.mapToMarkers(customJpaEntity);
+    }
+
+    @Override
+    public boolean isTemporarySaved(Long userId) {
+        Integer count = customJpaRepository.countByUserIdAndIsTmpTrue(userId);
+        return count > 0;
     }
 
     private String findDongCode(String address){

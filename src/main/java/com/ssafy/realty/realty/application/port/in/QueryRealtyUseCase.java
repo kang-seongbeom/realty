@@ -12,5 +12,5 @@ public interface QueryRealtyUseCase {
 
     MarkerDtos queryCustomInfo(Long customId);
 
-
+    boolean isTemporarySaved(Long userId);
 }

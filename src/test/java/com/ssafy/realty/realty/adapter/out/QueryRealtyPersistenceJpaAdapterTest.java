@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class QueryRealtyPersistenceJpaAdapterTest {
 
     @Autowired
-    private QueryRealtyPersistenceMybatisAdapter queryRealtyPersistenceMybatisAdapter;
+    private QueryRealtyPersistenceAdapter queryRealtyPersistenceAdapter;
 
     @Test
     @DisplayName("마커 주변 집 정보")
@@ -32,7 +32,7 @@ class QueryRealtyPersistenceJpaAdapterTest {
                 null, null,
                 transportations);
         TotalVicinityHomeInfos totalVicinityHomeInfos =
-                queryRealtyPersistenceMybatisAdapter.queryMarkerVicinityHome(marker);
+                queryRealtyPersistenceAdapter.queryMarkerVicinityHome(marker);
 
         assertFalse(totalVicinityHomeInfos.getTotal().isEmpty());
     }
@@ -44,7 +44,7 @@ class QueryRealtyPersistenceJpaAdapterTest {
         String aptCode = "11110000000003";
 
         // when
-        DealInfos dealInfos = queryRealtyPersistenceMybatisAdapter.queryTotalHistory(aptCode);
+        DealInfos dealInfos = queryRealtyPersistenceAdapter.queryTotalHistory(aptCode);
 
         // then
         assertFalse(dealInfos.getDealInfos().isEmpty());

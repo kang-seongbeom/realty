@@ -41,4 +41,9 @@ public class QueryRealtyService implements QueryRealtyUseCase {
         Markers markers = queryRealtyPort.queryCustomInfo(customId);
         return realtyServiceMapper.mapToMarkerDtos(markers);
     }
+
+    @Override
+    public boolean isTemporarySaved(Long userId) {
+        return queryRealtyPort.isTemporarySaved(userId);
+    }
 }

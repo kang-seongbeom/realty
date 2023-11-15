@@ -11,4 +11,6 @@ public interface QueryRealtyPort {
     DealInfos queryTotalHistory(String aptCode);
 
     Markers queryCustomInfo(Long customId);
+
+    boolean isTemporarySaved(Long userId);
 }

@@ -23,4 +23,10 @@ public class QueryCustomPersistenceAdapter implements QueryCustomPort {
         List<CustomDealJpaEntity> total = customDealJpaRepository.findAll();
         return customAdapterMapper.mapToSummaries(total);
     }
+
+    @Override
+    public Summaries myCustomInfos(Long userId) {
+        List<CustomDealJpaEntity> infos = customDealJpaRepository.findByUserId(userId);
+        return customAdapterMapper.mapToSummaries(infos);
+    }
 }

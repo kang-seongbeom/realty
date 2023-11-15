@@ -7,12 +7,18 @@ import com.ssafy.realty.realty.adapter.out.CommandRealtyPersistenceAdapter;
 import com.ssafy.realty.realty.domain.Marker;
 import com.ssafy.realty.realty.domain.Save;
 import com.ssafy.realty.realty.domain.wrap.Markers;
-import com.ssafy.realty.user.adapter.out.entity.UserJpaEntity;
-import com.ssafy.realty.user.adapter.out.repository.UserJpaRepository;
+import com.ssafy.realty.security.config.auth.PrincipalDetails;
+import com.ssafy.realty.security.config.jwt.JwtManager;
+import com.ssafy.realty.security.entity.User;
+import com.ssafy.realty.security.repository.UserRepository;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.LocalDate.now;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,13 +47,19 @@ class CustomControllerTest {
     private CustomDealJpaRepository customDealJpaRepository;
 
     @Autowired
-    private UserJpaRepository userJpaRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder encoder;
+
+    @Autowired
+    private JwtManager jwtManager;
 
     @Test
     @Transactional
     public void total() throws Exception {
         // given
-        Long userId = getUserId(user());
+        Long userId = defaultUser().getId();
         saveCustom(userId);
 
         List<CustomDealJpaEntity> all = customDealJpaRepository.findAll();
@@ -63,19 +76,55 @@ class CustomControllerTest {
                 .andExpect(content().json(expect));
     }
 
-    private UserJpaEntity user() {
-        UserJpaEntity user = UserJpaEntity
-                .builder()
-                .username("custome@gmail.com")
-                .password("a1234567")
-                .role(Role.USER)
-                .nickname("ksb")
-                .build();
-        return userJpaRepository.save(user);
+    @Test
+    @Transactional
+    public void myCustomInfos() throws Exception {
+        Long defaultUserId = defaultUser().getId();
+        User user = user("dkssud@gmail.com");
+        Long userId = user.getId();
+
+        String accessToken = getAuthorizedUserToken(user);
+
+        saveCustom(defaultUserId);
+        saveCustom(userId);
+        saveCustom(userId);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/api/v1/custom/my-custom")
+                .header("accessToken", accessToken);
+
+        // when
+        String responseBody = mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        JSONObject jsonObject = new JSONObject(responseBody);
+        int length = jsonObject.getJSONArray("data").length();
+
+        // then
+        assertThat(length).isEqualTo(2);
     }
 
-    private Long getUserId(UserJpaEntity savedUser){
-        return savedUser.getId();
+    private User defaultUser() {
+        User user = new User(null, "custome@gmail.com", encoder.encode("a1234567"), "ksb", Role.USER);
+        return userRepository.save(user);
+    }
+
+    private User user(String username){
+        User user = new User(null, username, encoder.encode("a1234567"), "ksb", Role.USER);
+        return userRepository.save(user);
+    }
+
+    private String getAuthorizedUserToken(User saved) {
+        PrincipalDetails principalDetails = new PrincipalDetails(saved);
+
+        String accessToken = jwtManager.createAccessToken(principalDetails);
+
+        if (accessToken != null && jwtManager.isTokenValid(accessToken)) {
+            Authentication authentication = jwtManager.getAuthentication(accessToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        return "Bearer " + accessToken;
     }
 
     private static Markers customData() {

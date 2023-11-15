@@ -5,4 +5,6 @@ import com.ssafy.realty.custom_deal.domain.wrap.Summaries;
 public interface QueryCustomPort {
 
     Summaries total();
+
+    Summaries myCustomInfos(Long userId);
 }

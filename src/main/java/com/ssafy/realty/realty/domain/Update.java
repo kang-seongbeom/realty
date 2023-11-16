@@ -19,12 +19,12 @@ public class Update {
 
     @Value
     public static class UpdateUserId {
-        Long userId;
+        Long value;
     }
 
     @Value
     public static class UpdateCustomId{
-        Long customId;
+        Long value;
     }
 
     @Value

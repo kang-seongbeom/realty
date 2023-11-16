@@ -1,6 +1,7 @@
 package com.ssafy.realty.realty.application.service.mapper;
 
 import com.ssafy.realty.realty.application.port.common_dto.MarkerDto;
+import com.ssafy.realty.realty.application.port.in.DeleteDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
 import com.ssafy.realty.realty.application.port.common_dto.wrap.MarkerDtos;
 import com.ssafy.realty.realty.application.port.in.dto.SaveTemporaryDto;
@@ -81,6 +82,10 @@ public class RealtyServiceMapper {
                 .collect(Collectors.toList());
 
         return new MarkerDtos(data);
+    }
+
+    public Delete mapToDelete(DeleteDto deleteDto) {
+        return Delete.init(deleteDto.getUserId(), deleteDto.getCustomId());
     }
 
     private MarkerDto mapToMarkerDto(Marker marker) {

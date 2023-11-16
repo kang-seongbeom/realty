@@ -7,16 +7,14 @@ import com.ssafy.realty.realty.adapter.out.mapper.RealtyAdapterMapper;
 import com.ssafy.realty.realty.adapter.out.repository.CustomJpaRepository;
 import com.ssafy.realty.realty.adapter.out.repository.RealtyUserJpaRepository;
 import com.ssafy.realty.realty.application.port.out.CommandRealtyPort;
+import com.ssafy.realty.realty.domain.Delete;
 import com.ssafy.realty.realty.domain.Save;
 import com.ssafy.realty.realty.domain.SaveTemporary;
 import com.ssafy.realty.realty.domain.Update;
-import com.ssafy.realty.realty.domain.wrap.Markers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -29,7 +27,7 @@ public class CommandRealtyPersistenceAdapter implements CommandRealtyPort {
 
     @Override
     public void save(Save save) {
-        RealtyUserJpaEntity user = findByUserId(save.getSaveUserId().getUserId());
+        RealtyUserJpaEntity user = customFindByUserId(save.getSaveUserId().getUserId());
 
         CustomJpaEntity customJpaEntity = realtyAdapterMapper.mapToCustomJpaEntity(save);
         user.addCustom(customJpaEntity);
@@ -38,7 +36,7 @@ public class CommandRealtyPersistenceAdapter implements CommandRealtyPort {
 
     @Override
     public void saveTemporary(SaveTemporary saveTemporary) {
-        RealtyUserJpaEntity user = findByUserId(saveTemporary.getSaveUserId().getUserId());
+        RealtyUserJpaEntity user = customFindByUserId(saveTemporary.getSaveUserId().getUserId());
 
         deleteBeforeSaveTemporary(user.getId());
 
@@ -51,20 +49,37 @@ public class CommandRealtyPersistenceAdapter implements CommandRealtyPort {
 
     @Override
     public void update(Update update) {
-        CustomJpaEntity customJpa = customJpaRepository.findById(update.getUpdateCustomId().getCustomId())
-                .orElseThrow(() -> new NoSuchElementException("커스텀 글을 찾을 수 없습니다."));
+        CustomJpaEntity customJpa = customFindById(update.getUpdateCustomId().getValue());
 
-        if((long)customJpa.getUser().getId() != update.getUpdateUserId().getUserId()){
-            throw new SecurityException("작성자가 아닌 글을 수정할 수 없습니다.");
-        }
+        notPermitIfNotOwner(update.getUpdateUserId().getValue(), customJpa.getUser().getId());
 
         customJpa.updateTitle(update.getUpdateData().getTitle());
         customJpa.updateMarkers(realtyAdapterMapper.mapToMarkerJpaEntities(update.getUpdateData().getMarkers()));
     }
 
-    private RealtyUserJpaEntity findByUserId(Long userId){
+    @Override
+    public void delete(Delete delete) {
+        CustomJpaEntity customJpa = customFindById(delete.getCustomId().getValue());
+
+        notPermitIfNotOwner(delete.getUserId().getValue(), customJpa.getUser().getId());
+
+        customJpaRepository.deleteById(customJpa.getId());
+    }
+
+    private CustomJpaEntity customFindById(Long customId) {
+        return customJpaRepository.findById(customId)
+                .orElseThrow(() -> new NoSuchElementException("커스텀 글을 찾을 수 없습니다."));
+    }
+
+    private RealtyUserJpaEntity customFindByUserId(Long userId){
         return realtyUserJpaRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
+    }
+
+    private static void notPermitIfNotOwner(long userId, long customOwnerId) {
+        if(userId != customOwnerId){
+            throw new SecurityException("작성자가 아닌 글을 조작할 수 없습니다.");
+        }
     }
 
     public void deleteBeforeSaveTemporary(Long userId){

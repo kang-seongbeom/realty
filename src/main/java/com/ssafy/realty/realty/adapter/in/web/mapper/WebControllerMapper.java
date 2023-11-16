@@ -5,6 +5,7 @@ import com.ssafy.realty.realty.adapter.in.web.payload.UpdatePayload;
 import com.ssafy.realty.realty.adapter.in.web.payload.wrap.MarkerPayloads;
 import com.ssafy.realty.realty.application.port.common_dto.MarkerDto;
 import com.ssafy.realty.realty.adapter.in.web.payload.MarkerPayload;
+import com.ssafy.realty.realty.application.port.in.DeleteDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
 import com.ssafy.realty.realty.application.port.common_dto.wrap.MarkerDtos;
 import com.ssafy.realty.realty.application.port.in.dto.SaveTemporaryDto;
@@ -52,5 +53,9 @@ public class WebControllerMapper {
 
     public SaveTemporaryDto mapToSaveTemporaryDto(Long userId, MarkerPayloads markerPayloads) {
         return new SaveTemporaryDto(userId, mapToMarkerDtos(markerPayloads));
+    }
+
+    public DeleteDto mapToDeleteDto(Long userId, Long customId) {
+        return new DeleteDto(userId, customId);
     }
 }

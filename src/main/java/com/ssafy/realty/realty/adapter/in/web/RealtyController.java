@@ -9,6 +9,7 @@ import com.ssafy.realty.realty.adapter.in.web.payload.UpdatePayload;
 import com.ssafy.realty.realty.adapter.in.web.payload.wrap.MarkerPayloads;
 import com.ssafy.realty.realty.application.port.common_dto.wrap.MarkerDtos;
 import com.ssafy.realty.realty.application.port.in.CommandRealtyUseCase;
+import com.ssafy.realty.realty.application.port.in.DeleteDto;
 import com.ssafy.realty.realty.application.port.in.QueryRealtyUseCase;
 import com.ssafy.realty.realty.application.port.common_dto.MarkerDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
@@ -91,7 +92,7 @@ class RealtyController {
     }
 
     @GetMapping("/{aptCode}")
-    @ApiOperation(value = "집의 전체 거래 정보", notes = "하나의 집에 대한 전체 거래 정보를 조회 후 반환한다.")
+    @ApiOperation(value = "집의 전체 거래 정보", notes = "하나의 집에 대한 전체 거래 정보를 조회 후 반환")
     @ApiResponsesCommon
     ResponseEntity<TotalHistoryDealInfoDtos> totalHistory(@PathVariable String aptCode) {
         TotalHistoryDealInfoDtos totalHistoryDealInfoDtos = queryRealtyUseCase.queryTotalHistory(aptCode);
@@ -99,7 +100,7 @@ class RealtyController {
     }
 
     @PostMapping("/save")
-    @ApiOperation(value = "커스텀 매물 정보 저장", notes = "사용자가 만든 매물 정보를 저장한다.")
+    @ApiOperation(value = "커스텀 매물 정보 저장", notes = "사용자가 만든 매물 정보를 저장")
     @ApiResponsesCommon
     ResponseEntity<Void> save(@AuthenticationPrincipal PrincipalDetails principalDetails,
                               @Valid @RequestBody SavePayload savePayload) {
@@ -108,8 +109,8 @@ class RealtyController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/update/{customId}")
-    @ApiOperation(value = "커스컴 매물 정보 수정", notes = "사용자가 만든 매물 정보를 수정한다.")
+    @PatchMapping("/custom/update/{customId}")
+    @ApiOperation(value = "커스텀 매물 정보 수정", notes = "사용자가 만든 매물 정보를 수정")
     @ApiResponsesCommon
     ResponseEntity<Void> update(@AuthenticationPrincipal PrincipalDetails principalDetails,
                                 @Valid @RequestBody UpdatePayload updatePayload,
@@ -125,5 +126,15 @@ class RealtyController {
     ResponseEntity<MarkerDtos> detailCustomInfo(@PathVariable Long customId) {
         MarkerDtos markerDtos = queryRealtyUseCase.queryCustomInfo(customId);
         return ResponseEntity.ok(markerDtos);
+    }
+
+    @DeleteMapping("/custom/delete/{customId}")
+    @ApiOperation(value = "커스텀 매물 정보 삭제", notes = "매물 정보 삭제")
+    @ApiResponsesCommon
+    ResponseEntity<Void> delete(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                @PathVariable Long customId){
+        DeleteDto deleteDto = webControllerMapper.mapToDeleteDto(principalDetails.getUser().getId(), customId);
+        commandRealtyUseCase.delete(deleteDto);
+        return ResponseEntity.ok().build();
     }
 }

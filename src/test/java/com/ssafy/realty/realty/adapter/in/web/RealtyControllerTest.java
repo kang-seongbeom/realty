@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -128,7 +129,6 @@ class RealtyControllerTest extends RealtyData {
         // given
         User user = registDefaultUser();
         saveDefaultCustom(user.getId());
-
         List<CustomJpaEntity> all = customJpaRepository.findAll();
         Long lastInsertCustomId = all.get(all.size() - 1).getId();
 
@@ -140,7 +140,7 @@ class RealtyControllerTest extends RealtyData {
         requestBody.put("markers", markers);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .patch("/api/v1/realty/update/" + lastInsertCustomId)
+                .patch("/api/v1/realty/custom/update/" + lastInsertCustomId)
                 .header("accessToken", getAuthorizedUserToken(user))
                 .content(requestBody.toString())
                 .contentType(MediaType.APPLICATION_JSON);
@@ -156,6 +156,29 @@ class RealtyControllerTest extends RealtyData {
         assertThat(customJpaEntity.getMarkers().get(0).getLng()).isEqualTo(realtyInfoJsonBodyVersion2().getDouble("lng"));
         assertThat(customJpaEntity.getMarkers().get(0).getAddress()).isEqualTo(realtyInfoJsonBodyVersion2().getString("address"));
     }
+
+    @Test
+    @DisplayName("삭제")
+    public void delete() throws Exception {
+        User user = registDefaultUser();
+        saveDefaultCustom(user.getId());
+        List<CustomJpaEntity> all = customJpaRepository.findAll();
+        Long lastInsertCustomId = all.get(all.size() - 1).getId();
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete("/api/v1/realty/custom/delete/" + lastInsertCustomId)
+                .header("accessToken", getAuthorizedUserToken(user))
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // when
+        ResultActions result = mockMvc.perform(request);
+
+        // then
+        result.andExpect(status().isOk());
+        Optional<CustomJpaEntity> deleted = customJpaRepository.findById(lastInsertCustomId);
+        assertThat(deleted).isNotPresent();
+    }
+
 
     @Test
     @DisplayName("임시 저장")

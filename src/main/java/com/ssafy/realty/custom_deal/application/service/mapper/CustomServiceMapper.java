@@ -3,12 +3,10 @@ package com.ssafy.realty.custom_deal.application.service.mapper;
 import com.ssafy.realty.custom_deal.application.port.in.dto.CustomCatalogDto;
 import com.ssafy.realty.custom_deal.application.port.in.dto.IsOwnerDto;
 import com.ssafy.realty.custom_deal.application.port.in.dto.OwnCustomCatalogDto;
+import com.ssafy.realty.custom_deal.application.port.in.dto.SearchCustomDto;
 import com.ssafy.realty.custom_deal.application.port.out.dto.CustomSummaryDto;
 import com.ssafy.realty.custom_deal.application.port.out.dto.wrap.CustomSummaryDtos;
-import com.ssafy.realty.custom_deal.domain.CustomCatalog;
-import com.ssafy.realty.custom_deal.domain.IsOwner;
-import com.ssafy.realty.custom_deal.domain.OwnCustomCatalog;
-import com.ssafy.realty.custom_deal.domain.Summary;
+import com.ssafy.realty.custom_deal.domain.*;
 import com.ssafy.realty.custom_deal.domain.wrap.Summaries;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +35,10 @@ public class CustomServiceMapper {
 
     public IsOwner mapToIsOwner(IsOwnerDto isOwnerDto){
         return IsOwner.init(isOwnerDto.getUserId(), isOwnerDto.getCustomId());
+    }
+
+    public Search mapToSearch(SearchCustomDto searchCustomDto) {
+        return Search.init(searchCustomDto.getSearchType(), searchCustomDto.getValue(), searchCustomDto.getPageable());
     }
 
     private CustomSummaryDto mapToCustomSummaryDto(Summary summary) {

@@ -53,13 +53,18 @@ public class RealtyAdapterMapper {
                 .star(0)
                 .build();
 
-        customJpa.setMarkers(getMarkerJpaEntities(save.getSaveData().getMarkers()));
+        customJpa.setMarkers(mapToMarkerJpaEntities(save.getSaveData().getMarkers()));
         return customJpa;
+    }
+
+    public void updateToCustomJpaEntity(CustomJpaEntity customJpa, Update update) {
+        customJpa.updateTitle(update.getUpdateData().getTitle());
+        customJpa.updateMarkers(mapToMarkerJpaEntities(update.getUpdateData().getMarkers()));
     }
 
     public TemporaryCustomJpaEntity mapToTemporaryJpaEntity(SaveTemporary saveTemporary) {
         TemporaryCustomJpaEntity temporaryCustomJpa = new TemporaryCustomJpaEntity();
-        temporaryCustomJpa.setMarkers(getMarkerJpaEntities(saveTemporary.getSaveData().getMarkers()));
+        temporaryCustomJpa.setMarkers(mapToMarkerJpaEntities(saveTemporary.getSaveData().getMarkers()));
         return temporaryCustomJpa;
     }
 
@@ -115,7 +120,7 @@ public class RealtyAdapterMapper {
         return new Marker.MarkerData.MarkerFilter.Transportation(trans.getType(), trans.getTime());
     }
 
-    private List<MarkerJpaEntity> getMarkerJpaEntities(Markers markers) {
+    public List<MarkerJpaEntity> mapToMarkerJpaEntities(Markers markers) {
         return markers.getMarkers()
                 .stream()
                 .map(this::mapToMarkerJpaEntity)

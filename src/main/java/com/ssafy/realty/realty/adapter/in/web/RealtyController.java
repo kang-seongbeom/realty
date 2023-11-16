@@ -5,6 +5,7 @@ import com.ssafy.realty.common.swagger.ApiResponsesCommon;
 import com.ssafy.realty.realty.adapter.in.web.mapper.WebControllerMapper;
 import com.ssafy.realty.realty.adapter.in.web.payload.MarkerPayload;
 import com.ssafy.realty.realty.adapter.in.web.payload.SavePayload;
+import com.ssafy.realty.realty.adapter.in.web.payload.UpdatePayload;
 import com.ssafy.realty.realty.adapter.in.web.payload.wrap.MarkerPayloads;
 import com.ssafy.realty.realty.application.port.common_dto.wrap.MarkerDtos;
 import com.ssafy.realty.realty.application.port.in.CommandRealtyUseCase;
@@ -12,9 +13,9 @@ import com.ssafy.realty.realty.application.port.in.QueryRealtyUseCase;
 import com.ssafy.realty.realty.application.port.common_dto.MarkerDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveTemporaryDto;
+import com.ssafy.realty.realty.application.port.in.dto.UpdateDto;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.TotalHistoryDealInfoDtos;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.VicinityHomeInfoDtos;
-import com.ssafy.realty.realty.domain.wrap.Markers;
 import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.NoResultException;
 import javax.validation.Valid;
-import java.util.Collections;
 
 @RestController
 @RequiredArgsConstructor
@@ -99,12 +99,23 @@ class RealtyController {
     }
 
     @PostMapping("/save")
-    @ApiOperation(value = "매물 정보 저장", notes = "사용자가 만든 매물 정보를 저장한다.")
+    @ApiOperation(value = "커스텀 매물 정보 저장", notes = "사용자가 만든 매물 정보를 저장한다.")
     @ApiResponsesCommon
     ResponseEntity<Void> save(@AuthenticationPrincipal PrincipalDetails principalDetails,
                               @Valid @RequestBody SavePayload savePayload) {
         SaveDto saveDto = webControllerMapper.mapToSaveDto(principalDetails.getUser().getId(), savePayload);
         commandRealtyUseCase.save(saveDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/update/{customId}")
+    @ApiOperation(value = "커스컴 매물 정보 수정", notes = "사용자가 만든 매물 정보를 수정한다.")
+    @ApiResponsesCommon
+    ResponseEntity<Void> update(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                                @Valid @RequestBody UpdatePayload updatePayload,
+                                @PathVariable Long customId){
+        UpdateDto updateDto = webControllerMapper.mapToUpdateDto(principalDetails.getUser().getId(), customId, updatePayload);
+        commandRealtyUseCase.update(updateDto);
         return ResponseEntity.ok().build();
     }
 

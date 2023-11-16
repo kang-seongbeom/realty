@@ -5,7 +5,6 @@ import com.ssafy.realty.common.Role;
 import com.ssafy.realty.realty.adapter.out.CommandRealtyPersistenceAdapter;
 import com.ssafy.realty.realty.adapter.out.entity.CustomJpaEntity;
 import com.ssafy.realty.realty.adapter.out.repository.CustomJpaRepository;
-import com.ssafy.realty.realty.domain.Marker;
 import com.ssafy.realty.realty.domain.Save;
 import com.ssafy.realty.realty.domain.SaveTemporary;
 import com.ssafy.realty.realty.domain.wrap.Markers;
@@ -25,6 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("부동산 컨트롤러 통합 테스트")
+@Transactional
 class RealtyControllerTest extends RealtyData {
 
     @Autowired
@@ -64,7 +65,6 @@ class RealtyControllerTest extends RealtyData {
 
     @Test
     @DisplayName("마커 주변 집 정보")
-    @Transactional
     public void realtyInfoTest() throws Exception {
         // given
         JSONObject requestBody = realtyInfoJsonBody();
@@ -100,7 +100,6 @@ class RealtyControllerTest extends RealtyData {
 
     @Test
     @DisplayName("저장")
-    @Transactional
     public void save() throws Exception {
         // given
         JSONObject requestBody = new JSONObject();
@@ -124,9 +123,43 @@ class RealtyControllerTest extends RealtyData {
     }
 
     @Test
+    @DisplayName("수정")
+    public void update() throws Exception {
+        // given
+        User user = registDefaultUser();
+        saveDefaultCustom(user.getId());
+
+        List<CustomJpaEntity> all = customJpaRepository.findAll();
+        Long lastInsertCustomId = all.get(all.size() - 1).getId();
+
+        JSONObject requestBody = new JSONObject();
+        JSONArray markers = new JSONArray();
+        markers.put(realtyInfoJsonBodyVersion2());
+
+        requestBody.put("title", "update Title");
+        requestBody.put("markers", markers);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .patch("/api/v1/realty/update/" + lastInsertCustomId)
+                .header("accessToken", getAuthorizedUserToken(user))
+                .content(requestBody.toString())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // when
+        ResultActions result = mockMvc.perform(request);
+
+        // then
+        result.andExpect(status().isOk());
+        CustomJpaEntity customJpaEntity = customJpaRepository.findById(lastInsertCustomId).get();
+        assertThat(customJpaEntity.getTitle()).isEqualTo("update Title");
+        assertThat(customJpaEntity.getMarkers().get(0).getLat()).isEqualTo(realtyInfoJsonBodyVersion2().getDouble("lat"));
+        assertThat(customJpaEntity.getMarkers().get(0).getLng()).isEqualTo(realtyInfoJsonBodyVersion2().getDouble("lng"));
+        assertThat(customJpaEntity.getMarkers().get(0).getAddress()).isEqualTo(realtyInfoJsonBodyVersion2().getString("address"));
+    }
+
+    @Test
     @DisplayName("임시 저장")
-    @Transactional
-    public void saveTmp() throws Exception {
+    public void saveDefaultTmp() throws Exception {
         // given
         JSONObject requestBody = new JSONObject();
 
@@ -148,11 +181,10 @@ class RealtyControllerTest extends RealtyData {
 
     @Test
     @DisplayName("기존에 임시 저장된 데이터가 있으면 덮어씌움")
-    @Transactional
     public void coverTmpData() throws Exception {
         // given
         User user = registDefaultUser();
-        saveTmp(user.getId());
+        saveDefaultTmp(user.getId());
 
         JSONObject requestBody = new JSONObject();
         JSONArray markers = new JSONArray();
@@ -180,12 +212,11 @@ class RealtyControllerTest extends RealtyData {
 
     @Test
     @DisplayName("임시 저장된  데이터가 있는지 확인")
-    @Transactional
     public void isSaveTmp() throws Exception {
         // given
         User user = registDefaultUser();
 
-        saveTmp(user.getId());
+        saveDefaultTmp(user.getId());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get("/api/v1/realty/tmp/is-saved")
@@ -199,7 +230,6 @@ class RealtyControllerTest extends RealtyData {
 
     @Test
     @DisplayName("임시 저장된  데이터가 없으면 204 반환")
-    @Transactional
     public void isNotSaveTmp() throws Exception {
         // given
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -214,14 +244,13 @@ class RealtyControllerTest extends RealtyData {
 
     @Test
     @DisplayName("임시 저장된 데이터 로드")
-    @Transactional
     public void loadTmp() throws Exception {
         // given
         String expect = "{\"data\":[{\"lat\":12.0,\"lng\":133.0,\"address\":\"address\",\"filter\":{\"date\":{\"lower\":\"2017-03-23\",\"upper\":\"2020-04-04\"},\"dealAmount\":{\"lower\":10,\"upper\":20},\"area\":{\"lower\":10.1,\"upper\":11.1},\"transportations\":[{\"type\":\"WALK\",\"time\":5},{\"type\":\"BYCYCLE\",\"time\":10}]}},{\"lat\":22.0,\"lng\":233.0,\"address\":\"address\",\"filter\":{\"date\":{\"lower\":\"2010-01-01\",\"upper\":\"2050-12-31\"},\"dealAmount\":{\"lower\":100,\"upper\":20123},\"area\":{\"lower\":11230.1,\"upper\":111233.1},\"transportations\":[{\"type\":\"WALK\",\"time\":5},{\"type\":\"BYCYCLE\",\"time\":10}]}}]}";
 
         User user = registDefaultUser();
 
-        saveTmp(user.getId());
+        saveDefaultTmp(user.getId());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get("/api/v1/realty/tmp")
@@ -236,15 +265,14 @@ class RealtyControllerTest extends RealtyData {
 
     @Test
     @DisplayName("저장된 커스컴 매물 정보 확인")
-    @Transactional
     public void custom() throws Exception {
         // given
         String expect = "{\"data\":[{\"lat\":12.0,\"lng\":133.0,\"address\":\"address\",\"filter\":{\"date\":{\"lower\":\"2017-03-23\",\"upper\":\"2020-04-04\"},\"dealAmount\":{\"lower\":10,\"upper\":20},\"area\":{\"lower\":10.1,\"upper\":11.1},\"transportations\":[{\"type\":\"WALK\",\"time\":5},{\"type\":\"BYCYCLE\",\"time\":10}]}},{\"lat\":22.0,\"lng\":233.0,\"address\":\"address\",\"filter\":{\"date\":{\"lower\":\"2010-01-01\",\"upper\":\"2050-12-31\"},\"dealAmount\":{\"lower\":100,\"upper\":20123},\"area\":{\"lower\":11230.1,\"upper\":111233.1},\"transportations\":[{\"type\":\"WALK\",\"time\":5},{\"type\":\"BYCYCLE\",\"time\":10}]}}]}";
 
-        saveCustom(getUserId(registDefaultUser()));
+        saveDefaultCustom(getUserId(registDefaultUser()));
 
         List<CustomJpaEntity> all = customJpaRepository.findAll();
-        Long lastInsertCustomId = all.get(all.size()-1).getId();
+        Long lastInsertCustomId = all.get(all.size() - 1).getId();
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get("/api/v1/realty/custom/" + lastInsertCustomId);
@@ -261,7 +289,7 @@ class RealtyControllerTest extends RealtyData {
         return userRepository.save(user);
     }
 
-    private Long getUserId(User savedUser){
+    private Long getUserId(User savedUser) {
         return savedUser.getId();
     }
 
@@ -281,13 +309,13 @@ class RealtyControllerTest extends RealtyData {
         return "Bearer " + accessToken;
     }
 
-    private void saveCustom(Long userId){
+    private void saveDefaultCustom(Long userId) {
         String title = "kkk 제목 title";
 
         commandRealtyPersistenceAdapter.save(Save.init(userId, title, customData()));
     }
 
-    private void saveTmp(Long userId){
+    private void saveDefaultTmp(Long userId) {
         commandRealtyPersistenceAdapter.saveTemporary(SaveTemporary.init(userId, customData()));
     }
 }

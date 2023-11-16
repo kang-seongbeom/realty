@@ -9,11 +9,14 @@ import com.ssafy.realty.realty.adapter.out.repository.RealtyUserJpaRepository;
 import com.ssafy.realty.realty.application.port.out.CommandRealtyPort;
 import com.ssafy.realty.realty.domain.Save;
 import com.ssafy.realty.realty.domain.SaveTemporary;
+import com.ssafy.realty.realty.domain.Update;
 import com.ssafy.realty.realty.domain.wrap.Markers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -44,6 +47,19 @@ public class CommandRealtyPersistenceAdapter implements CommandRealtyPort {
 
         user.addCustom(temporaryCustomJpaEntity);
         customJpaRepository.save(temporaryCustomJpaEntity);
+    }
+
+    @Override
+    public void update(Update update) {
+        CustomJpaEntity customJpa = customJpaRepository.findById(update.getUpdateCustomId().getCustomId())
+                .orElseThrow(() -> new NoSuchElementException("커스텀 글을 찾을 수 없습니다."));
+
+        if((long)customJpa.getUser().getId() != update.getUpdateUserId().getUserId()){
+            throw new SecurityException("작성자가 아닌 글을 수정할 수 없습니다.");
+        }
+
+        customJpa.updateTitle(update.getUpdateData().getTitle());
+        customJpa.updateMarkers(realtyAdapterMapper.mapToMarkerJpaEntities(update.getUpdateData().getMarkers()));
     }
 
     private RealtyUserJpaEntity findByUserId(Long userId){

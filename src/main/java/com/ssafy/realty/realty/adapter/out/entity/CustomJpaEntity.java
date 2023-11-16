@@ -53,8 +53,16 @@ public class CustomJpaEntity {
     public void setMarkers(List<MarkerJpaEntity> markers) {
         this.markers = markers;
 
-        for(MarkerJpaEntity marker : markers){
+        for (MarkerJpaEntity marker : markers) {
             marker.setCustom(this);
         }
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    public void updateMarkers(List<MarkerJpaEntity> markers){
+        this.markers = markers;
     }
 }

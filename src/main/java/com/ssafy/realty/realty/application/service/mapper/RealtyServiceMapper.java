@@ -4,6 +4,7 @@ import com.ssafy.realty.realty.application.port.common_dto.MarkerDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
 import com.ssafy.realty.realty.application.port.common_dto.wrap.MarkerDtos;
 import com.ssafy.realty.realty.application.port.in.dto.SaveTemporaryDto;
+import com.ssafy.realty.realty.application.port.in.dto.UpdateDto;
 import com.ssafy.realty.realty.application.port.out.dto.TotalHistoryDealInfoDto;
 import com.ssafy.realty.realty.application.port.out.dto.VicinityHomeInfosDto;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.TotalHistoryDealInfoDtos;
@@ -55,6 +56,10 @@ public class RealtyServiceMapper {
     public Save mapToSave(SaveDto saveDto) {
         return Save.init(saveDto.getUserId(), saveDto.getTitle(), mapToMarkers(saveDto.getMarkers()));
     }
+    public Update mapToUpdate(UpdateDto updateDto) {
+        return Update.init(updateDto.getUserId(), updateDto.getCustomId(), updateDto.getTitle(), mapToMarkers(updateDto.getMarkers()));
+    }
+
 
     public SaveTemporary mapToSaveTemporary(SaveTemporaryDto saveTemporaryDto) {
         return SaveTemporary.init(saveTemporaryDto.getId(), mapToMarkers(saveTemporaryDto.getMarkers()));

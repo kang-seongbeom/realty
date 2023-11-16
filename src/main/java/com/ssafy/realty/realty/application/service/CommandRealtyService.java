@@ -1,14 +1,14 @@
 package com.ssafy.realty.realty.application.service;
 
-import com.ssafy.realty.realty.application.port.common_dto.wrap.MarkerDtos;
 import com.ssafy.realty.realty.application.port.in.CommandRealtyUseCase;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveTemporaryDto;
+import com.ssafy.realty.realty.application.port.in.dto.UpdateDto;
 import com.ssafy.realty.realty.application.port.out.CommandRealtyPort;
 import com.ssafy.realty.realty.application.service.mapper.RealtyServiceMapper;
 import com.ssafy.realty.realty.domain.Save;
 import com.ssafy.realty.realty.domain.SaveTemporary;
-import com.ssafy.realty.realty.domain.wrap.Markers;
+import com.ssafy.realty.realty.domain.Update;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CommandRealtyService implements CommandRealtyUseCase {
 
-    private final RealtyServiceMapper realtyServiceMapper;
-
     private final CommandRealtyPort commandRealtyPort;
+
+    private final RealtyServiceMapper realtyServiceMapper;
 
     @Transactional
     @Override
@@ -34,5 +34,11 @@ public class CommandRealtyService implements CommandRealtyUseCase {
     public void saveTemporary(SaveTemporaryDto saveTemporaryDto) {
         SaveTemporary saveTemporary = realtyServiceMapper.mapToSaveTemporary(saveTemporaryDto);
         commandRealtyPort.saveTemporary(saveTemporary);
+    }
+
+    @Override
+    public void update(UpdateDto updateDto) {
+        Update update = realtyServiceMapper.mapToUpdate(updateDto);
+        commandRealtyPort.update(update);
     }
 }

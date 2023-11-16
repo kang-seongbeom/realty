@@ -1,12 +1,14 @@
 package com.ssafy.realty.realty.adapter.in.web.mapper;
 
 import com.ssafy.realty.realty.adapter.in.web.payload.SavePayload;
+import com.ssafy.realty.realty.adapter.in.web.payload.UpdatePayload;
 import com.ssafy.realty.realty.adapter.in.web.payload.wrap.MarkerPayloads;
 import com.ssafy.realty.realty.application.port.common_dto.MarkerDto;
 import com.ssafy.realty.realty.adapter.in.web.payload.MarkerPayload;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
 import com.ssafy.realty.realty.application.port.common_dto.wrap.MarkerDtos;
 import com.ssafy.realty.realty.application.port.in.dto.SaveTemporaryDto;
+import com.ssafy.realty.realty.application.port.in.dto.UpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -37,6 +39,15 @@ public class WebControllerMapper {
         return new SaveDto(userId, savePayload.getTitle(),
                 mapToMarkerDtos(new MarkerPayloads(savePayload.getMarkers()))
         );
+    }
+
+    public UpdateDto mapToUpdateDto(Long userId, Long customId, UpdatePayload updatePayload){
+        return UpdateDto.builder()
+                .userId(userId)
+                .customId(customId)
+                .title(updatePayload.getTitle())
+                .markers(mapToMarkerDtos(new MarkerPayloads(updatePayload.getMarkers())))
+                .build();
     }
 
     public SaveTemporaryDto mapToSaveTemporaryDto(Long userId, MarkerPayloads markerPayloads) {

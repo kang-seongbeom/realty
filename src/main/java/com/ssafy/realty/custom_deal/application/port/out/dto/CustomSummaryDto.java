@@ -1,4 +1,4 @@
-package com.ssafy.realty.custom_deal.application.port.out;
+package com.ssafy.realty.custom_deal.application.port.out.dto;
 
 import lombok.Builder;
 import lombok.Data;

@@ -1,8 +1,10 @@
 package com.ssafy.realty.custom_deal.adapter.in.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.realty.common.Role;
 import com.ssafy.realty.custom_deal.adapter.out.entity.CustomDealJpaEntity;
 import com.ssafy.realty.custom_deal.adapter.out.respository.CustomDealJpaRepository;
+import com.ssafy.realty.custom_deal.application.port.out.dto.wrap.CustomSummaryDtos;
 import com.ssafy.realty.realty.adapter.out.CommandRealtyPersistenceAdapter;
 import com.ssafy.realty.realty.adapter.out.entity.CustomJpaEntity;
 import com.ssafy.realty.realty.adapter.out.repository.CustomJpaRepository;
@@ -13,6 +15,7 @@ import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import com.ssafy.realty.security.config.jwt.JwtManager;
 import com.ssafy.realty.security.entity.User;
 import com.ssafy.realty.security.repository.UserRepository;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.time.LocalDate.now;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,7 +70,7 @@ class CustomControllerTest {
 
     @Test
     @Transactional
-    public void total() throws Exception {
+    public void allCatalogs() throws Exception {
         // given
         Long userId = defaultUser().getId();
         saveCustom(userId);
@@ -74,7 +81,7 @@ class CustomControllerTest {
         String expect = String.format("{\"data\":[{\"id\":%d,\"author\":\"ksb\",\"title\":\"kkk 제목 title\",\"look\":0,\"start\":0,\"createDate\":\"%s\"}]}", lastInsertId, now);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get("/api/v1/custom/total");
+                .get("/api/v1/custom/catalog");
 
         // when, then
         mockMvc.perform(request)
@@ -84,7 +91,36 @@ class CustomControllerTest {
 
     @Test
     @Transactional
-    public void myCustomInfos() throws Exception {
+    public void pagingCatalogs() throws Exception {
+        // given
+        Long userId = defaultUser().getId();
+        for(int i=0; i<100; i++){
+            saveCustom(userId);
+        }
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/api/v1/custom/catalog")
+                .param("page", "0")
+                .param("size", "10");
+
+        // when
+        ResultActions result = mockMvc.perform(request);
+
+        // then
+        result.andExpect(status().isOk());
+
+        Pattern pattern = Pattern.compile("\\{\"id\":\\d+,\"author\":\".*?\",\"title\":\".*?\",\"look\":\\d+,\"start\":\\d+,\"createDate\":\"\\d{4}-\\d{2}-\\d{2}\"\\}");
+        Matcher matcher = pattern.matcher(result.andReturn().getResponse().getContentAsString());
+
+        int count = 0;
+        while (matcher.find()) count++;
+
+        assertThat(count).isEqualTo(10);
+    }
+
+    @Test
+    @Transactional
+    public void ownCustomCatalogs() throws Exception {
         Long defaultUserId = defaultUser().getId();
         User user = user("dkssud@gmail.com");
         Long userId = user.getId();
@@ -96,7 +132,7 @@ class CustomControllerTest {
         saveCustom(userId);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get("/api/v1/custom/my-custom")
+                .get("/api/v1/custom/my-catalog")
                 .header("accessToken", accessToken);
 
         // when

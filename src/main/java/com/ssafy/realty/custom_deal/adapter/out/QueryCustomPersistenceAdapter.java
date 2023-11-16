@@ -4,11 +4,15 @@ import com.ssafy.realty.custom_deal.adapter.out.entity.CustomDealJpaEntity;
 import com.ssafy.realty.custom_deal.adapter.out.mapper.CustomAdapterMapper;
 import com.ssafy.realty.custom_deal.adapter.out.respository.CustomDealJpaRepository;
 import com.ssafy.realty.custom_deal.application.port.out.QueryCustomPort;
+import com.ssafy.realty.custom_deal.domain.CustomCatalog;
 import com.ssafy.realty.custom_deal.domain.IsOwner;
+import com.ssafy.realty.custom_deal.domain.OwnCustomCatalog;
 import com.ssafy.realty.custom_deal.domain.wrap.Summaries;
 import com.ssafy.realty.realty.adapter.out.entity.CustomJpaEntity;
 import com.ssafy.realty.realty.adapter.out.repository.CustomJpaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,21 +28,26 @@ public class QueryCustomPersistenceAdapter implements QueryCustomPort {
     private final CustomAdapterMapper customAdapterMapper;
 
     @Override
-    public Summaries total() {
-        List<CustomDealJpaEntity> total = customDealJpaRepository.findAll();
-        return customAdapterMapper.mapToSummaries(total);
+    public Summaries catalogs(CustomCatalog customCatalog) {
+        Page<CustomDealJpaEntity> catalogs =
+                customDealJpaRepository.findAllByOrderByIdDesc(customCatalog.getCustomCatalogData().getPageable());
+        return customAdapterMapper.mapToSummaries(catalogs);
     }
 
     @Override
-    public Summaries myCustomInfos(Long userId) {
-        List<CustomDealJpaEntity> infos = customDealJpaRepository.findByUserId(userId);
+    public Summaries myCustomInfos(OwnCustomCatalog ownCustomCatalog) {
+        Page<CustomDealJpaEntity> infos =
+                customDealJpaRepository.findByUserId(
+                        ownCustomCatalog.getOwnCustomCatalogUserId().getValue(),
+                        ownCustomCatalog.getOwnCustomCatalogData().getPageable()
+                );
         return customAdapterMapper.mapToSummaries(infos);
     }
 
     @Override
     public boolean isOwner(IsOwner isOwner) {
         CustomJpaEntity custom = customJpaRepository.findById(isOwner.getIsOwnerCustomId().getValue())
-                .orElseThrow(() -> new NoSuchElementException("해당 커스텀을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NoSuchElementException("해당 커스텀 글을 찾을 수 없습니다."));
 
         return (long) custom.getUser().getId() == isOwner.getIsOwnerUserId().getValue();
     }

@@ -1,11 +1,16 @@
 package com.ssafy.realty.custom_deal.application.service;
 
-import com.ssafy.realty.custom_deal.application.port.in.IsOwnerDto;
+import com.ssafy.realty.custom_deal.application.port.in.dto.IsOwnerDto;
 import com.ssafy.realty.custom_deal.application.port.in.QueryCustomUseCase;
+import com.ssafy.realty.custom_deal.application.port.in.dto.CustomCatalogDto;
+import com.ssafy.realty.custom_deal.application.port.in.dto.OwnCustomCatalogDto;
 import com.ssafy.realty.custom_deal.application.port.out.QueryCustomPort;
 import com.ssafy.realty.custom_deal.application.port.out.dto.wrap.CustomSummaryDtos;
 import com.ssafy.realty.custom_deal.application.service.mapper.CustomServiceMapper;
+import com.ssafy.realty.custom_deal.domain.CustomCatalog;
 import com.ssafy.realty.custom_deal.domain.IsOwner;
+import com.ssafy.realty.custom_deal.domain.OwnCustomCatalog;
+import com.ssafy.realty.custom_deal.domain.wrap.Summaries;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +25,18 @@ public class QueryCustomService implements QueryCustomUseCase {
     private final CustomServiceMapper customServiceMapper;
 
     @Override
-    public CustomSummaryDtos total() {
-        return customServiceMapper.mapToCustomSummaryDtos(queryCustomPort.total());
+    public CustomSummaryDtos total(CustomCatalogDto customCatalogDto) {
+        CustomCatalog customCatalog = customServiceMapper.mapToCustomCatalog(customCatalogDto);
+        Summaries catalogs = queryCustomPort.catalogs(customCatalog);
+        return customServiceMapper.mapToCustomSummaryDtos(catalogs);
     }
 
     @Override
-    public CustomSummaryDtos myCustomInfos(Long userId) {
-        return customServiceMapper.mapToCustomSummaryDtos(queryCustomPort.myCustomInfos(userId));
+    public CustomSummaryDtos myCustomInfos(OwnCustomCatalogDto ownCustomCatalogDto) {
+        OwnCustomCatalog ownCustomCatalog = customServiceMapper.mapToOwnCustomCatalog(ownCustomCatalogDto);
+        Summaries catalogs = queryCustomPort.myCustomInfos(ownCustomCatalog);
+
+        return customServiceMapper.mapToCustomSummaryDtos(catalogs);
     }
 
     @Override

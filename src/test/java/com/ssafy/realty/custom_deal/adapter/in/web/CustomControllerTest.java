@@ -15,12 +15,12 @@ import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import com.ssafy.realty.security.config.jwt.JwtManager;
 import com.ssafy.realty.security.entity.User;
 import com.ssafy.realty.security.repository.UserRepository;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,7 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class CustomControllerTest {
 
     @Autowired
@@ -69,7 +69,6 @@ class CustomControllerTest {
     private JwtManager jwtManager;
 
     @Test
-    @Transactional
     public void allCatalogs() throws Exception {
         // given
         Long userId = defaultUser().getId();
@@ -90,7 +89,6 @@ class CustomControllerTest {
     }
 
     @Test
-    @Transactional
     public void pagingCatalogs() throws Exception {
         // given
         Long userId = defaultUser().getId();
@@ -119,7 +117,6 @@ class CustomControllerTest {
     }
 
     @Test
-    @Transactional
     public void ownCustomCatalogs() throws Exception {
         Long defaultUserId = defaultUser().getId();
         User user = user("dkssud@gmail.com");
@@ -148,7 +145,6 @@ class CustomControllerTest {
     }
 
     @Test
-    @Transactional
     public void isOwner() throws Exception {
         // given
         User user = defaultUser();
@@ -167,6 +163,41 @@ class CustomControllerTest {
                 .andReturn();
 
         System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void titleSearch() throws Exception {
+        // given
+        Long userId = defaultUser().getId();
+        for(int i=0; i<5; i++){
+            saveCustom(userId);
+            saveCustomWithTitle(userId, "제제");
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", "title");
+        jsonObject.put("value", "제목");
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post("/api/v1/custom/search")
+                .param("page", "0")
+                .param("size", "10")
+                .content(jsonObject.toString())
+                .contentType(MediaType.APPLICATION_JSON);;
+
+        // when
+        ResultActions result = mockMvc.perform(request);
+
+        // then
+        result.andExpect(status().isOk());
+
+        Pattern pattern = Pattern.compile("\\{\"id\":\\d+,\"author\":\".*?\",\"title\":\".*?\",\"look\":\\d+,\"start\":\\d+,\"createDate\":\"\\d{4}-\\d{2}-\\d{2}\"\\}");
+        Matcher matcher = pattern.matcher(result.andReturn().getResponse().getContentAsString());
+
+        int count = 0;
+        while (matcher.find()) count++;
+
+        assertThat(count).isEqualTo(5);
     }
 
     private User defaultUser() {
@@ -216,6 +247,10 @@ class CustomControllerTest {
     private void saveCustom(Long userId){
         String title = "kkk 제목 title";
 
+        commandRealtyPersistenceAdapter.save(Save.init(userId, title, customData()));
+    }
+
+    private void saveCustomWithTitle(Long userId, String title) {
         commandRealtyPersistenceAdapter.save(Save.init(userId, title, customData()));
     }
 }

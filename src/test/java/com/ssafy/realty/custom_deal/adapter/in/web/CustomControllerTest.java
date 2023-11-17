@@ -3,7 +3,9 @@ package com.ssafy.realty.custom_deal.adapter.in.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.realty.common.Role;
 import com.ssafy.realty.custom_deal.adapter.out.entity.CustomDealJpaEntity;
+import com.ssafy.realty.custom_deal.adapter.out.entity.UserStarCustomJpaEntity;
 import com.ssafy.realty.custom_deal.adapter.out.respository.CustomDealJpaRepository;
+import com.ssafy.realty.custom_deal.adapter.out.respository.UserStarCustomJpaRepository;
 import com.ssafy.realty.custom_deal.application.port.out.dto.wrap.CustomSummaryDtos;
 import com.ssafy.realty.realty.adapter.out.CommandRealtyPersistenceAdapter;
 import com.ssafy.realty.realty.adapter.out.entity.CustomJpaEntity;
@@ -20,6 +22,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.time.LocalDate.now;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,6 +64,9 @@ class CustomControllerTest {
 
     @Autowired
     private CustomJpaRepository customJpaRepository;
+
+    @Autowired
+    private UserStarCustomJpaRepository userStarCustomJpaRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -210,8 +219,7 @@ class CustomControllerTest {
         long lastInsertId = all.get(all.size()-1).getId();
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post("/api/v1/custom/view/" + lastInsertId)
-                .header("accessToken", getAuthorizedUserToken(user));
+                .post("/api/v1/custom/view/" + lastInsertId);
 
         // when
         mockMvc.perform(request)
@@ -219,6 +227,34 @@ class CustomControllerTest {
 
         // then
         assertThat(customDealJpaRepository.findById(lastInsertId).get().getView()).isEqualTo(1);
+    }
+
+    @Test
+    public void star() throws Exception {
+        // given
+        User user = defaultUser();
+        saveCustom(user.getId());
+
+        List<CustomJpaEntity> all = customJpaRepository.findAll();
+        long lastInsertId = all.get(all.size()-1).getId();
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post("/api/v1/custom/star/" + lastInsertId)
+                .header("accessToken", getAuthorizedUserToken(user));
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        // when
+        ResultActions result = mockMvc.perform(request);
+
+        List<UserStarCustomJpaEntity> userStared = userStarCustomJpaRepository.findByUserId(user.getId(), pageable)
+                .get()
+                .collect(Collectors.toList());
+
+        // then
+        result.andExpect(status().isOk());
+        assertThat(userStared.get(0).getUser().getId()).isEqualTo(user.getId());
+        assertThat(userStared.get(0).getCustom().getId()).isEqualTo(lastInsertId);
     }
 
     private User defaultUser() {

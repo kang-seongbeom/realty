@@ -32,4 +32,8 @@ public class WebCustomMapper {
     public ViewIncreaseDto mapToViewIncreaseDto(Long customId) {
         return new ViewIncreaseDto(customId);
     }
+
+    public StarCustomDto mapToStarIncreaseDto(Long userId, Long customId) {
+        return new StarCustomDto(userId, customId);
+    }
 }

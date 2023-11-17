@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthorizationFilter(jwtManager), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/api/v1/realty/save", "/api/v1/realty/update")
+                .antMatchers("/api/v1/realty/save", "/api/v1/realty/update/**", "/api/v1/custom/star/**")
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_SSAFY') or hasRole('ROLE_ADMIN')")
                 .antMatchers("/api/v1/user/**")
                 .access("hasRole('ROLE_USER') or hasRole('ROLE_SSAFY') or hasRole('ROLE_ADMIN')")

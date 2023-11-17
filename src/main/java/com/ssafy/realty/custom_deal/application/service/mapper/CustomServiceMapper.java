@@ -42,6 +42,10 @@ public class CustomServiceMapper {
         return ViewIncrease.init(viewIncreaseDto.getCustomId());
     }
 
+    public StarCustom mapToStarIncrease(StarCustomDto starCustomDto) {
+        return StarCustom.init(starCustomDto.getUserId(), starCustomDto.getCustomId());
+    }
+
     private CustomSummaryDto mapToCustomSummaryDto(Summary summary) {
         return CustomSummaryDto
                 .builder()

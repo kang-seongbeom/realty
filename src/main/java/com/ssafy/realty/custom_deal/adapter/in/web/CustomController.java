@@ -70,11 +70,21 @@ class CustomController {
     }
 
     @PostMapping("/view/{customId}")
-    @ApiOperation(value = "커스텀 검색", notes = "검색 후 조건에 맞는 커스텀 반환")
+    @ApiOperation(value = "조회수", notes = "조회수(view) 증가")
     @ApiResponsesCommon
     ResponseEntity<Void> viewIncrease(@PathVariable Long customId){
         ViewIncreaseDto viewIncreaseDto = webCustomMapper.mapToViewIncreaseDto(customId);
         commandCustomUseCase.viewIncrease(viewIncreaseDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/star/{customId}")
+    @ApiOperation(value = "좋아요", notes = "좋아요(star) 증가")
+    @ApiResponsesCommon
+    ResponseEntity<Void> starCustom(@AuthenticationPrincipal PrincipalDetails principalDetails,
+                              @PathVariable Long customId){
+        StarCustomDto starCustomDto = webCustomMapper.mapToStarIncreaseDto(principalDetails.getUser().getId(), customId);
+        commandCustomUseCase.starIncrease(starCustomDto);
         return ResponseEntity.ok().build();
     }
 }

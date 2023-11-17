@@ -3,6 +3,7 @@ package com.ssafy.realty.custom_deal.adapter.out.entity;
 import lombok.Getter;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -15,4 +16,7 @@ public class CustomUserJpaEntity {
 
     @Column
     private String nickname;
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserStarCustomJpaEntity> startToCustoms;
 }

@@ -49,7 +49,7 @@ public class RealtyAdapterMapper {
         CustomJpaEntity customJpa = CustomJpaEntity
                 .builder()
                 .title(save.getSaveData().getTitle())
-                .look(0)
+                .view(0)
                 .star(0)
                 .build();
 

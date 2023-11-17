@@ -2,10 +2,7 @@ package com.ssafy.realty.custom_deal.adapter.in.web.mapper;
 
 import com.ssafy.realty.common.SearchType;
 import com.ssafy.realty.custom_deal.adapter.in.web.payload.SearchCustomPayload;
-import com.ssafy.realty.custom_deal.application.port.in.dto.IsOwnerDto;
-import com.ssafy.realty.custom_deal.application.port.in.dto.CustomCatalogDto;
-import com.ssafy.realty.custom_deal.application.port.in.dto.OwnCustomCatalogDto;
-import com.ssafy.realty.custom_deal.application.port.in.dto.SearchCustomDto;
+import com.ssafy.realty.custom_deal.application.port.in.dto.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
@@ -30,5 +27,9 @@ public class WebCustomMapper {
                 searchCustomPayload.getValue(),
                 pageable
         );
+    }
+
+    public ViewIncreaseDto mapToViewIncreaseDto(Long customId) {
+        return new ViewIncreaseDto(customId);
     }
 }

@@ -24,7 +24,7 @@ public class CustomDealJpaEntity {
     private String title;
 
     @Column
-    private Integer look;
+    private Integer view;
 
     @Column
     private Integer star;
@@ -40,4 +40,9 @@ public class CustomDealJpaEntity {
 
 //    @OneToMany(mappedBy = "custom", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 //    private List<MarkerJpaEntity> markers;
+
+    public void viewIncrease(){
+        this.view += 1;
+    }
+
 }

@@ -6,9 +6,6 @@ import com.ssafy.realty.custom_deal.domain.wrap.Summaries;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component
 public class CustomAdapterMapper {
     public Summaries mapToSummaries(Page<CustomDealJpaEntity> total) {
@@ -18,7 +15,7 @@ public class CustomAdapterMapper {
     private Summary mapToSummary(CustomDealJpaEntity deal){
         return Summary.init(
                 deal.getId(), deal.getUser().getNickname(),
-                deal.getTitle(), deal.getLook(),
+                deal.getTitle(), deal.getView(),
                 deal.getStar(), deal.getCreateDate()
         );
     }

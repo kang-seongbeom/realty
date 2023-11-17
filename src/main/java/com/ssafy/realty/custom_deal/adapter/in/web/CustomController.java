@@ -3,11 +3,9 @@ package com.ssafy.realty.custom_deal.adapter.in.web;
 import com.ssafy.realty.common.swagger.ApiResponsesCommon;
 import com.ssafy.realty.custom_deal.adapter.in.web.mapper.WebCustomMapper;
 import com.ssafy.realty.custom_deal.adapter.in.web.payload.SearchCustomPayload;
-import com.ssafy.realty.custom_deal.application.port.in.dto.IsOwnerDto;
+import com.ssafy.realty.custom_deal.application.port.in.CommandCustomUseCase;
+import com.ssafy.realty.custom_deal.application.port.in.dto.*;
 import com.ssafy.realty.custom_deal.application.port.in.QueryCustomUseCase;
-import com.ssafy.realty.custom_deal.application.port.in.dto.CustomCatalogDto;
-import com.ssafy.realty.custom_deal.application.port.in.dto.OwnCustomCatalogDto;
-import com.ssafy.realty.custom_deal.application.port.in.dto.SearchCustomDto;
 import com.ssafy.realty.custom_deal.application.port.out.dto.wrap.CustomSummaryDtos;
 import com.ssafy.realty.security.config.auth.PrincipalDetails;
 import io.swagger.annotations.Api;
@@ -27,6 +25,7 @@ import javax.validation.Valid;
 class CustomController {
 
     private final QueryCustomUseCase queryCustomUseCase;
+    private final CommandCustomUseCase commandCustomUseCase;
 
     private final WebCustomMapper webCustomMapper;
 
@@ -70,4 +69,12 @@ class CustomController {
         return ResponseEntity.ok(summaryDtos);
     }
 
+    @PostMapping("/view/{customId}")
+    @ApiOperation(value = "커스텀 검색", notes = "검색 후 조건에 맞는 커스텀 반환")
+    @ApiResponsesCommon
+    ResponseEntity<Void> viewIncrease(@PathVariable Long customId){
+        ViewIncreaseDto viewIncreaseDto = webCustomMapper.mapToViewIncreaseDto(customId);
+        commandCustomUseCase.viewIncrease(viewIncreaseDto);
+        return ResponseEntity.ok().build();
+    }
 }

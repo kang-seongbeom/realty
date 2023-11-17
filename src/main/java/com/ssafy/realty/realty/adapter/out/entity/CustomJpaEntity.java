@@ -29,7 +29,7 @@ public class CustomJpaEntity {
     private String title;
 
     @Column
-    private Integer look;
+    private Integer view;
 
     @Column
     private Integer star;

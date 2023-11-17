@@ -200,6 +200,27 @@ class CustomControllerTest {
         assertThat(count).isEqualTo(5);
     }
 
+    @Test
+    public void viewIncrease() throws Exception {
+        // given
+        User user = defaultUser();
+        saveCustom(user.getId());
+
+        List<CustomJpaEntity> all = customJpaRepository.findAll();
+        long lastInsertId = all.get(all.size()-1).getId();
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post("/api/v1/custom/view/" + lastInsertId)
+                .header("accessToken", getAuthorizedUserToken(user));
+
+        // when
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+
+        // then
+        assertThat(customDealJpaRepository.findById(lastInsertId).get().getView()).isEqualTo(1);
+    }
+
     private User defaultUser() {
         User user = new User(null, "custome@gmail.com", encoder.encode("a1234567"), "ksb", Role.USER);
         return userRepository.save(user);

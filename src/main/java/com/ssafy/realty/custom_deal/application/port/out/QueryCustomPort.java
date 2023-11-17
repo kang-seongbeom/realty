@@ -1,9 +1,6 @@
 package com.ssafy.realty.custom_deal.application.port.out;
 
-import com.ssafy.realty.custom_deal.domain.CustomCatalog;
-import com.ssafy.realty.custom_deal.domain.IsOwner;
-import com.ssafy.realty.custom_deal.domain.OwnCustomCatalog;
-import com.ssafy.realty.custom_deal.domain.Search;
+import com.ssafy.realty.custom_deal.domain.*;
 import com.ssafy.realty.custom_deal.domain.wrap.Summaries;
 
 public interface QueryCustomPort {
@@ -15,4 +12,6 @@ public interface QueryCustomPort {
     boolean isOwner(IsOwner isOwner);
 
     Summaries search(Search search);
+
+    Summaries ownStarCustom(OwnStarCustom ownStarCustom);
 }

@@ -4,20 +4,16 @@ import com.ssafy.realty.custom_deal.adapter.out.entity.CustomDealJpaEntity;
 import com.ssafy.realty.custom_deal.adapter.out.mapper.CustomAdapterMapper;
 import com.ssafy.realty.custom_deal.adapter.out.respository.CustomDealCriteriaRepository;
 import com.ssafy.realty.custom_deal.adapter.out.respository.CustomDealJpaRepository;
+import com.ssafy.realty.custom_deal.adapter.out.respository.UserStarCustomJpaRepository;
 import com.ssafy.realty.custom_deal.application.port.out.QueryCustomPort;
-import com.ssafy.realty.custom_deal.domain.CustomCatalog;
-import com.ssafy.realty.custom_deal.domain.IsOwner;
-import com.ssafy.realty.custom_deal.domain.OwnCustomCatalog;
-import com.ssafy.realty.custom_deal.domain.Search;
+import com.ssafy.realty.custom_deal.domain.*;
 import com.ssafy.realty.custom_deal.domain.wrap.Summaries;
 import com.ssafy.realty.realty.adapter.out.entity.CustomJpaEntity;
 import com.ssafy.realty.realty.adapter.out.repository.CustomJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
@@ -27,6 +23,7 @@ public class QueryCustomPersistenceAdapter implements QueryCustomPort {
     private final CustomJpaRepository customJpaRepository;
     private final CustomDealJpaRepository customDealJpaRepository;
     private final CustomDealCriteriaRepository customDealCriteriaRepository;
+    private final UserStarCustomJpaRepository userStarCustomJpaRepository;
 
     private final CustomAdapterMapper customAdapterMapper;
 
@@ -59,6 +56,15 @@ public class QueryCustomPersistenceAdapter implements QueryCustomPort {
     public Summaries search(Search search) {
         Page<CustomDealJpaEntity> catalogs =
                 customDealCriteriaRepository.findByDynamicSearch(search);
+        return customAdapterMapper.mapToSummaries(catalogs);
+    }
+
+    @Override
+    public Summaries ownStarCustom(OwnStarCustom ownStarCustom) {
+        Page<CustomDealJpaEntity> catalogs = userStarCustomJpaRepository.findCustomByUserId(
+                ownStarCustom.getOwnStarCustomUserId().getValue(),
+                ownStarCustom.getOwnStarCustomData().getPageable()
+        );
         return customAdapterMapper.mapToSummaries(catalogs);
     }
 }

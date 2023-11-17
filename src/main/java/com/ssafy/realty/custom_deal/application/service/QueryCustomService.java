@@ -1,17 +1,11 @@
 package com.ssafy.realty.custom_deal.application.service;
 
-import com.ssafy.realty.custom_deal.application.port.in.dto.IsOwnerDto;
+import com.ssafy.realty.custom_deal.application.port.in.dto.*;
 import com.ssafy.realty.custom_deal.application.port.in.QueryCustomUseCase;
-import com.ssafy.realty.custom_deal.application.port.in.dto.CustomCatalogDto;
-import com.ssafy.realty.custom_deal.application.port.in.dto.OwnCustomCatalogDto;
-import com.ssafy.realty.custom_deal.application.port.in.dto.SearchCustomDto;
 import com.ssafy.realty.custom_deal.application.port.out.QueryCustomPort;
 import com.ssafy.realty.custom_deal.application.port.out.dto.wrap.CustomSummaryDtos;
 import com.ssafy.realty.custom_deal.application.service.mapper.CustomServiceMapper;
-import com.ssafy.realty.custom_deal.domain.CustomCatalog;
-import com.ssafy.realty.custom_deal.domain.IsOwner;
-import com.ssafy.realty.custom_deal.domain.OwnCustomCatalog;
-import com.ssafy.realty.custom_deal.domain.Search;
+import com.ssafy.realty.custom_deal.domain.*;
 import com.ssafy.realty.custom_deal.domain.wrap.Summaries;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,6 +44,13 @@ public class QueryCustomService implements QueryCustomUseCase {
     public CustomSummaryDtos search(SearchCustomDto searchCustomDto) {
         Search search = customServiceMapper.mapToSearch(searchCustomDto);
         Summaries catalogs = queryCustomPort.search(search);
+        return customServiceMapper.mapToCustomSummaryDtos(catalogs);
+    }
+
+    @Override
+    public CustomSummaryDtos ownStarCustom(OwnStarCustomDto ownStarCustomDto) {
+        OwnStarCustom ownStarCustom = customServiceMapper.mapToOwnStarCustom(ownStarCustomDto);
+        Summaries catalogs = queryCustomPort.ownStarCustom(ownStarCustom);
         return customServiceMapper.mapToCustomSummaryDtos(catalogs);
     }
 }

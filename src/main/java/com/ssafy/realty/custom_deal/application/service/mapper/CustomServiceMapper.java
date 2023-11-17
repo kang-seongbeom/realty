@@ -46,6 +46,10 @@ public class CustomServiceMapper {
         return StarCustom.init(starCustomDto.getUserId(), starCustomDto.getCustomId());
     }
 
+    public OwnStarCustom mapToOwnStarCustom(OwnStarCustomDto ownStarCustomDto) {
+        return OwnStarCustom.init(ownStarCustomDto.getUserId(), ownStarCustomDto.getPageable());
+    }
+
     private CustomSummaryDto mapToCustomSummaryDto(Summary summary) {
         return CustomSummaryDto
                 .builder()

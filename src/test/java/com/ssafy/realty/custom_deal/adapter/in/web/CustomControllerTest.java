@@ -2,11 +2,13 @@ package com.ssafy.realty.custom_deal.adapter.in.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.realty.common.Role;
+import com.ssafy.realty.custom_deal.adapter.out.CommandCustomPersistenceAdapter;
 import com.ssafy.realty.custom_deal.adapter.out.entity.CustomDealJpaEntity;
 import com.ssafy.realty.custom_deal.adapter.out.entity.UserStarCustomJpaEntity;
 import com.ssafy.realty.custom_deal.adapter.out.respository.CustomDealJpaRepository;
 import com.ssafy.realty.custom_deal.adapter.out.respository.UserStarCustomJpaRepository;
 import com.ssafy.realty.custom_deal.application.port.out.dto.wrap.CustomSummaryDtos;
+import com.ssafy.realty.custom_deal.domain.StarCustom;
 import com.ssafy.realty.realty.adapter.out.CommandRealtyPersistenceAdapter;
 import com.ssafy.realty.realty.adapter.out.entity.CustomJpaEntity;
 import com.ssafy.realty.realty.adapter.out.repository.CustomJpaRepository;
@@ -18,6 +20,7 @@ import com.ssafy.realty.security.config.jwt.JwtManager;
 import com.ssafy.realty.security.entity.User;
 import com.ssafy.realty.security.repository.UserRepository;
 import org.json.JSONObject;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -60,6 +63,9 @@ class CustomControllerTest {
     private CommandRealtyPersistenceAdapter commandRealtyPersistenceAdapter;
 
     @Autowired
+    private CommandCustomPersistenceAdapter customPersistenceAdapter;
+
+    @Autowired
     private CustomDealJpaRepository customDealJpaRepository;
 
     @Autowired
@@ -78,6 +84,7 @@ class CustomControllerTest {
     private JwtManager jwtManager;
 
     @Test
+    @DisplayName("모든 게시글 확인 (페이징 기본 20개)")
     public void allCatalogs() throws Exception {
         // given
         Long userId = defaultUser().getId();
@@ -98,6 +105,7 @@ class CustomControllerTest {
     }
 
     @Test
+    @DisplayName("페이징 확인")
     public void pagingCatalogs() throws Exception {
         // given
         Long userId = defaultUser().getId();
@@ -126,6 +134,7 @@ class CustomControllerTest {
     }
 
     @Test
+    @DisplayName("자신이 만든 매물 정보 글 보기")
     public void ownCustomCatalogs() throws Exception {
         Long defaultUserId = defaultUser().getId();
         User user = user("dkssud@gmail.com");
@@ -154,6 +163,7 @@ class CustomControllerTest {
     }
 
     @Test
+    @DisplayName("매물 정보 글의 주인 확인")
     public void isOwner() throws Exception {
         // given
         User user = defaultUser();
@@ -175,6 +185,7 @@ class CustomControllerTest {
     }
 
     @Test
+    @DisplayName("제목 기준 검색")
     public void titleSearch() throws Exception {
         // given
         Long userId = defaultUser().getId();
@@ -210,6 +221,7 @@ class CustomControllerTest {
     }
 
     @Test
+    @DisplayName("조회수 증가")
     public void viewIncrease() throws Exception {
         // given
         User user = defaultUser();
@@ -230,6 +242,7 @@ class CustomControllerTest {
     }
 
     @Test
+    @DisplayName("좋아요 버튼 클릭")
     public void star() throws Exception {
         // given
         User user = defaultUser();
@@ -255,6 +268,43 @@ class CustomControllerTest {
         result.andExpect(status().isOk());
         assertThat(userStared.get(0).getUser().getId()).isEqualTo(user.getId());
         assertThat(userStared.get(0).getCustom().getId()).isEqualTo(lastInsertId);
+    }
+
+    @Test
+    @DisplayName("회원이 좋아요를 누른 리스트만 보기")
+    public void myStar() throws Exception {
+        // given
+        User user = defaultUser();
+        User anotherUser = user("another@gmail.com");
+
+        saveCustom(user.getId());
+        saveCustom(anotherUser.getId());
+        saveCustom(anotherUser.getId());
+
+        List<CustomJpaEntity> all = customJpaRepository.findAll();
+        long lastInsertId = all.get(all.size()-1).getId();
+
+        StarCustom starCustom = StarCustom.init(user.getId(), lastInsertId);
+
+        customPersistenceAdapter.starCustom(starCustom);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/api/v1/custom/star/own")
+                .header("accessToken", getAuthorizedUserToken(user));
+
+        // when
+        ResultActions result = mockMvc.perform(request);
+
+        // then
+        result.andExpect(status().isOk());
+
+        Pattern pattern = Pattern.compile("\\{\"id\":\\d+,\"author\":\".*?\",\"title\":\".*?\",\"look\":\\d+,\"start\":\\d+,\"createDate\":\"\\d{4}-\\d{2}-\\d{2}\"\\}");
+        Matcher matcher = pattern.matcher(result.andReturn().getResponse().getContentAsString());
+
+        int count = 0;
+        while (matcher.find()) count++;
+
+        assertThat(count).isEqualTo(1);
     }
 
     private User defaultUser() {

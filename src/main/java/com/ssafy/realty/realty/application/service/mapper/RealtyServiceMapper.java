@@ -47,16 +47,33 @@ public class RealtyServiceMapper {
     }
 
     public TotalHistoryDealInfoDtos mapToTotalHistoryDealInfos(DealInfos dealInfos) {
+        if (dealInfos.getDealInfos().isEmpty()) {
+            return TotalHistoryDealInfoDtos.builder().build();
+        }
+
+        return TotalHistoryDealInfoDtos
+                .builder()
+                .aptCode(dealInfos.getDealInfos().get(0).getDealInfoArtCode().getArtCode())
+                .lat(dealInfos.getDealInfos().get(0).getDealInfoData().getLat())
+                .lng(dealInfos.getDealInfos().get(0).getDealInfoData().getLng())
+                .address(dealInfos.getDealInfos().get(0).getDealInfoData().getAddress())
+                .data(mapToTotalHistoryDealInfoDatas(dealInfos))
+                .build();
+
+    }
+
+    private List<TotalHistoryDealInfoDto> mapToTotalHistoryDealInfoDatas(DealInfos dealInfos) {
         List<TotalHistoryDealInfoDto> data = dealInfos.getDealInfos()
                 .stream()
                 .map(this::mapToTotalHistoryDealInfo)
                 .collect(Collectors.toList());
-        return new TotalHistoryDealInfoDtos(data);
+        return data;
     }
 
     public Save mapToSave(SaveDto saveDto) {
         return Save.init(saveDto.getUserId(), saveDto.getTitle(), mapToMarkers(saveDto.getMarkers()));
     }
+
     public Update mapToUpdate(UpdateDto updateDto) {
         return Update.init(updateDto.getUserId(), updateDto.getCustomId(), updateDto.getTitle(), mapToMarkers(updateDto.getMarkers()));
     }
@@ -66,7 +83,7 @@ public class RealtyServiceMapper {
         return SaveTemporary.init(saveTemporaryDto.getId(), mapToMarkers(saveTemporaryDto.getMarkers()));
     }
 
-    public Markers mapToMarkers(MarkerDtos markerDtos){
+    public Markers mapToMarkers(MarkerDtos markerDtos) {
         List<Marker> data = markerDtos.getData()
                 .stream()
                 .map(this::mapToMarker)
@@ -97,7 +114,7 @@ public class RealtyServiceMapper {
                 .build();
     }
 
-    private MarkerDto.DtoMarkerFilter mapToDtoMarkerFilter(Marker.MarkerData.MarkerFilter markerFilter){
+    private MarkerDto.DtoMarkerFilter mapToDtoMarkerFilter(Marker.MarkerData.MarkerFilter markerFilter) {
         return MarkerDto.DtoMarkerFilter
                 .builder()
                 .date(mapToPayloadDateRange(markerFilter.getDayRange()))
@@ -115,7 +132,7 @@ public class RealtyServiceMapper {
         return new MarkerDto.DtoMarkerFilter.PayloadDealAmountRange(dealAmount.getRange().getLower(), dealAmount.getRange().getUpper());
     }
 
-    private MarkerDto.DtoMarkerFilter.PayloadAreaRange mapToPayloadAreaRange(Marker.MarkerData.MarkerFilter.AreaRange area){
+    private MarkerDto.DtoMarkerFilter.PayloadAreaRange mapToPayloadAreaRange(Marker.MarkerData.MarkerFilter.AreaRange area) {
         return new MarkerDto.DtoMarkerFilter.PayloadAreaRange(area.getRange().getLower(), area.getRange().getUpper());
     }
 
@@ -132,11 +149,6 @@ public class RealtyServiceMapper {
     private TotalHistoryDealInfoDto mapToTotalHistoryDealInfo(DealInfo dealInfo) {
         return TotalHistoryDealInfoDto
                 .builder()
-                .aptCode(dealInfo.getDealInfoArtCode().getArtCode())
-                .apartmentName(dealInfo.getDealInfoData().getApartmentName())
-                .lat(dealInfo.getDealInfoData().getLat())
-                .lng(dealInfo.getDealInfoData().getLng())
-                .address(dealInfo.getDealInfoData().getAddress())
                 .floor(dealInfo.getDealInfoData().getFloor())
                 .dealAmount(dealInfo.getDealInfoData().getDealAmount())
                 .dealDate(dealInfo.getDealInfoData().getDealDate())

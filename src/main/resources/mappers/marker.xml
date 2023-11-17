@@ -24,8 +24,8 @@
             houseinfo.lng AS lng,
             CONCAT(houseinfo.dong, ' ', houseinfo.roadName, ' ', houseinfo.jibun) AS address,
             COUNT(*) AS totalDealAmount,
-            REPLACE(MAX(housedeal.dealAmount), ',', '') AS maxDealAmount,
-            REPLACE(MIN(housedeal.dealAmount), ',', '') AS minDealAmount,
+            MAX(CAST(REPLACE(dealAmount, ',', '') AS UNSIGNED)) as maxDealAmount,
+            MIN(CAST(REPLACE(dealAmount, ',', '') AS UNSIGNED)) as minDealAmount,
             AVG(housedeal.dealAmount) AS avgDealAmount,
             AVG(housedeal.area) AS avgArea
         FROM (SELECT * FROM houseinfo sh WHERE sh.dongCode = #{dongCode}) houseinfo

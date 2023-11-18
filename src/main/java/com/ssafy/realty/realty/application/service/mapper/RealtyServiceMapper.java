@@ -124,26 +124,26 @@ public class RealtyServiceMapper {
                 .build();
     }
 
-    private MarkerDto.DtoMarkerFilter.PayloadDateRange mapToPayloadDateRange(Marker.MarkerData.MarkerFilter.DateRange date) {
-        return new MarkerDto.DtoMarkerFilter.PayloadDateRange(date.getRange().getLower().toString(), date.getRange().getUpper().toString());
+    private MarkerDto.DtoMarkerFilter.DtoDateRange mapToPayloadDateRange(Marker.MarkerData.MarkerFilter.DateRange date) {
+        return new MarkerDto.DtoMarkerFilter.DtoDateRange(date.getRange().getLower().toString(), date.getRange().getUpper().toString());
     }
 
-    private MarkerDto.DtoMarkerFilter.PayloadDealAmountRange mapToPayloadDealAmountRange(Marker.MarkerData.MarkerFilter.DealAmountRange dealAmount) {
-        return new MarkerDto.DtoMarkerFilter.PayloadDealAmountRange(dealAmount.getRange().getLower(), dealAmount.getRange().getUpper());
+    private MarkerDto.DtoMarkerFilter.DtoDealAmountRange mapToPayloadDealAmountRange(Marker.MarkerData.MarkerFilter.DealAmountRange dealAmount) {
+        return new MarkerDto.DtoMarkerFilter.DtoDealAmountRange(dealAmount.getRange().getLower(), dealAmount.getRange().getUpper());
     }
 
-    private MarkerDto.DtoMarkerFilter.PayloadAreaRange mapToPayloadAreaRange(Marker.MarkerData.MarkerFilter.AreaRange area) {
-        return new MarkerDto.DtoMarkerFilter.PayloadAreaRange(area.getRange().getLower(), area.getRange().getUpper());
+    private MarkerDto.DtoMarkerFilter.DtoAreaRange mapToPayloadAreaRange(Marker.MarkerData.MarkerFilter.AreaRange area) {
+        return new MarkerDto.DtoMarkerFilter.DtoAreaRange(area.getRange().getLower(), area.getRange().getUpper());
     }
 
-    private List<MarkerDto.DtoMarkerFilter.PayloadTransportation> mapToPayloadTransportations(List<Marker.MarkerData.MarkerFilter.Transportation> trans) {
+    private List<MarkerDto.DtoMarkerFilter.DtoTransportation> mapToPayloadTransportations(List<Marker.MarkerData.MarkerFilter.Transportation> trans) {
         return trans.stream()
                 .map(this::mapToPayloadTransportation)
                 .collect(Collectors.toList());
     }
 
-    private MarkerDto.DtoMarkerFilter.PayloadTransportation mapToPayloadTransportation(Marker.MarkerData.MarkerFilter.Transportation t) {
-        return new MarkerDto.DtoMarkerFilter.PayloadTransportation(t.getType().toString(), t.getTime());
+    private MarkerDto.DtoMarkerFilter.DtoTransportation mapToPayloadTransportation(Marker.MarkerData.MarkerFilter.Transportation t) {
+        return new MarkerDto.DtoMarkerFilter.DtoTransportation(t.getType().toString(), t.getTime());
     }
 
     private TotalHistoryDealInfoDto mapToTotalHistoryDealInfo(DealInfo dealInfo) {
@@ -158,7 +158,7 @@ public class RealtyServiceMapper {
     private List<String[]> getTransportations(MarkerDto markerDto) {
         List<String[]> transportations = new ArrayList<>();
         if (markerDto.getFilter().getTransportations() != null) {
-            for (MarkerDto.DtoMarkerFilter.PayloadTransportation p : markerDto.getFilter().getTransportations()) {
+            for (MarkerDto.DtoMarkerFilter.DtoTransportation p : markerDto.getFilter().getTransportations()) {
                 String[] trans = new String[2];
                 trans[0] = p.getType();
                 trans[1] = String.valueOf(p.getTime());

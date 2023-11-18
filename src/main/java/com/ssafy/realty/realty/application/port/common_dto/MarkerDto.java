@@ -19,15 +19,15 @@ public class MarkerDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DtoMarkerFilter {
-        private PayloadDateRange date;
-        private PayloadDealAmountRange dealAmount;
-        private PayloadAreaRange area;
-        private List<PayloadTransportation> transportations;
+        private DtoDateRange date;
+        private DtoDealAmountRange dealAmount;
+        private DtoAreaRange area;
+        private List<DtoTransportation> transportations;
 
         @Data
         @AllArgsConstructor
         @NoArgsConstructor
-        public static class PayloadDateRange {
+        public static class DtoDateRange {
             private String lower;
             private String upper;
         }
@@ -35,7 +35,7 @@ public class MarkerDto {
         @Data
         @AllArgsConstructor
         @NoArgsConstructor
-        public static class PayloadDealAmountRange {
+        public static class DtoDealAmountRange {
             private Long lower;
             private Long upper;
         }
@@ -43,7 +43,7 @@ public class MarkerDto {
         @Data
         @AllArgsConstructor
         @NoArgsConstructor
-        public static class PayloadAreaRange {
+        public static class DtoAreaRange {
             private Double lower;
             private Double upper;
         }
@@ -51,7 +51,7 @@ public class MarkerDto {
         @Data
         @AllArgsConstructor
         @NoArgsConstructor
-        public static class PayloadTransportation {
+        public static class DtoTransportation {
             private String type;
             private Integer time;
         }

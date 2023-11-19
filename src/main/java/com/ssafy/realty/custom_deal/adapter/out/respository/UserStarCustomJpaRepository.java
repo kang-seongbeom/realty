@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface UserStarCustomJpaRepository extends JpaRepository<UserStarCustomJpaEntity, Long> {
 
@@ -13,5 +14,5 @@ public interface UserStarCustomJpaRepository extends JpaRepository<UserStarCusto
 
     @Query(value = "SELECT uc.custom FROM UserStarCustomJpaEntity uc WHERE uc.user.id = :userId",
             countQuery = "SELECT COUNT(uc) FROM UserStarCustomJpaEntity uc WHERE uc.user.id = :userId")
-    Page<CustomDealJpaEntity> findCustomByUserId(Long userId, Pageable pageable);
+    Page<CustomDealJpaEntity> findCustomByUserId(@Param("userId") Long userId, Pageable pageable);
 }

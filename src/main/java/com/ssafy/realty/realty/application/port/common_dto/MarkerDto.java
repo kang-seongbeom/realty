@@ -14,6 +14,10 @@ public class MarkerDto {
     private String address;
     private DtoMarkerFilter filter;
 
+    public DtoMarkerFilter getFilter() {
+        return (filter != null) ? filter : new DtoMarkerFilter();
+    }
+
     @Data
     @Builder
     @NoArgsConstructor

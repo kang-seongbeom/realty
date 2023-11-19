@@ -25,14 +25,16 @@ import java.util.stream.Collectors;
 public class RealtyServiceMapper {
 
     public Marker mapToMarker(MarkerDto markerDto) {
+        MarkerDto.DtoMarkerFilter filter = markerDto.getFilter();
+
         return Marker.init(
                 markerDto.getLat(), markerDto.getLng(), markerDto.getAddress(),
-                markerDto.getFilter().getDate() != null ? markerDto.getFilter().getDate().getLower() : null,
-                markerDto.getFilter().getDate() != null ? markerDto.getFilter().getDate().getUpper() : null,
-                markerDto.getFilter().getDealAmount() != null ? markerDto.getFilter().getDealAmount().getLower() : null,
-                markerDto.getFilter().getDealAmount() != null ? markerDto.getFilter().getDealAmount().getUpper() : null,
-                markerDto.getFilter().getArea() != null ? markerDto.getFilter().getArea().getLower() : null,
-                markerDto.getFilter().getArea() != null ? markerDto.getFilter().getArea().getUpper() : null,
+                filter.getDate() != null ? filter.getDate().getLower() : null,
+                filter.getDate() != null ? filter.getDate().getUpper() : null,
+                filter.getDealAmount() != null ? filter.getDealAmount().getLower() : null,
+                filter.getDealAmount() != null ? filter.getDealAmount().getUpper() : null,
+                filter.getArea() != null ? filter.getArea().getLower() : null,
+                filter.getArea() != null ? filter.getArea().getUpper() : null,
                 getTransportations(markerDto)
         );
     }

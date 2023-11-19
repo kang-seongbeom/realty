@@ -23,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -41,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @DisplayName("부동산 컨트롤러 통합 테스트")
 @Transactional
+@ActiveProfiles("test")
 class RealtyControllerTest extends RealtyData {
 
     @Autowired
@@ -65,7 +67,7 @@ class RealtyControllerTest extends RealtyData {
     private CustomJpaRepository customJpaRepository;
 
     @Test
-    @DisplayName("마커 주변 집 정보")
+    @DisplayName("마커 주변 집 정보 필터링")
     public void realtyInfoTest() throws Exception {
         // given
         JSONObject requestBody = realtyInfoJsonBody();
@@ -80,6 +82,25 @@ class RealtyControllerTest extends RealtyData {
         mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andExpect(content().json(expect));
+    }
+
+    @Test
+    @DisplayName("마커 주변 집 정보 필터링 X")
+    public void realtyInfoTestNoCondition() throws Exception {
+        // given
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("lat", 35.9768231457432);
+        requestBody.put("lng", 128.944137387794);
+        requestBody.put("address", "경상북도 영천시 야사동");
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post("/api/v1/realty/realty-info")
+                .content(requestBody.toString())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // when, then
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
     }
 
     @Test

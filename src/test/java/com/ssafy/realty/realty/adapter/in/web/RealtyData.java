@@ -62,7 +62,7 @@ public class RealtyData {
         JSONObject json = new JSONObject();
         json.put("lat", 35.9614192418845);
         json.put("lng", 126.713870217358);
-        json.put("address", "전북 군산시 수송동");
+        json.put("address", "전북 군산시 수송동 12-2");
 
         JSONObject filter = new JSONObject();
 

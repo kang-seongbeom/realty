@@ -160,11 +160,13 @@ public class Marker {
             }
 
             private void setDongName(String[] names, int index){
+                String dongNameRegex = "[0-9-]";
+
                 StringBuffer buffer = new StringBuffer();
                 for(int i=index; i<names.length; i++){
                     buffer.append(names[i]).append(" ");
                 }
-                this.dongName = buffer.toString().trim();
+                this.dongName = buffer.toString().replaceAll(dongNameRegex, "").trim();
             }
         }
 

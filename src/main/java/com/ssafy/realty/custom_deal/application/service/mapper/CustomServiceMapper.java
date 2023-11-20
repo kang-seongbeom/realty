@@ -27,7 +27,7 @@ public class CustomServiceMapper {
                 .map(this::mapToCustomSummaryDto)
                 .collect(Collectors.toList());
 
-        return new CustomSummaryDtos(data);
+        return new CustomSummaryDtos(data, summaries.getData().getTotalPages(), summaries.getData().getNumber());
     }
 
     public IsOwner mapToIsOwner(IsOwnerDto isOwnerDto){

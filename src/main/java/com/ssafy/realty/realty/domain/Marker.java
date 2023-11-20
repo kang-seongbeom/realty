@@ -161,8 +161,17 @@ public class Marker {
 
             private void setDongName(String[] names, int index){
                 StringBuffer buffer = new StringBuffer();
-                for(int i=index; i<names.length-1; i++){
-                    buffer.append(names[i]).append(" ");
+                String jibunRegex = "[0-9-]";
+                String jibun = names[names.length-1].replaceAll(jibunRegex, "");
+
+                if(jibun.length() == 0){
+                    for(int i=index; i<names.length-1; i++){
+                        buffer.append(names[i]).append(" ");
+                    }
+                }else{
+                    for(int i=index; i<names.length; i++){
+                        buffer.append(names[i]).append(" ");
+                    }
                 }
                 this.dongName = buffer.toString().trim();
             }

@@ -132,7 +132,7 @@ public class RealtyAdapterMapper {
                 .builder()
                 .lat(marker.getMarkerData().getLat())
                 .lng(marker.getMarkerData().getLng())
-                .address(marker.getMarkerData().getAddress())
+                .address(marker.getMarkerData().getAddress().getFullAddress())
                 .build();
 
         markerJpa.setFilter(getFilterJpaEntity(marker.getMarkerData().getFilter()));

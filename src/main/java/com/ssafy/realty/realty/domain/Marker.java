@@ -3,6 +3,7 @@ package com.ssafy.realty.realty.domain;
 import com.ssafy.realty.common.TransportationType;
 import lombok.*;
 
+import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -17,9 +18,9 @@ public class Marker {
                               String dateLower, String dateUpper,
                               Long dealAmountLower, Long dealAmountUpper,
                               Double areaLower, Double areaUpper,
-                              List<String[]> transportations){
+                              List<String[]> transportations) {
         return new Marker(null,
-                new MarkerData(lat, lng, address,
+                new MarkerData(lat, lng, new MarkerData.MarkerAddress(address),
                         MarkerData.initMarkerFilter(
                                 dateLower, dateUpper,
                                 dealAmountLower, dealAmountUpper,
@@ -32,35 +33,139 @@ public class Marker {
 
     public static Marker init(Long markerId,
                               Double lat, Double lng, String address,
-                              MarkerData.MarkerFilter filter){
+                              MarkerData.MarkerFilter filter) {
         return new Marker(
                 new MarkerId(markerId),
-                new MarkerData(lat, lng, address, filter)
+                new MarkerData(
+                        lat, lng,
+                        new MarkerData.MarkerAddress(address),
+                        filter)
         );
     }
 
     @Value
-    private static class MarkerId{
+    private static class MarkerId {
         Long value;
     }
 
     @Value
-    public static class MarkerData{
+    public static class MarkerData {
         Double lat;
         Double lng;
-        String address;
+        MarkerAddress address;
         MarkerFilter filter;
 
         static MarkerFilter initMarkerFilter(String dateLower, String dateUpper,
-                                              Long dealAmountLower, Long dealAmountUpper,
-                                              Double areaLower, Double areaUpper,
-                                              List<String[]> transportations){
+                                             Long dealAmountLower, Long dealAmountUpper,
+                                             Double areaLower, Double areaUpper,
+                                             List<String[]> transportations) {
             return new MarkerFilter(
                     MarkerData.MarkerFilter.initDateRange(dateLower, dateUpper),
                     MarkerData.MarkerFilter.initDealAmountRange(dealAmountLower, dealAmountUpper),
                     MarkerData.MarkerFilter.initAreaRange(areaLower, areaUpper),
                     MarkerData.MarkerFilter.initTransportations(transportations)
             );
+        }
+
+        @Getter
+        public static class MarkerAddress {
+            private String sidoName;
+            private String gugunName;
+            private String dongName;
+
+            public String getFullAddress(){
+                StringBuffer buffer = new StringBuffer();
+                buffer.append(sidoName).append(" ")
+                        .append(gugunName).append(" ")
+                        .append(dongName);
+                return buffer.toString();
+            }
+
+            public MarkerAddress(String address){
+                String[] names = split(address);
+                setNames(names);
+            }
+
+            private void setNames(String[] names) {
+                setSidoName(names);
+                int index = setGugunName(names);
+                setDongName(names, index);
+            }
+
+            public String[] split(String address) {
+                return address.split(" ");
+            }
+
+            private void setSidoName(String[] names) {
+                if (names.length == 0) {
+                    throw new NoResultException("sido를 찾을 수 없습니다.");
+                }
+
+                String s = names[0];
+
+                if (s.equals("서울")) {
+                    this.sidoName = "서울특별시";
+                } else if (s.equals("부산")) {
+                    this.sidoName = "부산광역시";
+                } else if (s.equals("대구")) {
+                    this.sidoName = "대구광역시";
+                } else if (s.equals("인천")) {
+                    this.sidoName = "인천광역시";
+                } else if (s.equals("광주")) {
+                    this.sidoName = "광주광역시";
+                } else if (s.equals("대전")) {
+                    this.sidoName = "대전광역시";
+                } else if (s.equals("울산")) {
+                    this.sidoName = "울산광역시";
+                } else if (s.equals("세종")) {
+                    this.sidoName = "세종특별자치시";
+                } else if (s.equals("경기")) {
+                    this.sidoName = "경기도";
+                } else if (s.equals("강원특별자치도")) {
+                    this.sidoName = "강원도";
+                } else if (s.equals("충북")) {
+                    this.sidoName = "충청북도";
+                } else if (s.equals("충남")) {
+                    this.sidoName = "충청남도";
+                } else if (s.equals("전북")) {
+                    this.sidoName = "전라북도";
+                } else if (s.equals("전남")) {
+                    this.sidoName = "전라남도";
+                } else if (s.equals("경북")) {
+                    this.sidoName = "경상북도";
+                } else if (s.equals("경남")) {
+                    this.sidoName = "경상남도";
+                } else if (s.equals("제주")) {
+                    this.sidoName = "제주특별자치도";
+                } else {
+                    this.sidoName = names[0];
+                }
+            }
+
+            private int setGugunName(String[] names) {
+                if (names.length < 3) {
+                    throw new NoResultException("gugun를 찾을 수 없습니다.");
+                }
+
+                String secondLast = names[1];
+                String thirdLast = names[2];
+
+                if (secondLast.endsWith("시") && thirdLast.endsWith("구")) {
+                    this.gugunName = secondLast + " " + thirdLast;
+                    return 3;
+                }
+
+                this.gugunName = secondLast;
+                return 2;
+            }
+
+            private void setDongName(String[] names, int index){
+                StringBuffer buffer = new StringBuffer();
+                for(int i=index; i<names.length; i++){
+                    buffer.append(names[i]).append(" ");
+                }
+                this.dongName = buffer.toString().trim();
+            }
         }
 
         @Value
@@ -72,7 +177,7 @@ public class Marker {
 
             @Getter
             @AllArgsConstructor
-            public static class Range<T>{
+            public static class Range<T> {
                 T lower;
                 T upper;
             }
@@ -98,9 +203,9 @@ public class Marker {
                 Integer time;
             }
 
-            private static DateRange initDateRange(String lower, String upper){
-                if(lower == null) lower = "1900-01-01";
-                if(upper == null) upper = "2999-12-31";
+            private static DateRange initDateRange(String lower, String upper) {
+                if (lower == null) lower = "1900-01-01";
+                if (upper == null) upper = "2999-12-31";
 
                 return new DateRange(new Range<>(
                         LocalDate.parse(lower, DateTimeFormatter.ISO_DATE),
@@ -108,25 +213,25 @@ public class Marker {
                 );
             }
 
-            private static DealAmountRange initDealAmountRange(Long lower, Long upper){
-                if(lower == null) lower = 0L;
-                if(upper == null) upper = 999_999_999_999L;
+            private static DealAmountRange initDealAmountRange(Long lower, Long upper) {
+                if (lower == null) lower = 0L;
+                if (upper == null) upper = 999_999_999_999L;
 
                 return new DealAmountRange(new Range<>(lower, upper));
             }
 
-            private static AreaRange initAreaRange(Double lower, Double upper){
-                if(lower == null) lower = 0.0;
-                if(upper == null) upper = 9_999_999.0;
+            private static AreaRange initAreaRange(Double lower, Double upper) {
+                if (lower == null) lower = 0.0;
+                if (upper == null) upper = 9_999_999.0;
 
                 return new AreaRange(new Range<>(lower, upper));
             }
 
-            private static List<Transportation> initTransportations(List<String[]> transInfo){
+            private static List<Transportation> initTransportations(List<String[]> transInfo) {
                 List<Transportation> result = new ArrayList<>();
 
-                for(String[] info : transInfo){
-                    if(info.length != 2) throw new IllegalArgumentException("잘못된 데이터가 포함되어 있습니다.");
+                for (String[] info : transInfo) {
+                    if (info.length != 2) throw new IllegalArgumentException("잘못된 데이터가 포함되어 있습니다.");
 
                     TransportationType type = TransportationType.findByTypeKey(info[0]);
                     Integer time = Integer.parseInt(info[1]);

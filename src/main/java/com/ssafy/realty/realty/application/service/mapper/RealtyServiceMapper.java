@@ -111,7 +111,7 @@ public class RealtyServiceMapper {
         return MarkerDto.builder()
                 .lat(marker.getMarkerData().getLat())
                 .lng(marker.getMarkerData().getLng())
-                .address(marker.getMarkerData().getAddress())
+                .address(marker.getMarkerData().getAddress().getFullAddress())
                 .filter(mapToDtoMarkerFilter(marker.getMarkerData().getFilter()))
                 .build();
     }

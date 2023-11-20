@@ -39,7 +39,7 @@ public class QueryRealtyPersistenceAdapter implements QueryRealtyPort {
         List<Marker.MarkerData.MarkerFilter.Transportation> transportations =
                 marker.getMarkerData().getFilter().getTransportations();
 
-        for(Marker.MarkerData.MarkerFilter.Transportation t : transportations){
+        for (Marker.MarkerData.MarkerFilter.Transportation t : transportations) {
             Double distance = t.getType().getDistance(t.getTime());
             List<MarkerVicinityHomeInfo> infos =
                     houseInfoMybatisRepository.queryMarkerVicinityHome(dongCode, lat, lng, distance);
@@ -77,14 +77,12 @@ public class QueryRealtyPersistenceAdapter implements QueryRealtyPort {
         return realtyAdapterMapper.mapToMarkers(customJpaEntity);
     }
 
-    private String findDongCode(String address){
-        String[] ad = address.split(" ");
+    private String findDongCode(Marker.MarkerData.MarkerAddress address) {
 
-        if(ad.length >= 3){
-            return dongCodeJpaRepository
-                    .findBySidoNameAndGugunNameAndDongName(ad[0], ad[1], ad[2])
-                    .getDongCode();
-        }
-        throw new NoSuchElementException("dongcode를 찾을 수 없습니다.");
+        return dongCodeJpaRepository
+                .findBySidoNameAndGugunNameAndDongName(address.getSidoName(), address.getGugunName(), address.getDongName())
+                .orElseThrow(() -> new NoSuchElementException("dongcode를 찾을 수 없습니다."))
+                .getDongCode();
+
     }
 }

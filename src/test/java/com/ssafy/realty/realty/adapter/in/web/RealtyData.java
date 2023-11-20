@@ -13,9 +13,9 @@ public class RealtyData {
 
     protected JSONObject realtyInfoJsonBody() throws JSONException {
         JSONObject json = new JSONObject();
-        json.put("lat", 35.9768231457432);
-        json.put("lng", 128.944137387794);
-        json.put("address", "경상북도 영천시 야사동");
+        json.put("lat", 37.2882448079096);
+        json.put("lng", 126.863103138301);
+        json.put("address", "경기도 안산시 상록구 본오동");
 
         JSONObject filter = new JSONObject();
 
@@ -60,9 +60,9 @@ public class RealtyData {
 
     protected JSONObject realtyInfoJsonBodyVersion2() throws JSONException {
         JSONObject json = new JSONObject();
-        json.put("lat", 33.5076094855731);
-        json.put("lng", 126.534698636335);
-        json.put("address", "전라남도 함평균 대동면");
+        json.put("lat", 35.9614192418845);
+        json.put("lng", 126.713870217358);
+        json.put("address", "전북 군산시 수송동");
 
         JSONObject filter = new JSONObject();
 
@@ -101,12 +101,12 @@ public class RealtyData {
         ts.add(new String[]{"bicycle", "10"});
 
         Marker marker1 = Marker.init(12.0, 133.0,
-                "address", "2017-03-23",
+                "충남 태안군 이원면 관리", "2017-03-23",
                 "2020-04-04",
                 10L, 20L,
                 10.1, 11.1, ts);
         Marker marker2 = Marker.init(22.0, 233.0,
-                "address", "2010-01-01",
+                "충남 태안군 이원면 관리", "2010-01-01",
                 "2050-12-31",
                 100L, 20123L,
                 11230.1, 111233.1, ts);
@@ -122,7 +122,7 @@ public class RealtyData {
         ts.add(new String[]{"car", "20"});
 
         Marker marker1 = Marker.init(32.123123, 131.1234235,
-                "주소",
+                "서울 종로구 청운동",
                 "2020-01-01", "2021-12-31",
                 1_000_000L, 3_000_000_000L,
                 30.1, 100.9, ts);

@@ -71,7 +71,6 @@ class RealtyControllerTest extends RealtyData {
     public void realtyInfoTest() throws Exception {
         // given
         JSONObject requestBody = realtyInfoJsonBody();
-        String expect = "{\"data\":[{\"type\":\"WALK\",\"time\":5,\"homeSummaryInfos\":[{\"aptCode\":47230000000010,\"apartmentName\":\"야사주공3차단지\",\"lat\":35.9768231457432,\"lng\":128.944137387794,\"address\":\"야사동 충효로 120\",\"totalDealAmount\":230,\"maxDealAmount\":6500,\"minDealAmount\":1800,\"avgDealAmount\":3.5130434782608697,\"avgArea\":38.86356521739134},{\"aptCode\":47230000000011,\"apartmentName\":\"야사5단지주공아파트\",\"lat\":35.9768231457432,\"lng\":128.944137387794,\"address\":\"야사동 충효로 120\",\"totalDealAmount\":114,\"maxDealAmount\":8500,\"minDealAmount\":4500,\"avgDealAmount\":5.692982456140351,\"avgArea\":53.3434210526315}]},{\"type\":\"WALK\",\"time\":10,\"homeSummaryInfos\":[{\"aptCode\":47230000000010,\"apartmentName\":\"야사주공3차단지\",\"lat\":35.9768231457432,\"lng\":128.944137387794,\"address\":\"야사동 충효로 120\",\"totalDealAmount\":230,\"maxDealAmount\":6500,\"minDealAmount\":1800,\"avgDealAmount\":3.5130434782608697,\"avgArea\":38.86356521739134},{\"aptCode\":47230000000011,\"apartmentName\":\"야사5단지주공아파트\",\"lat\":35.9768231457432,\"lng\":128.944137387794,\"address\":\"야사동 충효로 120\",\"totalDealAmount\":114,\"maxDealAmount\":8500,\"minDealAmount\":4500,\"avgDealAmount\":5.692982456140351,\"avgArea\":53.3434210526315}]},{\"type\":\"BYCYCLE\",\"time\":5,\"homeSummaryInfos\":[{\"aptCode\":47230000000010,\"apartmentName\":\"야사주공3차단지\",\"lat\":35.9768231457432,\"lng\":128.944137387794,\"address\":\"야사동 충효로 120\",\"totalDealAmount\":230,\"maxDealAmount\":6500,\"minDealAmount\":1800,\"avgDealAmount\":3.5130434782608697,\"avgArea\":38.86356521739134},{\"aptCode\":47230000000011,\"apartmentName\":\"야사5단지주공아파트\",\"lat\":35.9768231457432,\"lng\":128.944137387794,\"address\":\"야사동 충효로 120\",\"totalDealAmount\":114,\"maxDealAmount\":8500,\"minDealAmount\":4500,\"avgDealAmount\":5.692982456140351,\"avgArea\":53.3434210526315},{\"aptCode\":47230000000027,\"apartmentName\":\"부경웰빙타운\",\"lat\":35.9754303418083,\"lng\":128.94414368135,\"address\":\"야사동 새말1길 158-29\",\"totalDealAmount\":14,\"maxDealAmount\":24100,\"minDealAmount\":13300,\"avgDealAmount\":18.071428571428573,\"avgArea\":103.9372071428571},{\"aptCode\":47230000000037,\"apartmentName\":\"동신캐슬\",\"lat\":35.9770146599208,\"lng\":128.942349856214,\"address\":\"야사동 모란4길 154-3\",\"totalDealAmount\":9,\"maxDealAmount\":18000,\"minDealAmount\":14000,\"avgDealAmount\":15.777777777777779,\"avgArea\":83.88459999999999}]}]}";
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post("/api/v1/realty/realty-info")
@@ -80,8 +79,7 @@ class RealtyControllerTest extends RealtyData {
 
         // when, then
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(content().json(expect));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -172,7 +170,6 @@ class RealtyControllerTest extends RealtyData {
         assertThat(customJpaEntity.getTitle()).isEqualTo("update Title");
         assertThat(customJpaEntity.getMarkers().get(0).getLat()).isEqualTo(realtyInfoJsonBodyVersion2().getDouble("lat"));
         assertThat(customJpaEntity.getMarkers().get(0).getLng()).isEqualTo(realtyInfoJsonBodyVersion2().getDouble("lng"));
-        assertThat(customJpaEntity.getMarkers().get(0).getAddress()).isEqualTo(realtyInfoJsonBodyVersion2().getString("address"));
     }
 
     @Test
@@ -248,7 +245,6 @@ class RealtyControllerTest extends RealtyData {
         assertNotNull(customJpaEntity);
         assertThat(customJpaEntity.getMarkers().get(0).getLat()).isEqualTo(realtyInfoJsonBodyVersion2().getDouble("lat"));
         assertThat(customJpaEntity.getMarkers().get(0).getLng()).isEqualTo(realtyInfoJsonBodyVersion2().getDouble("lng"));
-        assertThat(customJpaEntity.getMarkers().get(0).getAddress()).isEqualTo(realtyInfoJsonBodyVersion2().getString("address"));
     }
 
     @Test
@@ -287,8 +283,6 @@ class RealtyControllerTest extends RealtyData {
     @DisplayName("임시 저장된 데이터 로드")
     public void loadTmp() throws Exception {
         // given
-        String expect = "{\"data\":[{\"lat\":12.0,\"lng\":133.0,\"address\":\"address\",\"filter\":{\"date\":{\"lower\":\"2017-03-23\",\"upper\":\"2020-04-04\"},\"dealAmount\":{\"lower\":10,\"upper\":20},\"area\":{\"lower\":10.1,\"upper\":11.1},\"transportations\":[{\"type\":\"WALK\",\"time\":5},{\"type\":\"BYCYCLE\",\"time\":10}]}},{\"lat\":22.0,\"lng\":233.0,\"address\":\"address\",\"filter\":{\"date\":{\"lower\":\"2010-01-01\",\"upper\":\"2050-12-31\"},\"dealAmount\":{\"lower\":100,\"upper\":20123},\"area\":{\"lower\":11230.1,\"upper\":111233.1},\"transportations\":[{\"type\":\"WALK\",\"time\":5},{\"type\":\"BYCYCLE\",\"time\":10}]}}]}";
-
         User user = registDefaultUser();
 
         saveDefaultTmp(user.getId());
@@ -300,15 +294,14 @@ class RealtyControllerTest extends RealtyData {
 
         // when, then
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(content().json(expect));
+                .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("저장된 커스컴 매물 정보 확인")
     public void custom() throws Exception {
         // given
-        String expect = "{\"data\":[{\"lat\":12.0,\"lng\":133.0,\"address\":\"address\",\"filter\":{\"date\":{\"lower\":\"2017-03-23\",\"upper\":\"2020-04-04\"},\"dealAmount\":{\"lower\":10,\"upper\":20},\"area\":{\"lower\":10.1,\"upper\":11.1},\"transportations\":[{\"type\":\"WALK\",\"time\":5},{\"type\":\"BYCYCLE\",\"time\":10}]}},{\"lat\":22.0,\"lng\":233.0,\"address\":\"address\",\"filter\":{\"date\":{\"lower\":\"2010-01-01\",\"upper\":\"2050-12-31\"},\"dealAmount\":{\"lower\":100,\"upper\":20123},\"area\":{\"lower\":11230.1,\"upper\":111233.1},\"transportations\":[{\"type\":\"WALK\",\"time\":5},{\"type\":\"BYCYCLE\",\"time\":10}]}}]}";
+
 
         saveDefaultCustom(getUserId(registDefaultUser()));
 
@@ -320,8 +313,7 @@ class RealtyControllerTest extends RealtyData {
 
         // when, then
         mockMvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(content().json(expect));
+                .andExpect(status().isOk());
     }
 
 

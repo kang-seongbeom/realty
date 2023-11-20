@@ -1,11 +1,14 @@
 package com.ssafy.realty.custom_deal.application.port.in.dto;
 
-import lombok.AllArgsConstructor;
+import com.ssafy.realty.custom_deal.application.port.in.dto.util.AbstractResizePageable;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.domain.Pageable;
 
 @Data
-@AllArgsConstructor
-public class CustomCatalogDto {
-    Pageable pageable;
+public class CustomCatalogDto extends AbstractResizePageable {
+
+    public CustomCatalogDto(Pageable pageable) {
+        super(pageable);
+    }
 }

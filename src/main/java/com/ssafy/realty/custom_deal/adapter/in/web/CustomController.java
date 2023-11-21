@@ -29,15 +29,6 @@ class CustomController {
 
     private final WebCustomMapper webCustomMapper;
 
-    @GetMapping("/catalog")
-    @ApiOperation(value = "모든 커스텀 정보", notes = "모든 사용자들이 만든 커스텀 매물 정보 반환")
-    @ApiResponsesCommon
-    ResponseEntity<CustomSummaryDtos> totalCustomInfo(Pageable pageable) {
-        CustomCatalogDto customCatalogDto = webCustomMapper.mapToCustomCatalog(pageable);
-        CustomSummaryDtos summaryDtos = queryCustomUseCase.total(customCatalogDto);
-        return ResponseEntity.ok(summaryDtos);
-    }
-
     @GetMapping("/my-catalog")
     @ApiOperation(value = "본인이 만든 모든 커스텀 정보", notes = "본인이 만든 커스텀 매물 정보 반환")
     @ApiResponsesCommon
@@ -59,10 +50,10 @@ class CustomController {
         return ResponseEntity.ok(isOwner);
     }
 
-    @PostMapping("/search")
+    @GetMapping("/search")
     @ApiOperation(value = "커스텀 검색", notes = "검색 후 조건에 맞는 커스텀 반환")
     @ApiResponsesCommon
-    ResponseEntity<CustomSummaryDtos> search(@Valid @RequestBody SearchCustomPayload searchCustomPayload, Pageable pageable) {
+    ResponseEntity<CustomSummaryDtos> search(@ModelAttribute SearchCustomPayload searchCustomPayload, Pageable pageable) {
         SearchCustomDto searchCustomDto = webCustomMapper.mapToSearchCustomDto(searchCustomPayload, pageable);
         CustomSummaryDtos summaryDtos =  queryCustomUseCase.search(searchCustomDto);
 

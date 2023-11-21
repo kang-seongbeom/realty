@@ -21,13 +21,6 @@ public class QueryCustomService implements QueryCustomUseCase {
     private final CustomServiceMapper customServiceMapper;
 
     @Override
-    public CustomSummaryDtos total(CustomCatalogDto customCatalogDto) {
-        CustomCatalog customCatalog = customServiceMapper.mapToCustomCatalog(customCatalogDto);
-        Summaries catalogs = queryCustomPort.catalogs(customCatalog);
-        return customServiceMapper.mapToCustomSummaryDtos(catalogs);
-    }
-
-    @Override
     public CustomSummaryDtos myCustomInfos(OwnCustomCatalogDto ownCustomCatalogDto) {
         OwnCustomCatalog ownCustomCatalog = customServiceMapper.mapToOwnCustomCatalog(ownCustomCatalogDto);
         Summaries catalogs = queryCustomPort.myCustomInfos(ownCustomCatalog);

@@ -13,6 +13,6 @@ public abstract class AbstractResizePageable {
 
     public AbstractResizePageable(Pageable pageable) {
         int resize = pageable.getPageNumber() - 1;
-        this.pageable = PageRequest.of((resize > 0) ? resize - 1 : 0, pageable.getPageSize());
+        this.pageable = PageRequest.of(Math.max(resize, 0), pageable.getPageSize());
     }
 }

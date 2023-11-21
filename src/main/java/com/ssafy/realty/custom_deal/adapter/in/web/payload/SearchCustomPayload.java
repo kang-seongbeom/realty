@@ -6,8 +6,6 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class SearchCustomPayload {
-    @NotNull
     String type;
-    @NotNull
     String value;
 }

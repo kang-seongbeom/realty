@@ -5,8 +5,6 @@ import com.ssafy.realty.custom_deal.domain.wrap.Summaries;
 
 public interface QueryCustomPort {
 
-    Summaries catalogs(CustomCatalog customCatalog);
-
     Summaries myCustomInfos(OwnCustomCatalog ownCustomCatalog);
 
     boolean isOwner(IsOwner isOwner);

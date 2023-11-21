@@ -15,6 +15,9 @@ public class CustomUserJpaEntity {
     private Long id;
 
     @Column
+    private String username;
+
+    @Column
     private String nickname;
 
     @OneToMany(mappedBy = "user")

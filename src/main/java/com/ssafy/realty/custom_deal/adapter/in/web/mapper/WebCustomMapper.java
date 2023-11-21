@@ -10,10 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class WebCustomMapper {
 
-    public CustomCatalogDto mapToCustomCatalog(Pageable pageable){
-        return new CustomCatalogDto(pageable);
-    }
-
     public OwnCustomCatalogDto mapToOwnCustomCatalogDto(Long userId, Pageable pageable){
         return new OwnCustomCatalogDto(userId, pageable);
     }

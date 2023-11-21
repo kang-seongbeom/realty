@@ -13,10 +13,6 @@ import java.util.stream.Collectors;
 @Component
 public class CustomServiceMapper {
 
-    public CustomCatalog mapToCustomCatalog(CustomCatalogDto customCatalogDto){
-        return CustomCatalog.init(customCatalogDto.getPageable());
-    }
-
     public OwnCustomCatalog mapToOwnCustomCatalog(OwnCustomCatalogDto ownCustomCatalogDto){
         return OwnCustomCatalog.init(ownCustomCatalogDto.getUserId(), ownCustomCatalogDto.getPageable());
     }

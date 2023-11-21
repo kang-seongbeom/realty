@@ -85,21 +85,6 @@ class CustomControllerTest {
     private JwtManager jwtManager;
 
     @Test
-    @DisplayName("모든 게시글 확인 (페이징 기본 20개)")
-    public void allCatalogs() throws Exception {
-        // given
-        Long userId = defaultUser().getId();
-        saveCustom(userId);
-
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get("/api/v1/custom/catalog");
-
-        // when, then
-        mockMvc.perform(request)
-                .andExpect(status().isOk());
-    }
-
-    @Test
     @DisplayName("페이징 확인")
     public void pagingCatalogs() throws Exception {
         // given
@@ -109,7 +94,7 @@ class CustomControllerTest {
         }
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get("/api/v1/custom/catalog")
+                .get("/api/v1/custom/search")
                 .param("page", "0")
                 .param("size", "10");
 
@@ -189,16 +174,12 @@ class CustomControllerTest {
             saveCustomWithTitle(userId, "제제");
         }
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("type", "title");
-        jsonObject.put("value", "제목");
-
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post("/api/v1/custom/search")
+                .get("/api/v1/custom/search")
+                .param("type", "title")
+                .param("value", "제목")
                 .param("page", "0")
-                .param("size", "10")
-                .content(jsonObject.toString())
-                .contentType(MediaType.APPLICATION_JSON);;
+                .param("size", "10");
 
         // when
         ResultActions result = mockMvc.perform(request);

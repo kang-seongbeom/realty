@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 public enum SearchType {
-    TITLE("title"), AUTHOR("author");
+    ALL("all"), TITLE("title"), AUTHOR("author");
 
     private final String value;
 
@@ -13,10 +13,12 @@ public enum SearchType {
     }
 
     public static SearchType findBySearchValue(String s){
+        if(s == null) return ALL;
+
         return Arrays.stream(SearchType.values())
                 .filter(v -> v.value.equals(s.toLowerCase()))
                 .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("검색 조건을 찾을 수 없습니다."));
+                .orElse(ALL);
     }
 
     public String getValue() {

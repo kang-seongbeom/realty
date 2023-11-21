@@ -5,8 +5,6 @@ import com.ssafy.realty.custom_deal.application.port.out.dto.wrap.CustomSummaryD
 
 public interface QueryCustomUseCase {
 
-    CustomSummaryDtos total(CustomCatalogDto customCatalogDto);
-
     CustomSummaryDtos myCustomInfos(OwnCustomCatalogDto ownCustomCatalogDto);
 
     boolean isOwner(IsOwnerDto isOwnerDto);

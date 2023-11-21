@@ -1,5 +1,6 @@
 package com.ssafy.realty.custom_deal.adapter.out;
 
+import com.ssafy.realty.common.SearchType;
 import com.ssafy.realty.custom_deal.adapter.out.entity.CustomDealJpaEntity;
 import com.ssafy.realty.custom_deal.adapter.out.mapper.CustomAdapterMapper;
 import com.ssafy.realty.custom_deal.adapter.out.respository.CustomDealCriteriaRepository;
@@ -28,13 +29,6 @@ public class QueryCustomPersistenceAdapter implements QueryCustomPort {
     private final CustomAdapterMapper customAdapterMapper;
 
     @Override
-    public Summaries catalogs(CustomCatalog customCatalog) {
-        Page<CustomDealJpaEntity> catalogs =
-                customDealJpaRepository.findAllByOrderByIdDesc(customCatalog.getCustomCatalogData().getPageable());
-        return customAdapterMapper.mapToSummaries(catalogs);
-    }
-
-    @Override
     public Summaries myCustomInfos(OwnCustomCatalog ownCustomCatalog) {
         Page<CustomDealJpaEntity> infos =
                 customDealJpaRepository.findByUserId(
@@ -47,15 +41,22 @@ public class QueryCustomPersistenceAdapter implements QueryCustomPort {
     @Override
     public boolean isOwner(IsOwner isOwner) {
         CustomJpaEntity custom = customJpaRepository.findById(isOwner.getIsOwnerCustomId().getValue())
-                .orElseThrow(() -> new NoSuchElementException("해당 커스텀 글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NoSuchElementException("해당 매물 정보 글을 찾을 수 없습니다."));
 
         return (long) custom.getUser().getId() == isOwner.getIsOwnerUserId().getValue();
     }
 
     @Override
     public Summaries search(Search search) {
-        Page<CustomDealJpaEntity> catalogs =
-                customDealCriteriaRepository.findByDynamicSearch(search);
+        Page<CustomDealJpaEntity> catalogs;
+
+        if (search.getSearchData().getSearchType() == SearchType.TITLE) {
+            catalogs = customDealJpaRepository.findByTitleContainingOrderByIdDesc(search.getSearchData().getContent(), search.getSearchData().getPageable());
+        } else if(search.getSearchData().getSearchType() == SearchType.AUTHOR){
+            catalogs = customDealJpaRepository.findByNicknameContaining(search.getSearchData().getContent(), search.getSearchData().getPageable());
+        }else {
+            catalogs = customDealJpaRepository.findAllByOrderByIdDesc(search.getSearchData().getPageable());
+        }
         return customAdapterMapper.mapToSummaries(catalogs);
     }
 

@@ -33,6 +33,7 @@ public class JwtManager {
                 .withClaim("id", principalDetails.getUser().getId()) // 발행 유저정보 저장
                 .withClaim("username", principalDetails.getUser().getUsername())
                 .withClaim("role", principalDetails.getUser().getRole().toString())
+                .withClaim("nickname", principalDetails.getUser().getNickname())
                 .sign(Algorithm.HMAC512(jwtProperties.getAccessTokenSecret())); //고윳값
     }
 

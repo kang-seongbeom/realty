@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 @Entity
@@ -51,5 +52,4 @@ public class CustomDealJpaEntity {
     public void viewIncrease(){
         this.view += 1;
     }
-
 }

@@ -36,8 +36,13 @@ public class CommandCustomPersistenceAdapter implements CommandCustomCustomPort 
         CustomUserJpaEntity user = findUserByUserId(starCustom.getStarCustomUserId().getValue());
         CustomDealJpaEntity custom = findCustomByCustomId(starCustom.getStarCustomId().getValue());
 
-        UserStarCustomJpaEntity userStarCustomJpaEntity = adapterMapper.mapToUserStarCustomJpaEntity(user, custom);
-        userStarCustomJpaRepository.save(userStarCustomJpaEntity);
+        if(user.isStarCustom(custom.getId())){
+            Long mappingId = userStarCustomJpaRepository.findByUserIdAndCustomId(user.getId(), custom.getId()).getId();
+            userStarCustomJpaRepository.deleteById(mappingId);
+        }else {
+            UserStarCustomJpaEntity userStarCustomJpaEntity = adapterMapper.mapToUserStarCustomJpaEntity(user, custom);
+            userStarCustomJpaRepository.save(userStarCustomJpaEntity);
+        }
     }
 
     private CustomUserJpaEntity findUserByUserId(Long userId) {

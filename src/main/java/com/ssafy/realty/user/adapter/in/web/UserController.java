@@ -35,7 +35,7 @@ public class UserController {
                 .builder()
                 .username(registPayload.getUsername())
                 .password(registPayload.getPassword())
-                .nickname(registPayload.getPassword())
+                .nickname(registPayload.getNickname())
                 .build();
         commandUserUseCase.regist(dto);
 

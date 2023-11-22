@@ -12,11 +12,13 @@ import java.util.List;
 
 public interface CustomDealJpaRepository extends JpaRepository<CustomDealJpaEntity, Long> {
 
+    @Query("SELECT c FROM  CustomDealJpaEntity c WHERE c.isTmp != 'tmp' ORDER BY c.id DESC")
     Page<CustomDealJpaEntity> findAllByOrderByIdDesc(Pageable pageable);
 
-    Page<CustomDealJpaEntity> findByTitleContainingOrderByIdDesc(String title, Pageable pageable);
+    @Query("SELECT c FROM  CustomDealJpaEntity c WHERE c.title = :title and c.isTmp != 'tmp' ORDER BY c.id DESC")
+    Page<CustomDealJpaEntity> findByTitleContainingOrderByIdDesc(@Param("title") String title, Pageable pageable);
 
-    @Query("SELECT c FROM CustomDealJpaEntity c JOIN c.user u WHERE u.nickname LIKE %:nickname%")
+    @Query("SELECT c FROM CustomDealJpaEntity c JOIN c.user u WHERE u.nickname LIKE %:nickname% ORDER BY c.id DESC")
     Page<CustomDealJpaEntity> findByNicknameContaining(@Param("nickname") String nickname, Pageable pageable);
 
     Page<CustomDealJpaEntity> findByUserId(Long userId, Pageable pageable);

@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 public interface CustomJpaRepository extends JpaRepository<CustomJpaEntity, Long> {
 
 
-    @Query(value = "select count(*) from customs where users_id = :userId and is_tmp = 'true'", nativeQuery = true)
+    @Query(value = "select count(*) from customs where users_id = :userId and is_tmp = 'tmp'", nativeQuery = true)
     Integer countByUserIdAndIsTmpTrue(@Param("userId") Long userId);
 
     @Query("select c from CustomJpaEntity  c where c.user.id = :userId")

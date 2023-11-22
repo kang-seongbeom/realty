@@ -30,6 +30,9 @@ public class CustomDealJpaEntity {
     @Column
     private Integer star;
 
+    @Column(name = "is_tmp")
+    private String isTmp;
+
     @Column(name = "createDate")
     @CreationTimestamp
     @DateTimeFormat(pattern = "yyyy-MM-dd")

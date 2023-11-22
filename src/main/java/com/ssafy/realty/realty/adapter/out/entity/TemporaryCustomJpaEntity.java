@@ -7,6 +7,6 @@ import javax.persistence.Entity;
 
 @Entity
 @NoArgsConstructor
-@DiscriminatorValue("true")
+@DiscriminatorValue("tmp")
 public class TemporaryCustomJpaEntity extends CustomJpaEntity{
 }

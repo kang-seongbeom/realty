@@ -34,10 +34,6 @@ public class CustomServiceMapper {
         return Search.init(searchCustomDto.getSearchType(), searchCustomDto.getValue(), searchCustomDto.getPageable());
     }
 
-    public ViewIncrease mapToViewIncrease(ViewIncreaseDto viewIncreaseDto) {
-        return ViewIncrease.init(viewIncreaseDto.getCustomId());
-    }
-
     public StarCustom mapToStarIncrease(StarCustomDto starCustomDto) {
         return StarCustom.init(starCustomDto.getUserId(), starCustomDto.getCustomId());
     }

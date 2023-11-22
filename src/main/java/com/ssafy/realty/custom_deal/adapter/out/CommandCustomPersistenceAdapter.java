@@ -26,12 +26,6 @@ public class CommandCustomPersistenceAdapter implements CommandCustomCustomPort 
     private final CustomAdapterMapper adapterMapper;
 
     @Override
-    public void viewIncrease(ViewIncrease viewIncrease) {
-        CustomDealJpaEntity customDealJpa = findCustomByCustomId(viewIncrease.getViewIncreaseCustomId().getValue());
-        customDealJpa.viewIncrease();
-    }
-
-    @Override
     public void starCustom(StarCustom starCustom) {
         CustomUserJpaEntity user = findUserByUserId(starCustom.getStarCustomUserId().getValue());
         CustomDealJpaEntity custom = findCustomByCustomId(starCustom.getStarCustomId().getValue());

@@ -171,7 +171,7 @@ class CustomControllerTest {
         Long userId = defaultUser().getId();
         for(int i=0; i<5; i++){
             saveCustom(userId);
-            saveCustomWithTitle(userId, "제제");
+            saveCustomWithTitle(userId, "제목");
         }
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -194,27 +194,6 @@ class CustomControllerTest {
         while (matcher.find()) count++;
 
         assertTrue(count>= 5);
-    }
-
-    @Test
-    @DisplayName("조회수 증가")
-    public void viewIncrease() throws Exception {
-        // given
-        User user = defaultUser();
-        saveCustom(user.getId());
-
-        List<CustomJpaEntity> all = customJpaRepository.findAll();
-        long lastInsertId = all.get(all.size()-1).getId();
-
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post("/api/v1/custom/view/" + lastInsertId);
-
-        // when
-        mockMvc.perform(request)
-                .andExpect(status().isOk());
-
-        // then
-        assertThat(customDealJpaRepository.findById(lastInsertId).get().getView()).isEqualTo(1);
     }
 
     @Test

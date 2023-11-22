@@ -301,8 +301,6 @@ class RealtyControllerTest extends RealtyData {
     @DisplayName("저장된 커스컴 매물 정보 확인")
     public void custom() throws Exception {
         // given
-
-
         saveDefaultCustom(getUserId(registDefaultUser()));
 
         List<CustomJpaEntity> all = customJpaRepository.findAll();

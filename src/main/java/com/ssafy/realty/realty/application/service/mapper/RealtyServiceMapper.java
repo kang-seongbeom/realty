@@ -1,5 +1,7 @@
 package com.ssafy.realty.realty.application.service.mapper;
 
+import com.ssafy.realty.realty.application.port.in.dto.ViewIncreaseDto;
+import com.ssafy.realty.realty.domain.ViewIncrease;
 import com.ssafy.realty.realty.application.port.common_dto.MarkerDto;
 import com.ssafy.realty.realty.application.port.in.DeleteDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
@@ -105,6 +107,10 @@ public class RealtyServiceMapper {
 
     public Delete mapToDelete(DeleteDto deleteDto) {
         return Delete.init(deleteDto.getUserId(), deleteDto.getCustomId());
+    }
+
+    public ViewIncrease mapToViewIncrease(ViewIncreaseDto viewIncreaseDto) {
+        return ViewIncrease.init(viewIncreaseDto.getCustomId());
     }
 
     private MarkerDto mapToMarkerDto(Marker marker) {

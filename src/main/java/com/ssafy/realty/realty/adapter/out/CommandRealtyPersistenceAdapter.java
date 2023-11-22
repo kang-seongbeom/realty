@@ -7,10 +7,7 @@ import com.ssafy.realty.realty.adapter.out.mapper.RealtyAdapterMapper;
 import com.ssafy.realty.realty.adapter.out.repository.CustomJpaRepository;
 import com.ssafy.realty.realty.adapter.out.repository.RealtyUserJpaRepository;
 import com.ssafy.realty.realty.application.port.out.CommandRealtyPort;
-import com.ssafy.realty.realty.domain.Delete;
-import com.ssafy.realty.realty.domain.Save;
-import com.ssafy.realty.realty.domain.SaveTemporary;
-import com.ssafy.realty.realty.domain.Update;
+import com.ssafy.realty.realty.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -64,6 +61,12 @@ public class CommandRealtyPersistenceAdapter implements CommandRealtyPort {
         notPermitIfNotOwner(delete.getUserId().getValue(), customJpa.getUser().getId());
 
         customJpaRepository.deleteById(customJpa.getId());
+    }
+
+    @Override
+    public void viewIncrease(ViewIncrease viewIncrease) {
+        CustomJpaEntity customJpa = customFindById(viewIncrease.getViewIncreaseCustomId().getValue());
+        customJpa.increaseView();
     }
 
     private CustomJpaEntity customFindById(Long customId) {

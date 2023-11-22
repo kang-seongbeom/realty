@@ -60,15 +60,6 @@ class CustomController {
         return ResponseEntity.ok(summaryDtos);
     }
 
-    @PostMapping("/view/{customId}")
-    @ApiOperation(value = "조회수", notes = "조회수(view) 증가")
-    @ApiResponsesCommon
-    ResponseEntity<Void> viewIncrease(@PathVariable Long customId){
-        ViewIncreaseDto viewIncreaseDto = webCustomMapper.mapToViewIncreaseDto(customId);
-        commandCustomUseCase.viewIncrease(viewIncreaseDto);
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/star/{customId}")
     @ApiOperation(value = "좋아요", notes = "좋아요(star)로 사용자와 매물 정보 글 연결")
     @ApiResponsesCommon

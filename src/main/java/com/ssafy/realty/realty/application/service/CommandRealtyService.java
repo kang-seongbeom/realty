@@ -1,5 +1,7 @@
 package com.ssafy.realty.realty.application.service;
 
+import com.ssafy.realty.realty.application.port.in.dto.ViewIncreaseDto;
+import com.ssafy.realty.realty.domain.ViewIncrease;
 import com.ssafy.realty.realty.application.port.in.CommandRealtyUseCase;
 import com.ssafy.realty.realty.application.port.in.DeleteDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
@@ -47,4 +49,11 @@ public class CommandRealtyService implements CommandRealtyUseCase {
         Delete delete = realtyServiceMapper.mapToDelete(deleteDto);
         commandRealtyPort.delete(delete);
     }
+
+    @Override
+    public void viewIncrease(ViewIncreaseDto viewIncreaseDto) {
+        ViewIncrease viewIncrease = realtyServiceMapper.mapToViewIncrease(viewIncreaseDto);
+        commandRealtyPort.viewIncrease(viewIncrease);
+    }
+
 }

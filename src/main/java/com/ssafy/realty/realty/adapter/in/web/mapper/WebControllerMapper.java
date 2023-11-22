@@ -1,5 +1,6 @@
 package com.ssafy.realty.realty.adapter.in.web.mapper;
 
+import com.ssafy.realty.realty.application.port.in.dto.ViewIncreaseDto;
 import com.ssafy.realty.realty.adapter.in.web.payload.SavePayload;
 import com.ssafy.realty.realty.adapter.in.web.payload.UpdatePayload;
 import com.ssafy.realty.realty.adapter.in.web.payload.wrap.MarkerPayloads;
@@ -57,5 +58,13 @@ public class WebControllerMapper {
 
     public DeleteDto mapToDeleteDto(Long userId, Long customId) {
         return new DeleteDto(userId, customId);
+    }
+
+    public ViewIncreaseDto mapToViewIncreaseDto(Long customId) {
+        return new ViewIncreaseDto(customId);
+    }
+
+    public String mapToCustomCookieName(Long customId){
+        return String.format("post_%d", customId);
     }
 }

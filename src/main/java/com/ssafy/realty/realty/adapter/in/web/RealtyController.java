@@ -26,7 +26,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.NoResultException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Arrays;
 
 @RestController
 @RequiredArgsConstructor
@@ -123,9 +127,23 @@ class RealtyController {
     @GetMapping("/custom/{customId}")
     @ApiOperation(value = "커스텀 매물 정보 보기", notes = "다른(or 같은) 사용자가 만든 상세 매물 정보 확인")
     @ApiResponsesCommon
-    ResponseEntity<MarkerDtos> detailCustomInfo(@PathVariable Long customId) {
+    ResponseEntity<MarkerDtos> detailCustomInfo(@PathVariable Long customId, HttpServletRequest request, HttpServletResponse response) {
         MarkerDtos markerDtos = queryRealtyUseCase.queryCustomInfo(customId);
+
+        increaseView(customId, request, response);
+
         return ResponseEntity.ok(markerDtos);
+    }
+
+    private void increaseView(Long customId, HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        String viewCookieName = webControllerMapper.mapToCustomCookieName(customId);
+
+        if(!isViewCookieContain(cookies, viewCookieName)){
+            Cookie viewCookie = new Cookie(webControllerMapper.mapToCustomCookieName(customId), "viewed");
+            viewCookie.setMaxAge(24 * 60 * 60);
+            response.addCookie(viewCookie);
+        }
     }
 
     @DeleteMapping("/custom/delete/{customId}")
@@ -136,5 +154,14 @@ class RealtyController {
         DeleteDto deleteDto = webControllerMapper.mapToDeleteDto(principalDetails.getUser().getId(), customId);
         commandRealtyUseCase.delete(deleteDto);
         return ResponseEntity.ok().build();
+    }
+
+    private boolean isViewCookieContain(Cookie[] cookies, String viewCookieName) {
+        if(cookies == null) {
+            return false;
+        }
+
+        return Arrays.stream(cookies)
+                .anyMatch(c -> c.getName().equals(viewCookieName));
     }
 }

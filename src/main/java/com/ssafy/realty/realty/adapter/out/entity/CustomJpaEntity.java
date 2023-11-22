@@ -65,4 +65,8 @@ public class CustomJpaEntity {
     public void updateMarkers(List<MarkerJpaEntity> markers){
         this.markers = markers;
     }
+
+    public void increaseView(){
+        this.view += 1;
+    }
 }

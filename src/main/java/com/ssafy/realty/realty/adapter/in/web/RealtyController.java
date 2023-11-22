@@ -150,7 +150,6 @@ class RealtyController {
         if(cookies == null) {
             return false;
         }
-
         return Arrays.stream(cookies)
                 .anyMatch(c -> c.getName().equals(viewCookieName));
     }
@@ -164,6 +163,7 @@ class RealtyController {
             commandRealtyUseCase.viewIncrease(viewIncreaseDto);
 
             Cookie viewCookie = new Cookie(webControllerMapper.mapToCustomCookieName(customId), "viewed");
+            viewCookie.setPath("/");
             viewCookie.setMaxAge(24 * 60 * 60);
             response.addCookie(viewCookie);
         }

@@ -15,6 +15,7 @@ import com.ssafy.realty.realty.application.port.common_dto.MarkerDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveDto;
 import com.ssafy.realty.realty.application.port.in.dto.SaveTemporaryDto;
 import com.ssafy.realty.realty.application.port.in.dto.UpdateDto;
+import com.ssafy.realty.realty.application.port.in.dto.ViewIncreaseDto;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.TotalHistoryDealInfoDtos;
 import com.ssafy.realty.realty.application.port.out.dto.wrap.VicinityHomeInfoDtos;
 import com.ssafy.realty.security.config.auth.PrincipalDetails;
@@ -140,6 +141,9 @@ class RealtyController {
         String viewCookieName = webControllerMapper.mapToCustomCookieName(customId);
 
         if(!isViewCookieContain(cookies, viewCookieName)){
+            ViewIncreaseDto viewIncreaseDto = webControllerMapper.mapToViewIncreaseDto(customId);
+            commandRealtyUseCase.viewIncrease(viewIncreaseDto);
+
             Cookie viewCookie = new Cookie(webControllerMapper.mapToCustomCookieName(customId), "viewed");
             viewCookie.setMaxAge(24 * 60 * 60);
             response.addCookie(viewCookie);

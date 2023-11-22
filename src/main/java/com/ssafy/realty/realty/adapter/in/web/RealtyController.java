@@ -136,20 +136,6 @@ class RealtyController {
         return ResponseEntity.ok(markerDtos);
     }
 
-    private void increaseView(Long customId, HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies = request.getCookies();
-        String viewCookieName = webControllerMapper.mapToCustomCookieName(customId);
-
-        if(!isViewCookieContain(cookies, viewCookieName)){
-            ViewIncreaseDto viewIncreaseDto = webControllerMapper.mapToViewIncreaseDto(customId);
-            commandRealtyUseCase.viewIncrease(viewIncreaseDto);
-
-            Cookie viewCookie = new Cookie(webControllerMapper.mapToCustomCookieName(customId), "viewed");
-            viewCookie.setMaxAge(24 * 60 * 60);
-            response.addCookie(viewCookie);
-        }
-    }
-
     @DeleteMapping("/custom/delete/{customId}")
     @ApiOperation(value = "커스텀 매물 정보 삭제", notes = "매물 정보 삭제")
     @ApiResponsesCommon
@@ -167,5 +153,19 @@ class RealtyController {
 
         return Arrays.stream(cookies)
                 .anyMatch(c -> c.getName().equals(viewCookieName));
+    }
+
+    private void increaseView(Long customId, HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        String viewCookieName = webControllerMapper.mapToCustomCookieName(customId);
+
+        if(!isViewCookieContain(cookies, viewCookieName)){
+            ViewIncreaseDto viewIncreaseDto = webControllerMapper.mapToViewIncreaseDto(customId);
+            commandRealtyUseCase.viewIncrease(viewIncreaseDto);
+
+            Cookie viewCookie = new Cookie(webControllerMapper.mapToCustomCookieName(customId), "viewed");
+            viewCookie.setMaxAge(24 * 60 * 60);
+            response.addCookie(viewCookie);
+        }
     }
 }

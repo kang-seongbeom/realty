@@ -58,6 +58,7 @@ public class RealtyServiceMapper {
         return TotalHistoryDealInfoDtos
                 .builder()
                 .aptCode(dealInfos.getDealInfos().get(0).getDealInfoArtCode().getArtCode())
+                .apartmentName(dealInfos.getDealInfos().get(0).getDealInfoData().getApartmentName())
                 .lat(dealInfos.getDealInfos().get(0).getDealInfoData().getLat())
                 .lng(dealInfos.getDealInfos().get(0).getDealInfoData().getLng())
                 .address(dealInfos.getDealInfos().get(0).getDealInfoData().getAddress())

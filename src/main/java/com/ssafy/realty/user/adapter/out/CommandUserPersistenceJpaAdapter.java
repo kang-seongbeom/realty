@@ -3,6 +3,7 @@ package com.ssafy.realty.user.adapter.out;
 import com.ssafy.realty.user.adapter.out.entity.UserJpaEntity;
 import com.ssafy.realty.user.adapter.out.repository.UserJpaRepository;
 import com.ssafy.realty.user.application.port.out.*;
+import com.ssafy.realty.user.domain.ReIssuePassword;
 import com.ssafy.realty.user.domain.UserDomain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -33,5 +34,13 @@ public class CommandUserPersistenceJpaAdapter implements CommandUserPort {
                 .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
 
         entity.toUpdate(userDomain);
+    }
+
+    @Override
+    public void updateForReIssuePassword(ReIssuePassword reIssuePassword) {
+        UserJpaEntity entity = userJpaRepository.findByUsername(reIssuePassword.getReissuePasswordUsername().getUsername())
+                .orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다."));
+
+        entity.updatePassword(reIssuePassword.getReissuePasswordPassword().getPassword());
     }
 }

@@ -43,4 +43,8 @@ public class UserJpaEntity {
         this.password = updateWantUser.getUserDomainData().getPassword();
         this.nickname = updateWantUser.getUserDomainData().getNickname();
     }
+
+    public void updatePassword(String password){
+        this.password = password;
+    }
 }

@@ -2,13 +2,17 @@ package com.ssafy.realty.user.adapter.in.web;
 
 import com.ssafy.realty.common.swagger.ApiResponsesCommon;
 import com.ssafy.realty.security.config.auth.PrincipalDetails;
+import com.ssafy.realty.user.adapter.in.web.payload.ReIssuePayload;
 import com.ssafy.realty.user.adapter.in.web.payload.RegistPayload;
 import com.ssafy.realty.user.adapter.in.web.payload.UpdatePayload;
 import com.ssafy.realty.user.application.port.in.CommandUserUseCase;
+import com.ssafy.realty.user.application.port.in.ReIssuePasswordUseCase;
+import com.ssafy.realty.user.application.port.in.dto.ReIssuePasswordDto;
 import com.ssafy.realty.user.application.port.in.QueryUserUseCase;
 import com.ssafy.realty.user.application.port.in.dto.QueryResponseDto;
 import com.ssafy.realty.user.application.port.in.dto.RegistDto;
 import com.ssafy.realty.user.application.port.in.dto.UpdateDto;
+import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +30,7 @@ public class UserController {
 
     private final QueryUserUseCase queryUserUseCase;
     private final CommandUserUseCase commandUserUseCase;
+    private final ReIssuePasswordUseCase reIssuePasswordUseCase;
 
     @PostMapping("/regist")
     @ApiOperation(value = "회원가입", notes = "회원가입")
@@ -55,6 +60,15 @@ public class UserController {
     ResponseEntity<QueryResponseDto> query(@AuthenticationPrincipal PrincipalDetails principalDetails){
         QueryResponseDto queryResponseDto = queryUserUseCase.query(principalDetails.getUsername());
         return ResponseEntity.ok(queryResponseDto);
+    }
+
+    @PostMapping("/reissue-password")
+    @ApiOperation(value = "비밀번호 찾기", notes = "임시 비밀번호를 이메일로 발급한다.")
+    @ApiResponsesCommon
+    ResponseEntity<Void> findPassword(@RequestBody ReIssuePayload reIssuePayload) throws MessagingException, javax.mail.MessagingException {
+        ReIssuePasswordDto ReIssuePasswordDto = new ReIssuePasswordDto(reIssuePayload.getUsername());
+        reIssuePasswordUseCase.findPassword(ReIssuePasswordDto);
+        return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/user/update")

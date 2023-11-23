@@ -12,7 +12,6 @@ import com.ssafy.realty.user.application.port.in.QueryUserUseCase;
 import com.ssafy.realty.user.application.port.in.dto.QueryResponseDto;
 import com.ssafy.realty.user.application.port.in.dto.RegistDto;
 import com.ssafy.realty.user.application.port.in.dto.UpdateDto;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +64,7 @@ public class UserController {
     @PostMapping("/reissue-password")
     @ApiOperation(value = "비밀번호 찾기", notes = "임시 비밀번호를 이메일로 발급한다.")
     @ApiResponsesCommon
-    ResponseEntity<Void> findPassword(@RequestBody ReIssuePayload reIssuePayload) throws MessagingException, javax.mail.MessagingException {
+    ResponseEntity<Void> findPassword(@RequestBody ReIssuePayload reIssuePayload) throws javax.mail.MessagingException {
         ReIssuePasswordDto ReIssuePasswordDto = new ReIssuePasswordDto(reIssuePayload.getUsername());
         reIssuePasswordUseCase.findPassword(ReIssuePasswordDto);
         return ResponseEntity.ok().build();

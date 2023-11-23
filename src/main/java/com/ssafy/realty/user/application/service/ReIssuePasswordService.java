@@ -6,7 +6,6 @@ import com.ssafy.realty.user.application.port.out.CommandUserPort;
 import com.ssafy.realty.user.application.service.UserMailGenerator.TemporaryPasswordGenerator;
 import com.ssafy.realty.user.application.service.UserMailGenerator.UserMailSubjectContentGenerator;
 import com.ssafy.realty.user.domain.ReIssuePassword;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,6 +13,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
@@ -33,7 +33,7 @@ public class ReIssuePasswordService implements ReIssuePasswordUseCase {
     private String fromAddress;
 
     @Override
-    public void findPassword(ReIssuePasswordDto reIssuePasswordDto) throws MessagingException, javax.mail.MessagingException {
+    public void findPassword(ReIssuePasswordDto reIssuePasswordDto) throws MessagingException {
         String to = reIssuePasswordDto.getUsername();
         String rawTmpPassword = temporaryPasswordGenerator.generatePassword();
 

@@ -213,8 +213,8 @@ public class Marker {
             }
 
             private static DateRange initDateRange(String lower, String upper) {
-                if (lower == null) lower = "1900-01-01";
-                if (upper == null) upper = "2999-12-31";
+                if (lower == null || lower.isEmpty()) lower = "1900-01-01";
+                if (upper == null || upper.isEmpty()) upper = "2999-12-31";
 
                 return new DateRange(new Range<>(
                         LocalDate.parse(lower, DateTimeFormatter.ISO_DATE),
@@ -224,14 +224,14 @@ public class Marker {
 
             private static DealAmountRange initDealAmountRange(Long lower, Long upper) {
                 if (lower == null) lower = 0L;
-                if (upper == null) upper = 999_999_999_999L;
+                if (upper == null|| upper == 0L) upper = 999_999_999_999L;
 
                 return new DealAmountRange(new Range<>(lower, upper));
             }
 
             private static AreaRange initAreaRange(Double lower, Double upper) {
                 if (lower == null) lower = 0.0;
-                if (upper == null) upper = 9_999_999.0;
+                if (upper == null || upper < 1) upper = 9_999_999.0;
 
                 return new AreaRange(new Range<>(lower, upper));
             }

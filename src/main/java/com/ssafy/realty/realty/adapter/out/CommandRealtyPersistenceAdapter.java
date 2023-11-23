@@ -86,7 +86,7 @@ public class CommandRealtyPersistenceAdapter implements CommandRealtyPort {
     }
 
     public void deleteBeforeSaveTemporary(Long userId){
-        CustomJpaEntity beforeSavedTmp = customJpaRepository.findByUserId(userId);
+        CustomJpaEntity beforeSavedTmp = customJpaRepository.findTmpByUserId(userId);
         if(beforeSavedTmp != null){
             customJpaRepository.deleteById(beforeSavedTmp.getId());
         }

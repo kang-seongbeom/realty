@@ -13,4 +13,7 @@ public interface CustomJpaRepository extends JpaRepository<CustomJpaEntity, Long
 
     @Query("select c from CustomJpaEntity  c where c.user.id = :userId")
     CustomJpaEntity findByUserId(@Param("userId") Long userId);
+
+    @Query(value = "select * from customs where users_id = :userId and is_tmp = 'tmp'", nativeQuery = true)
+    CustomJpaEntity findTmpByUserId(@Param("userId") Long userId);
 }

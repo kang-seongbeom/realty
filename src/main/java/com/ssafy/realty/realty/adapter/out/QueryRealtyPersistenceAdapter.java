@@ -72,7 +72,7 @@ public class QueryRealtyPersistenceAdapter implements QueryRealtyPort {
 
     @Override
     public Markers loadTemporary(Long userId) {
-        CustomJpaEntity customJpaEntity = customJpaRepository.findByUserId(userId);
+        CustomJpaEntity customJpaEntity = customJpaRepository.findTmpByUserId(userId);
 
         return realtyAdapterMapper.mapToMarkers(customJpaEntity);
     }

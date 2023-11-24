@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 public enum TransportationType {
-    WALK("walk", 0.04), BYCYCLE("bicycle", 0.0609), OWN_CAR("car", 0.0833);
+    WALK("walk", 0.04), BICYCLE("bicycle", 0.0609), OWN_CAR("car", 0.0833);
 
     private final String key;
     private final Double value;
